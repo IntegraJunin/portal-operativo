@@ -67,7 +67,7 @@
 
   <div class="max-w-6xl mx-auto space-y-6">
     
-    <!-- Header Principal -->
+    <!-- Header Principal con Botones de Navegación Restaurados -->
     <header class="terra-card p-6 md:p-8 rounded-[32px] flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
       <div>
         <div class="flex items-center gap-2 mb-1">
@@ -84,56 +84,97 @@
         <p class="text-xs md:text-sm font-medium text-terra-muted tracking-wide font-display">Tres niveles de cobertura para acompañarte en cada etapa</p>
       </div>
 
-      <!-- Botón de Carga de Excel -->
-      <div class="flex flex-wrap gap-3 w-full md:w-auto">
-        <label class="w-full md:w-auto cursor-pointer bg-terra-dark hover:bg-[#2B221D] text-terra-bg text-sm font-bold py-3.5 px-6 rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 group font-display">
-          <svg class="w-5 h-5 text-terra-accent group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- Botones Superiores a la Derecha -->
+      <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+        <button onclick="cambiarVista('buscador')" id="navBuscador" class="bg-terra-dark text-white text-xs font-bold py-3 px-4 rounded-xl transition-all font-display shadow-sm">
+          🔍 Buscador
+        </button>
+        
+        <button onclick="cambiarVista('manuales')" id="navManuales" class="bg-white hover:bg-[#F3EDE6] text-terra-dark text-xs font-bold py-3 px-4 rounded-xl border border-[#EAE3D9] transition-all font-display">
+          📚 Manuales / Normativas
+        </button>
+
+        <label class="cursor-pointer bg-terra-accent hover:bg-[#785C4A] text-white text-xs font-bold py-3 px-4 rounded-xl transition-all duration-200 shadow-sm flex items-center justify-center gap-1.5 font-display">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
           </svg>
-          <span>Actualizar Excel</span>
+          <span>Excel</span>
           <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" class="hidden">
         </label>
       </div>
     </header>
 
-    <!-- Panel de Navegación / Dashboard / Buscador -->
-    <div class="space-y-4">
-      <!-- Buscador Principal -->
-      <div class="relative group">
-        <input type="text" id="searchInput" 
-          placeholder="Escriba lo que desea buscar (ej: consulta, quincho, sepelio, 180)..." 
-          class="w-full bg-white p-5 pl-14 rounded-2xl border border-[#EAE3D9] text-terra-dark text-base md:text-lg focus:outline-none focus:ring-4 focus:ring-terra-accent/15 focus:border-terra-accent shadow-sm transition-all placeholder:text-terra-muted/60 font-medium font-display"
-        >
-        <svg class="w-6 h-6 text-terra-muted group-focus-within:text-terra-accent absolute left-5 top-1/2 transform -translate-y-1/2 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-        </svg>
+    <!-- VISTA 1: BUSCADOR DE PRECIOS Y SERVICIOS -->
+    <div id="vistaBuscador" class="space-y-6">
+      <div class="space-y-4">
+        <div class="relative group">
+          <input type="text" id="searchInput" 
+            placeholder="Escriba lo que desea buscar (ej: consulta, quincho, sepelio, 180)..." 
+            class="w-full bg-white p-5 pl-14 rounded-2xl border border-[#EAE3D9] text-terra-dark text-base md:text-lg focus:outline-none focus:ring-4 focus:ring-terra-accent/15 focus:border-terra-accent shadow-sm transition-all placeholder:text-terra-muted/60 font-medium font-display"
+          >
+          <svg class="w-6 h-6 text-terra-muted group-focus-within:text-terra-accent absolute left-5 top-1/2 transform -translate-y-1/2 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+
+        <div id="categoryFilterContainer" class="flex flex-wrap gap-2 pt-1"></div>
       </div>
 
-      <!-- Filtro por Categorías -->
-      <div id="categoryFilterContainer" class="flex flex-wrap gap-2 pt-1">
-        <!-- Botones de categorías inyectados dinámicamente -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-[#F3EDE6]/80 px-6 py-3.5 rounded-2xl border border-[#EAE3D9] text-xs font-semibold text-terra-dark font-display">
+        <div class="flex items-center gap-2.5">
+          <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-terra-olive opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-terra-olive"></span>
+          </span>
+          <span id="resultsCount" class="tracking-wide">Cargando base de datos...</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="bg-white text-terra-dark font-bold px-3 py-1 rounded-full text-[11px] border border-[#EAE3D9]" id="storageStatus">
+            Guardado localmente
+          </span>
+        </div>
       </div>
+
+      <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
     </div>
 
-    <!-- Barra de Estado y Contador de Estadísticas -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-[#F3EDE6]/80 px-6 py-3.5 rounded-2xl border border-[#EAE3D9] text-xs font-semibold text-terra-dark font-display">
-      <div class="flex items-center gap-2.5">
-        <span class="relative flex h-2.5 w-2.5">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-terra-olive opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-terra-olive"></span>
-        </span>
-        <span id="resultsCount" class="tracking-wide">Cargando base de datos...</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="bg-white text-terra-dark font-bold px-3 py-1 rounded-full text-[11px] border border-[#EAE3D9]" id="storageStatus">
-          Guardado localmente
-        </span>
-      </div>
-    </div>
+    <!-- VISTA 2: MANUALES Y NORMATIVAS -->
+    <div id="vistaManuales" class="hidden space-y-6">
+      <div class="terra-card p-6 md:p-8 rounded-3xl space-y-6">
+        <div>
+          <h2 class="text-2xl font-bold text-terra-dark font-display mb-1">Manuales y Documentación Operativa</h2>
+          <p class="text-xs md:text-sm text-terra-muted font-display">Acceda a las normativas de cobertura, reglamentos y guías de procedimiento.</p>
+        </div>
 
-    <!-- Resultados en Grilla de Tarjetas -->
-    <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
-      <!-- Contenido dinámico -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-5 border border-[#EAE3D9] bg-[#F9F6F0] rounded-2xl space-y-3">
+            <div class="text-2xl">📋</div>
+            <h3 class="font-bold text-terra-dark font-display text-base">Reglamento General</h3>
+            <p class="text-xs text-terra-muted">Condiciones de contratación y límites de prestación del plan Integra.</p>
+            <button class="w-full bg-white border border-[#EAE3D9] hover:border-terra-accent text-terra-dark text-xs font-bold py-2 rounded-xl transition-all font-display">
+              Ver Documento
+            </button>
+          </div>
+
+          <div class="p-5 border border-[#EAE3D9] bg-[#F9F6F0] rounded-2xl space-y-3">
+            <div class="text-2xl">🏥</div>
+            <h3 class="font-bold text-terra-dark font-display text-base">Normativa Médica</h3>
+            <p class="text-xs text-terra-muted">Guía de autorización para consultas, prácticas y estudios de diagnóstico.</p>
+            <button class="w-full bg-white border border-[#EAE3D9] hover:border-terra-accent text-terra-dark text-xs font-bold py-2 rounded-xl transition-all font-display">
+              Ver Documento
+            </button>
+          </div>
+
+          <div class="p-5 border border-[#EAE3D9] bg-[#F9F6F0] rounded-2xl space-y-3">
+            <div class="text-2xl">⚰️</div>
+            <h3 class="font-bold text-terra-dark font-display text-base">Servicio de Sepelio</h3>
+            <p class="text-xs text-terra-muted">Protocolo de asistencia y alcance de coberturas para familiares directos.</p>
+            <button class="w-full bg-white border border-[#EAE3D9] hover:border-terra-accent text-terra-dark text-xs font-bold py-2 rounded-xl transition-all font-display">
+              Ver Documento
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -143,34 +184,39 @@
     let fuseInstance = null;
     let categoriaSeleccionada = "TODAS";
 
-    // Paleta de colores sutil por categoría
+    // Navegación entre Pestañas
+    function cambiarVista(vista) {
+      const vBuscador = document.getElementById('vistaBuscador');
+      const vManuales = document.getElementById('vistaManuales');
+      const btnBuscador = document.getElementById('navBuscador');
+      const btnManuales = document.getElementById('navManuales');
+
+      if (vista === 'buscador') {
+        vBuscador.classList.remove('hidden');
+        vManuales.classList.add('hidden');
+        btnBuscador.className = "bg-terra-dark text-white text-xs font-bold py-3 px-4 rounded-xl transition-all font-display shadow-sm";
+        btnManuales.className = "bg-white hover:bg-[#F3EDE6] text-terra-dark text-xs font-bold py-3 px-4 rounded-xl border border-[#EAE3D9] transition-all font-display";
+      } else {
+        vBuscador.classList.add('hidden');
+        vManuales.classList.remove('hidden');
+        btnManuales.className = "bg-terra-dark text-white text-xs font-bold py-3 px-4 rounded-xl transition-all font-display shadow-sm";
+        btnBuscador.className = "bg-white hover:bg-[#F3EDE6] text-terra-dark text-xs font-bold py-3 px-4 rounded-xl border border-[#EAE3D9] transition-all font-display";
+      }
+    }
+
     function getCategoryStyle(categoria) {
-      const catUpper = categoria.toUpperCase();
-
-      if (catUpper.includes('CONSULTA') || catUpper.includes('MEDIC') || catUpper.includes('SALUD')) {
-        return {
-          tag: "bg-[#EBF2E8] text-[#425938] border-[#C2D6BB]",
-          box: "bg-[#F4F8F3]/80 border-[#D5E3D2]"
-        };
+      let hash = 0;
+      const str = String(categoria || "GENERAL").toUpperCase();
+      for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
       }
-
-      if (catUpper.includes('SEPELIO') || catUpper.includes('FUNER')) {
-        return {
-          tag: "bg-[#F3EBF5] text-[#63426B] border-[#DFC9E3]",
-          box: "bg-[#F8F3F9]/80 border-[#E5D7E8]"
-        };
-      }
-
-      if (catUpper.includes('ASISTENCIA') || catUpper.includes('QUINCHO') || catUpper.includes('TURISMO')) {
-        return {
-          tag: "bg-[#E6F0F2] text-[#2E5B63] border-[#B9D8DE]",
-          box: "bg-[#F1F7F8]/80 border-[#CDE1E5]"
-        };
-      }
+      
+      const hues = [40, 95, 160, 200, 280, 320, 25];
+      const selectedHue = hues[Math.abs(hash) % hues.length];
 
       return {
-        tag: "bg-[#F3EDE6] text-[#786C64] border-[#E2D8CC]",
-        box: "bg-[#F3EDE6]/60 border-[#EAE3D9]"
+        tagStyle: `background-color: hsl(${selectedHue}, 30%, 94%); color: hsl(${selectedHue}, 40%, 28%); border-color: hsl(${selectedHue}, 25%, 82%);`,
+        boxStyle: `background-color: hsl(${selectedHue}, 35%, 96%); border-color: hsl(${selectedHue}, 25%, 87%);`
       };
     }
 
@@ -347,14 +393,14 @@
         card.innerHTML = `
           <div>
             <div class="flex items-center gap-2 mb-2.5">
-              <span class="text-[10px] font-bold tracking-wider px-2.5 py-1 rounded-md uppercase border font-display ${catStyle.tag}">
+              <span style="${catStyle.tagStyle}" class="text-[10px] font-bold tracking-wider px-2.5 py-1 rounded-md uppercase border font-display">
                 ${item.categoria}
               </span>
             </div>
 
             <h3 class="font-bold text-terra-dark text-base mb-4 leading-snug font-display">${item.nombre}</h3>
             
-            <div class="rounded-xl p-3.5 border transition-colors ${catStyle.box}">
+            <div style="${catStyle.boxStyle}" class="rounded-xl p-3.5 border transition-colors">
               <p class="text-[10px] font-bold text-terra-muted uppercase tracking-wider mb-1.5 font-display">Valores por Tipo de Plan / Socio</p>
               <div class="space-y-0.5">
                 ${preciosRowsHtml}
