@@ -78,7 +78,6 @@
         let baseDeDatos = [];
         let fuseInstance = null;
 
-        // Intentar descargar probando distintas variantes de nombre del archivo Excel
         async function descargarExcel() {
             const variantes = ['precios.xlsx', 'Precios.xlsx', 'PRECIOS.xlsx', './precios.xlsx'];
             for (const url of variantes) {
@@ -87,34 +86,68 @@
                     if (res.ok) return await res.arrayBuffer();
                 } catch (e) {}
             }
-            throw new Error('No se pudo encontrar el archivo Excel en el servidor.');
+            throw new Error('No se pudo encontrar precios.xlsx');
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             descargarExcel()
                 .then(data => {
                     const workbook = XLSX.read(data, { type: 'array' });
-                    const primeraHoja = workbook.SheetNames[0];
-                    const hoja = workbook.Sheets[primeraHoja];
+                    const primeraHoja = workbook.Sheets[workbook.SheetNames[0]];
                     
-                    // Convertir a JSON
-                    baseDeDatos = XLSX.utils.sheet_to_json(hoja, { defval: '-' });
+                    // Convertir a matriz raw (filas y columnas)
+                    const filas = XLSX.utils.sheet_to_json(primeraHoja, { header: 1, defval: '' });
 
-                    if (baseDeDatos.length === 0) throw new Error('El Excel está vacío');
+                    if (filas.length === 0) throw new Error('El Excel está vacío');
 
-                    // Detectar dinámicamente las claves del objeto para Fuse.js
-                    const primerRegistro = baseDeDatos[0];
-                    const llaves = Object.keys(primerRegistro);
+                    // 1. Encontrar la fila real de encabezados (primera fila que contenga texto relevante)
+                    let indexEncabezado = 0;
+                    for (let i = 0; i < Math.min(filas.length, 10); i++) {
+                        const textoFila = filas[i].join(' ').toUpperCase();
+                        if (textoFila.includes('PRACTICA') || textoFila.includes('DESCRIPCION') || textoFila.includes('PRESTACION') || textoFila.includes('INTEGRA') || textoFila.includes('CATEGORIA') || textoFila.includes('VALOR')) {
+                            indexEncabezado = i;
+                            break;
+                        }
+                    }
 
+                    const encabezados = filas[indexEncabezado].map(h => String(h).trim());
+
+                    // 2. Procesar las filas de datos desde la fila siguiente al encabezado
+                    baseDeDatos = [];
+                    for (let i = indexEncabezado + 1; i < filas.length; i++) {
+                        const fila = filas[i];
+                        if (!fila || fila.every(cell => cell === '')) continue; // Ignorar filas totalmente vacías
+
+                        let registro = {};
+                        let tieneDatosValidos = false;
+
+                        encabezados.forEach((nombreCol, colIndex) => {
+                            // Ignorar columnas vacías o nombres por defecto
+                            if (!nombreCol || nombreCol.startsWith('__EMPTY')) return;
+
+                            const valor = fila[colIndex];
+                            if (valor !== undefined && valor !== '') {
+                                registro[nombreCol] = valor;
+                                tieneDatosValidos = true;
+                            }
+                        });
+
+                        if (tieneDatosValidos) {
+                            baseDeDatos.push(registro);
+                        }
+                    }
+
+                    // Configurar motor de búsqueda difusa
+                    const llavesBusqueda = Object.keys(baseDeDatos[0] || {});
                     fuseInstance = new Fuse(baseDeDatos, {
                         includeScore: true,
                         threshold: 0.35,
-                        keys: llaves
+                        keys: llavesBusqueda
                     });
 
-                    // Actualizar indicadores visuales
+                    // Actualizar interfaz
                     document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
-                    document.getElementById('texto-resultados').textContent = `Base lista (${baseDeDatos.length} registros). Esperando búsqueda...`;
+                    document.getElementById('texto-resultados').textContent = `Base lista (${baseDeDatos.length} registros cargados). Esperando búsqueda...`;
                     document.getElementById('badge-estado').textContent = 'Base Cargada';
                     document.getElementById('badge-estado').classList.add('text-emerald-600');
                     
@@ -132,8 +165,8 @@
                     document.getElementById('badge-estado').classList.add('text-red-600');
                     document.getElementById('grilla-resultados').innerHTML = `
                         <div class="col-span-1 md:col-span-2 text-center py-10 bg-card rounded-[2rem] shadow-sm">
-                            <p class="text-red-500 font-bold text-lg">No se pudo cargar 'precios.xlsx'.</p>
-                            <p class="text-gray-400 text-sm mt-2">Asegúrate de que el archivo esté subido en la raíz de GitHub Pages.</p>
+                            <p class="text-red-500 font-bold text-lg">No se pudo procesar 'precios.xlsx'.</p>
+                            <p class="text-gray-400 text-sm mt-2">Verifica la estructura del archivo en GitHub.</p>
                         </div>`;
                 });
         });
@@ -154,16 +187,6 @@
             }
         });
 
-        // Buscar valor en un objeto ignorando mayúsculas/minúsculas/espacios
-        function obtenerValorCampoSensible(item, posiblesNombres) {
-            const keys = Object.keys(item);
-            for (const nombre of posiblesNombres) {
-                const keyEncontrada = keys.find(k => k.trim().toLowerCase() === nombre.toLowerCase());
-                if (keyEncontrada && item[keyEncontrada] !== '-') return { key: keyEncontrada, val: item[keyEncontrada] };
-            }
-            return null;
-        }
-
         function renderizarTarjetas(datos) {
             const contenedor = document.getElementById('grilla-resultados');
             
@@ -176,19 +199,19 @@
             }
 
             contenedor.innerHTML = datos.map(item => {
-                // Extracción flexible de Práctica y Categoría
-                const practicaMatch = obtenerValorCampoSensible(item, ['PRACTICA', 'PRACTICAS', 'DESCRIPCION', 'PRESTACION', 'SERVICIO', 'DETALLE']);
-                const practica = practicaMatch ? practicaMatch.val : 'Sin Descripción';
+                const llaves = Object.keys(item);
+                
+                // Detectar el nombre de la práctica/servicio
+                const llavePractica = llaves.find(k => /PRACTICA|DESCRIPCION|PRESTACION|SERVICIO|DETALLE|CONCEPTO/i.test(k)) || llaves[0];
+                const practica = item[llavePractica] || 'Sin Descripción';
 
-                const categoriaMatch = obtenerValorCampoSensible(item, ['CATEGORIA', 'ESPECIALIDAD', 'RUBRO', 'TIPO']);
-                const categoria = categoriaMatch ? categoriaMatch.val : 'GENERAL';
+                // Detectar la categoría
+                const llaveCategoria = llaves.find(k => /CATEGORIA|ESPECIALIDAD|RUBRO|TIPO/i.test(k));
+                const categoria = llaveCategoria ? item[llaveCategoria] : 'GENERAL';
 
-                // Claves utilizadas para el título/categoría para no repetirlas en los precios
-                const llavesUsadas = [practicaMatch?.key, categoriaMatch?.key, 'CODIGO', 'Codigo', 'Código', 'ID'].filter(Boolean);
-
-                // Renderizar las columnas de precios
-                const planesHTML = Object.keys(item)
-                    .filter(key => !llavesUsadas.includes(key) && item[key] !== '-')
+                // Renderizar las líneas de precios (las demás columnas que no son título/categoría)
+                const planesHTML = llaves
+                    .filter(key => key !== llavePractica && key !== llaveCategoria && !/CODIGO|ID/i.test(key))
                     .map(key => {
                         const valor = item[key];
                         const precioFormat = typeof valor === 'number' 
