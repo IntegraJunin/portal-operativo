@@ -5,14 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>integra | Buscador de Precios y Servicios</title>
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Fuse.js -->
     <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-    <!-- SheetJS -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-    <!-- Google Fonts: Comfortaa, Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
@@ -29,7 +25,6 @@
         .bg-inner-card { background-color: #fcfbfa; }
         .text-brand { color: #5c4b3f; }
         
-        /* Oculta la barra de scroll para un diseño más limpio */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #d1cdb8; border-radius: 10px; }
@@ -39,7 +34,7 @@
 
     <div class="max-w-5xl mx-auto">
         
-        <!-- Encabezado (Sin el botón de actualizar) -->
+        <!-- Encabezado -->
         <div class="bg-card rounded-[2rem] p-8 md:p-10 shadow-sm mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
                 <h1 class="text-5xl font-extrabold text-brand flex items-center gap-2">
@@ -51,7 +46,7 @@
             </div>
         </div>
 
-        <!-- Barra de Búsqueda -->
+        <!-- Buscador -->
         <div class="relative mb-6">
             <span class="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl">🔍</span>
             <input 
@@ -63,7 +58,7 @@
             >
         </div>
 
-        <!-- Barra de Estado -->
+        <!-- Estado -->
         <div class="flex flex-col md:flex-row justify-between items-center mb-6 bg-[#efeadd] px-6 py-3 rounded-full text-sm shadow-sm gap-3">
             <div class="flex items-center gap-3 font-bold text-gray-700">
                 <span id="indicador-color" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
@@ -74,26 +69,21 @@
             </div>
         </div>
 
-        <!-- Grilla de Resultados -->
-        <div id="grilla-resultados" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Las tarjetas se generan aquí dinámicamente -->
-        </div>
+        <!-- Resultados -->
+        <div id="grilla-resultados" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
 
     </div>
 
-    <!-- Script Principal -->
     <script>
         let baseDeDatos = [];
         let fuseInstance = null;
 
-        // Opciones de Fuse.js para búsqueda difusa
         const opcionesFuse = {
             includeScore: true,
             threshold: 0.3,
             keys: ['PRACTICA', 'DESCRIPCION', 'CATEGORIA', 'ESPECIALIDAD', 'CODIGO']
         };
 
-        // Carga el archivo automáticamente al iniciar
         document.addEventListener('DOMContentLoaded', () => {
             fetch('./precios.xlsx')
                 .then(res => {
@@ -105,10 +95,8 @@
                     const hoja = workbook.Sheets[workbook.SheetNames[0]];
                     baseDeDatos = XLSX.utils.sheet_to_json(hoja, { defval: '-' });
 
-                    // Configurar motor de búsqueda
                     fuseInstance = new Fuse(baseDeDatos, opcionesFuse);
 
-                    // Actualizar interfaz
                     document.getElementById('indicador-color').classList.replace('bg-amber-400', 'bg-emerald-500');
                     document.getElementById('texto-resultados').textContent = `Base lista. Esperando búsqueda...`;
                     document.getElementById('badge-estado').textContent = 'Base de Datos Cargada';
@@ -118,7 +106,6 @@
                     input.disabled = false;
                     input.focus();
 
-                    // Renderizar los primeros 10 al inicio
                     renderizarTarjetas(baseDeDatos.slice(0, 10));
                 })
                 .catch(err => {
@@ -130,7 +117,6 @@
                 });
         });
 
-        // Escuchador de tipeo en el buscador
         document.getElementById('input-busqueda').addEventListener('input', (e) => {
             const termino = e.target.value.trim();
 
@@ -147,7 +133,6 @@
             }
         });
 
-        // Generador de UI (Tarjetas)
         function renderizarTarjetas(datos) {
             const contenedor = document.getElementById('grilla-resultados');
             
@@ -160,11 +145,9 @@
             }
 
             contenedor.innerHTML = datos.map(item => {
-                // Mapeo adaptativo a las columnas del Excel
                 const practica = item.PRACTICA || item.DESCRIPCION || item.PRESTACION || 'Sin Descripción';
                 const categoria = item.CATEGORIA || item.ESPECIALIDAD || item.RUBRO || 'GENERAL';
                 
-                // Extraer columnas de precios (ignora columnas de texto)
                 const planesHTML = Object.keys(item)
                     .filter(key => key !== 'PRACTICA' && key !== 'DESCRIPCION' && key !== 'CATEGORIA' && key !== 'ESPECIALIDAD' && key !== 'CODIGO' && item[key] !== '-')
                     .map(key => {
