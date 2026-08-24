@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>integra | Buscador de Precios y Servicios</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Fuse.js para búsqueda inteligente -->
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+  <!-- SheetJS para Excel local -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <!-- Google Fonts: Comfortaa y Montserrat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            brand: ['Comfortaa', 'cursive', 'sans-serif'],
+            sans: ['Montserrat', 'sans-serif'],
+          },
+          colors: {
+            integra: {
+              blue: '#0B2A82',
+              green: '#10B981',
+              cyan: '#06B6D4',
+              orange: '#F97316',
+              grayPill: '#E2E8F0',
+              pillText: '#1E3A8A'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0B2A82;
+      background-image: 
+        radial-gradient(ellipse at top left, #10B981 0%, #10B981 22%, transparent 45%),
+        radial-gradient(ellipse at bottom right, #10B981 0%, #10B981 25%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    .brand-title {
+      font-family: 'Comfortaa', cursive, sans-serif;
+      letter-spacing: -0.05em;
+    }
+  </style>
+</head>
+
+<body class="text-slate-800 antialiased min-h-screen p-4 md:p-8 font-sans">
+
+  <div class="max-w-6xl mx-auto space-y-6">
+    
+    <!-- Header -->
+    <header class="bg-white p-6 md:p-8 rounded-[32px] shadow-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div>
+        <div class="flex items-center gap-1.5 mb-1">
+          <h1 class="text-4xl md:text-5xl font-bold text-integra-blue brand-title lowercase flex items-center gap-1">
+            <span>integra</span>
+            <!-- Asterisco / Isotipo de Integra vectorial (SVG) -->
+            <svg class="w-8 h-8 md:w-10 md:w-10 text-integra-green inline-block flex-shrink-0" viewBox="0 0 100 100" fill="currentColor">
+              <rect x="42" y="5" width="16" height="90" rx="8" />
+              <rect x="42" y="5" width="16" height="90" rx="8" transform="rotate(45 50 50)" />
+              <rect x="42" y="5" width="16" height="90" rx="8" transform="rotate(90 50 50)" />
+              <rect x="42" y="5" width="16" height="90" rx="8" transform="rotate(135 50 50)" />
+            </svg>
+          </h1>
+        </div>
+        <p class="text-sm font-medium text-slate-500">Tres niveles de cobertura para acompañarte en cada etapa</p>
+      </div>
+
+      <!-- Botón de Carga -->
+      <div class="flex flex-wrap gap-3">
+        <label class="cursor-pointer bg-integra-blue hover:bg-blue-900 text-white text-sm font-bold py-3.5 px-6 rounded-2xl transition-all duration-200 shadow-lg flex items-center gap-3">
+          <svg class="w-5 h-5 text-integra-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+          </svg>
+          <span>Actualizar Excel</span>
+          <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" class="hidden">
+        </label>
+      </div>
+    </header>
+
+    <!-- Buscador -->
+    <div class="relative group">
+      <input type="text" id="searchInput" 
+        placeholder="Escriba lo que desea buscar (ej: consulta, quincho, sepelio, 180)..." 
+        class="w-full bg-white p-5 pl-14 rounded-[28px] border-2 border-transparent text-integra-blue text-lg focus:outline-none focus:border-integra-green shadow-2xl transition-all placeholder:text-slate-400 font-medium"
+      >
+      <svg class="w-6 h-6 text-integra-blue absolute left-5 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+      </svg>
+    </div>
+
+    <!-- Barra de Estado -->
+    <div class="flex justify-between items-center bg-white/90 backdrop-blur-md px-6 py-3.5 rounded-2xl shadow-lg border border-white/50 text-xs font-bold text-integra-blue">
+      <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 bg-integra-green rounded-full animate-pulse"></span>
+        <span id="resultsCount">Buscando datos guardados...</span>
+      </div>
+      <div class="bg-integra-blue text-white px-3 py-1 rounded-full text-[11px]" id="storageStatus">
+        Guardado localmente
+      </div>
+    </div>
+
+    <!-- Resultados -->
+    <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+      <!-- Contenido dinámico -->
+    </div>
+
+  </div>
+
+  <script>
+    let serviciosAgrupados = [];
+    let fuseInstance = null;
+
+    // PARSER DE EXCEL AGRUPADO
+    function parseCustomExcelAgrupado(sheet) {
+      const parsedData = [];
+      const matrix = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+      let currentCategory = "GENERAL";
+      let planHeaders = [];
+
+      for (let rowIndex = 0; rowIndex < matrix.length; rowIndex++) {
+        const row = matrix[rowIndex];
+        if (!row || row.length === 0) continue;
+
+        const firstColText = String(row[0] || '').trim();
+
+        if (firstColText.length > 0) {
+          if (row.some(cell => String(cell).toUpperCase().includes("INTEGRA"))) {
+            planHeaders = [];
+            for (let colIndex = 1; colIndex < row.length; colIndex++) {
+              const headerVal = String(row[colIndex] || '').trim();
+              if (headerVal !== '') {
+                planHeaders[colIndex] = headerVal.toUpperCase();
+              }
+            }
+            if (!firstColText.toUpperCase().includes("INTEGRA")) {
+              currentCategory = firstColText;
+            }
+            continue;
+          }
+          
+          if (row.slice(1).every(cell => cell === undefined || cell === null || String(cell).trim() === '')) {
+            currentCategory = firstColText;
+            continue;
+          }
+        }
+
+        if (firstColText !== "") {
+          const itemNombre = firstColText;
+          const preciosPorPlan = {};
+          let tienePrecios = false;
+
+          for (let colIndex = 1; colIndex < row.length; colIndex++) {
+            const rawValor = row[colIndex];
+
+            if (rawValor !== undefined && rawValor !== null && String(rawValor).trim() !== "") {
+              let planNombre = planHeaders[colIndex] || "INTEGRA";
+              if (planNombre === "INTEGRA") {
+                for (let k = colIndex; k >= 1; k--) {
+                  if (planHeaders[k]) {
+                    planNombre = planHeaders[k];
+                    break;
+                  }
+                }
+              }
+
+              let precioTexto = String(rawValor).trim();
+              if (!isNaN(precioTexto)) {
+                precioTexto = "$" + Number(precioTexto).toLocaleString('es-AR');
+              }
+
+              preciosPorPlan[planNombre] = precioTexto;
+              tienePrecios = true;
+            }
+          }
+
+          if (tienePrecios) {
+            parsedData.push({
+              id: currentCategory + "_" + itemNombre,
+              categoria: currentCategory,
+              nombre: itemNombre,
+              precios: preciosPorPlan,
+              textoBusqueda: `${currentCategory} ${itemNombre} ${Object.keys(preciosPorPlan).join(" ")} ${Object.values(preciosPorPlan).join(" ")}`
+            });
+          }
+        }
+      }
+
+      return parsedData;
+    }
+
+    function initSearchEngine(data) {
+      const options = {
+        includeScore: true,
+        threshold: 0.2,
+        ignoreLocation: true,
+        keys: ['nombre', 'categoria', 'textoBusqueda']
+      };
+
+      fuseInstance = new Fuse(data, options);
+      renderResults(data);
+    }
+
+    function renderResults(data) {
+      const grid = document.getElementById('resultsGrid');
+      const count = document.getElementById('resultsCount');
+      
+      count.textContent = `Se encontraron ${data.length} práctica(s) / servicio(s)`;
+      grid.innerHTML = '';
+
+      if (data.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-16 bg-white rounded-[32px] shadow-2xl">
+            <p class="text-xl font-bold text-integra-blue mb-1">No se encontraron coincidencia exactas</p>
+            <p class="text-slate-500 text-sm">Intente con otra palabra clave.</p>
+          </div>
+        `;
+        return;
+      }
+
+      data.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-[32px] p-6 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between border border-slate-100";
+
+        let preciosRowsHtml = '';
+        
+        Object.entries(item.precios).forEach(([plan, valor]) => {
+          let badgeColor = "bg-slate-100 text-slate-700";
+          if (plan.includes("90")) badgeColor = "bg-amber-100 text-amber-700 font-bold";
+          if (plan.includes("180")) badgeColor = "bg-cyan-100 text-cyan-800 font-bold";
+          if (plan.includes("360")) badgeColor = "bg-emerald-100 text-emerald-800 font-bold";
+          if (plan.includes("SEC")) badgeColor = "bg-purple-100 text-purple-800 font-bold";
+          if (plan.includes("ASISTENCIAL")) badgeColor = "bg-blue-100 text-blue-800 font-bold";
+
+          preciosRowsHtml += `
+            <div class="flex justify-between items-center py-2 border-b border-slate-100 last:border-b-0">
+              <span class="text-xs px-3 py-1 rounded-full ${badgeColor}">${plan}</span>
+              <span class="text-base font-extrabold text-integra-blue">${valor}</span>
+            </div>
+          `;
+        });
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-[10px] font-bold tracking-wider px-3 py-1 bg-integra-grayPill text-integra-pillText rounded-full uppercase">
+                ${item.categoria}
+              </span>
+            </div>
+
+            <h3 class="font-extrabold text-slate-900 text-lg mb-4 leading-snug">${item.nombre}</h3>
+            
+            <div class="bg-slate-50/80 rounded-2xl p-4 border border-slate-100">
+              <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Valores por Tipo de Plan / Socio</p>
+              <div class="space-y-1">
+                ${preciosRowsHtml}
+              </div>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function cargarDatosGuardados() {
+      const cached = localStorage.getItem('integra_excel_data');
+      if (cached) {
+        try {
+          serviciosAgrupados = JSON.parse(cached);
+          initSearchEngine(serviciosAgrupados);
+          document.getElementById('storageStatus').textContent = "Base de Datos Cargada";
+        } catch (e) {
+          console.error("Error al cargar caché", e);
+        }
+      } else {
+        document.getElementById('resultsCount').textContent = "Por favor cargue la planilla de Excel la primera vez";
+      }
+    }
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const query = e.target.value.trim();
+      if (!query) {
+        renderResults(serviciosAgrupados);
+        return;
+      }
+
+      if (!fuseInstance) return;
+
+      const results = fuseInstance.search(query).map(r => r.item);
+      renderResults(results);
+    });
+
+    document.getElementById('excelInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const data = new Uint8Array(event.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+
+          serviciosAgrupados = parseCustomExcelAgrupado(firstSheet);
+
+          if (serviciosAgrupados.length > 0) {
+            localStorage.setItem('integra_excel_data', JSON.stringify(serviciosAgrupados));
+            
+            initSearchEngine(serviciosAgrupados);
+            document.getElementById('searchInput').value = '';
+            document.getElementById('storageStatus').textContent = "Base de Datos Guardada";
+            alert(`¡Planilla guardada con éxito! Se agruparon ${serviciosAgrupados.length} prácticas/servicios.`);
+          } else {
+            alert('No se pudieron extraer datos del Excel.');
+          }
+        } catch (err) {
+          console.error(err);
+          alert('Error al leer el archivo Excel.');
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    });
+
+    cargarDatosGuardados();
+  </script>
+</body>
+</html>
