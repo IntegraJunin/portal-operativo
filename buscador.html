@@ -3,79 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Operativo INTEGRA</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>integra | Buscador de Precios y Servicios</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fuse.js -->
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <!-- SheetJS -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <!-- Google Fonts: Comfortaa, Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+
     <style>
-        body { background-color: #f8f9fa; }
-        .iframe-container { width: 100%; height: calc(100vh - 80px); border: none; }
+        body { 
+            background-color: #f7f5f0; 
+            font-family: 'Comfortaa', cursive;
+        }
+        h1, h2, h3, .font-outfit { 
+            font-family: 'Outfit', sans-serif; 
+        }
+        .bg-card { background-color: #ffffff; }
+        .bg-inner-card { background-color: #fcfbfa; }
+        .text-brand { color: #5c4b3f; }
+        
+        /* Oculta la barra de scroll para un diseño más limpio */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d1cdb8; border-radius: 10px; }
     </style>
 </head>
-<body>
+<body class="text-slate-800 min-h-screen p-4 md:p-8">
 
-    <!-- Navegación Superior -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-        <a class="navbar-brand fw-bold" href="#">Portal Operativo INTEGRA</a>
-        <div class="ms-auto d-flex gap-2">
-            <button class="btn btn-primary" onclick="mostrarSeccion('manuales')">📄 Manuales de Procedimiento</button>
-            <button class="btn btn-outline-light" onclick="mostrarSeccion('precios')">🔍 Buscador de Precios</button>
-        </div>
-    </nav>
-
-    <!-- Contenido Principal -->
-    <div class="container-fluid p-0">
+    <div class="max-w-5xl mx-auto">
         
-        <!-- SECCIÓN 1: MANUALES -->
-        <div id="sec-manuales" class="row g-0">
-            <div class="col-md-3 bg-white border-end p-3" style="height: calc(100vh - 56px); overflow-y: auto;">
-                <h6 class="fw-bold text-secondary mb-3">SELECCIONE UN MANUAL</h6>
-                <div class="list-group list-group-flush">
-                    
-                    <span class="text-uppercase small fw-bold text-muted mt-2">Diagnóstico por Imágenes</span>
-                    <button class="list-group-item list-group-item-action border-0 ps-0" onclick="cargarPdf('manuales/CONVENIOS IMAGENES.pdf')">• Convenios Imágenes (COMED / Capponi)</button>
-                    
-                    <span class="text-uppercase small fw-bold text-muted mt-3">Laboratorio</span>
-                    <button class="list-group-item list-group-item-action border-0 ps-0" onclick="cargarPdf('manuales/ORDENES LABORATORIO.pdf')">• Emisión Órdenes Laboratorio</button>
-                    
-                    <span class="text-uppercase small fw-bold text-muted mt-3">Altas y Afiliaciones</span>
-                    <button class="list-group-item list-group-item-action border-0 ps-0" onclick="cargarPdf('manuales/PROCESO ALTAS Y ASOCIACIONES.pdf')">• Proceso Altas y Asociaciones</button>
-                    
-                    <span class="text-uppercase small fw-bold text-muted mt-3">Oftalmología</span>
-                    <button class="list-group-item list-group-item-action border-0 ps-0" onclick="cargarPdf('manuales/TOMOGRAFÍAS OPTICAS.pdf')">• Tomografías Ópticas (OCT / HRT)</button>
-                    
-                    <span class="text-uppercase small fw-bold text-muted mt-3">Consultas Médicas</span>
-                    <button class="list-group-item list-group-item-action border-0 ps-0" onclick="cargarPdf('manuales/Consultas_Medicas_Integra_360.pdf')">• Procedimiento Consultas Médicas</button>
-                
-                </div>
-            </div>
-            <div class="col-md-9">
-                <iframe id="viewer-pdf" class="iframe-container bg-white" src="about:blank"></iframe>
+        <!-- Encabezado (Sin el botón de actualizar) -->
+        <div class="bg-card rounded-[2rem] p-8 md:p-10 shadow-sm mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-5xl font-extrabold text-brand flex items-center gap-2">
+                    integra <span class="text-4xl" style="color: #8c7a6b;">✳</span>
+                </h1>
+                <p class="text-gray-500 font-semibold mt-2 text-sm md:text-base">
+                    Tres niveles de cobertura para acompañarte en cada etapa
+                </p>
             </div>
         </div>
 
-        <!-- SECCIÓN 2: BUSCADOR DE PRECIOS -->
-        <div id="sec-precios" class="d-none">
-            <iframe src="buscador.html" class="iframe-container bg-white"></iframe>
+        <!-- Barra de Búsqueda -->
+        <div class="relative mb-6">
+            <span class="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl">🔍</span>
+            <input 
+                type="text" 
+                id="input-busqueda" 
+                placeholder="Buscar por práctica, código o especialidad..." 
+                class="w-full pl-14 pr-6 py-5 rounded-full border-none shadow-sm focus:ring-4 focus:ring-orange-100 text-lg bg-card outline-none font-outfit font-semibold text-gray-700 transition disabled:opacity-50"
+                disabled
+            >
+        </div>
+
+        <!-- Barra de Estado -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 bg-[#efeadd] px-6 py-3 rounded-full text-sm shadow-sm gap-3">
+            <div class="flex items-center gap-3 font-bold text-gray-700">
+                <span id="indicador-color" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                <span id="texto-resultados">Cargando base de datos...</span>
+            </div>
+            <div id="badge-estado" class="bg-white px-4 py-1.5 rounded-full font-bold text-gray-500 text-xs shadow-sm uppercase tracking-wider">
+                Conectando...
+            </div>
+        </div>
+
+        <!-- Grilla de Resultados -->
+        <div id="grilla-resultados" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Las tarjetas se generan aquí dinámicamente -->
         </div>
 
     </div>
 
-    <!-- JavaScript de Control -->
+    <!-- Script Principal -->
     <script>
-        function cargarPdf(ruta) {
-            document.getElementById('viewer-pdf').src = ruta;
-        }
+        let baseDeDatos = [];
+        let fuseInstance = null;
 
-        function mostrarSeccion(seccion) {
-            const secManuales = document.getElementById('sec-manuales');
-            const secPrecios = document.getElementById('sec-precios');
+        // Opciones de Fuse.js para búsqueda difusa
+        const opcionesFuse = {
+            includeScore: true,
+            threshold: 0.3,
+            keys: ['PRACTICA', 'DESCRIPCION', 'CATEGORIA', 'ESPECIALIDAD', 'CODIGO']
+        };
 
-            if (seccion === 'manuales') {
-                secManuales.classList.remove('d-none');
-                secPrecios.classList.add('d-none');
-            } else if (seccion === 'precios') {
-                secManuales.classList.add('d-none');
-                secPrecios.classList.remove('d-none');
+        // Carga el archivo automáticamente al iniciar
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('./precios.xlsx')
+                .then(res => {
+                    if (!res.ok) throw new Error('Archivo no encontrado');
+                    return res.arrayBuffer();
+                })
+                .then(data => {
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const hoja = workbook.Sheets[workbook.SheetNames[0]];
+                    baseDeDatos = XLSX.utils.sheet_to_json(hoja, { defval: '-' });
+
+                    // Configurar motor de búsqueda
+                    fuseInstance = new Fuse(baseDeDatos, opcionesFuse);
+
+                    // Actualizar interfaz
+                    document.getElementById('indicador-color').classList.replace('bg-amber-400', 'bg-emerald-500');
+                    document.getElementById('texto-resultados').textContent = `Base lista. Esperando búsqueda...`;
+                    document.getElementById('badge-estado').textContent = 'Base de Datos Cargada';
+                    document.getElementById('badge-estado').classList.add('text-emerald-600');
+                    
+                    const input = document.getElementById('input-busqueda');
+                    input.disabled = false;
+                    input.focus();
+
+                    // Renderizar los primeros 10 al inicio
+                    renderizarTarjetas(baseDeDatos.slice(0, 10));
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('indicador-color').classList.replace('bg-amber-400', 'bg-red-500');
+                    document.getElementById('texto-resultados').textContent = 'Error al cargar precios.xlsx';
+                    document.getElementById('badge-estado').textContent = 'Error de conexión';
+                    document.getElementById('badge-estado').classList.add('text-red-600');
+                });
+        });
+
+        // Escuchador de tipeo en el buscador
+        document.getElementById('input-busqueda').addEventListener('input', (e) => {
+            const termino = e.target.value.trim();
+
+            if (!termino) {
+                renderizarTarjetas(baseDeDatos.slice(0, 10));
+                document.getElementById('texto-resultados').textContent = `Mostrando sugerencias...`;
+                return;
             }
+
+            if (fuseInstance) {
+                const resultados = fuseInstance.search(termino).map(res => res.item);
+                renderizarTarjetas(resultados);
+                document.getElementById('texto-resultados').textContent = `Se encontraron ${resultados.length} práctica(s) / servicio(s)`;
+            }
+        });
+
+        // Generador de UI (Tarjetas)
+        function renderizarTarjetas(datos) {
+            const contenedor = document.getElementById('grilla-resultados');
+            
+            if (datos.length === 0) {
+                contenedor.innerHTML = `
+                    <div class="col-span-1 md:col-span-2 text-center py-10 bg-card rounded-[2rem] shadow-sm">
+                        <p class="text-gray-400 font-bold text-lg">No se encontraron resultados.</p>
+                    </div>`;
+                return;
+            }
+
+            contenedor.innerHTML = datos.map(item => {
+                // Mapeo adaptativo a las columnas del Excel
+                const practica = item.PRACTICA || item.DESCRIPCION || item.PRESTACION || 'Sin Descripción';
+                const categoria = item.CATEGORIA || item.ESPECIALIDAD || item.RUBRO || 'GENERAL';
+                
+                // Extraer columnas de precios (ignora columnas de texto)
+                const planesHTML = Object.keys(item)
+                    .filter(key => key !== 'PRACTICA' && key !== 'DESCRIPCION' && key !== 'CATEGORIA' && key !== 'ESPECIALIDAD' && key !== 'CODIGO' && item[key] !== '-')
+                    .map(key => {
+                        const valor = item[key];
+                        const precioFormat = typeof valor === 'number' 
+                            ? new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(valor)
+                            : valor;
+
+                        return `
+                        <div class="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
+                            <span class="text-xs font-bold text-red-800 bg-red-50 px-2 py-1 rounded shadow-sm">${key.toUpperCase()}</span>
+                            <span class="font-outfit font-bold text-gray-800 text-lg">${precioFormat}</span>
+                        </div>`;
+                    }).join('');
+
+                return `
+                    <div class="bg-card rounded-[2rem] p-6 md:p-8 shadow-sm border-2 border-transparent hover:border-[#efeadd] transition duration-300 flex flex-col h-full">
+                        <div class="mb-4">
+                            <span class="text-[10px] font-extrabold text-brand bg-[#efeadd] px-3 py-1.5 rounded-md tracking-widest uppercase shadow-sm">
+                                ${categoria}
+                            </span>
+                        </div>
+                        <h3 class="font-outfit text-xl font-extrabold text-gray-800 mb-6 flex-grow leading-tight">
+                            ${practica}
+                        </h3>
+                        
+                        <div class="bg-inner-card rounded-2xl p-5 border border-gray-100 shadow-inner mt-auto">
+                            <p class="text-[10px] font-bold text-gray-400 mb-4 uppercase tracking-widest">Valores por tipo de plan / socio</p>
+                            <div class="flex flex-col gap-1">
+                                ${planesHTML || '<p class="text-sm text-gray-400">Sin valores asignados</p>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
     </script>
 </body>
