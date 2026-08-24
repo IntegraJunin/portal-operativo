@@ -78,28 +78,44 @@
         let baseDeDatos = [];
         let fuseInstance = null;
 
-        const opcionesFuse = {
-            includeScore: true,
-            threshold: 0.3,
-            keys: ['PRACTICA', 'DESCRIPCION', 'CATEGORIA', 'ESPECIALIDAD', 'CODIGO']
-        };
+        // Intentar descargar probando distintas variantes de nombre del archivo Excel
+        async function descargarExcel() {
+            const variantes = ['precios.xlsx', 'Precios.xlsx', 'PRECIOS.xlsx', './precios.xlsx'];
+            for (const url of variantes) {
+                try {
+                    const res = await fetch(url);
+                    if (res.ok) return await res.arrayBuffer();
+                } catch (e) {}
+            }
+            throw new Error('No se pudo encontrar el archivo Excel en el servidor.');
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
-            fetch('./precios.xlsx')
-                .then(res => {
-                    if (!res.ok) throw new Error('Archivo no encontrado');
-                    return res.arrayBuffer();
-                })
+            descargarExcel()
                 .then(data => {
                     const workbook = XLSX.read(data, { type: 'array' });
-                    const hoja = workbook.Sheets[workbook.SheetNames[0]];
+                    const primeraHoja = workbook.SheetNames[0];
+                    const hoja = workbook.Sheets[primeraHoja];
+                    
+                    // Convertir a JSON
                     baseDeDatos = XLSX.utils.sheet_to_json(hoja, { defval: '-' });
 
-                    fuseInstance = new Fuse(baseDeDatos, opcionesFuse);
+                    if (baseDeDatos.length === 0) throw new Error('El Excel está vacío');
 
-                    document.getElementById('indicador-color').classList.replace('bg-amber-400', 'bg-emerald-500');
-                    document.getElementById('texto-resultados').textContent = `Base lista. Esperando búsqueda...`;
-                    document.getElementById('badge-estado').textContent = 'Base de Datos Cargada';
+                    // Detectar dinámicamente las claves del objeto para Fuse.js
+                    const primerRegistro = baseDeDatos[0];
+                    const llaves = Object.keys(primerRegistro);
+
+                    fuseInstance = new Fuse(baseDeDatos, {
+                        includeScore: true,
+                        threshold: 0.35,
+                        keys: llaves
+                    });
+
+                    // Actualizar indicadores visuales
+                    document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
+                    document.getElementById('texto-resultados').textContent = `Base lista (${baseDeDatos.length} registros). Esperando búsqueda...`;
+                    document.getElementById('badge-estado').textContent = 'Base Cargada';
                     document.getElementById('badge-estado').classList.add('text-emerald-600');
                     
                     const input = document.getElementById('input-busqueda');
@@ -110,10 +126,15 @@
                 })
                 .catch(err => {
                     console.error(err);
-                    document.getElementById('indicador-color').classList.replace('bg-amber-400', 'bg-red-500');
-                    document.getElementById('texto-resultados').textContent = 'Error al cargar precios.xlsx';
-                    document.getElementById('badge-estado').textContent = 'Error de conexión';
+                    document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-red-500';
+                    document.getElementById('texto-resultados').textContent = 'Error al cargar el archivo de precios';
+                    document.getElementById('badge-estado').textContent = 'Error Excel';
                     document.getElementById('badge-estado').classList.add('text-red-600');
+                    document.getElementById('grilla-resultados').innerHTML = `
+                        <div class="col-span-1 md:col-span-2 text-center py-10 bg-card rounded-[2rem] shadow-sm">
+                            <p class="text-red-500 font-bold text-lg">No se pudo cargar 'precios.xlsx'.</p>
+                            <p class="text-gray-400 text-sm mt-2">Asegúrate de que el archivo esté subido en la raíz de GitHub Pages.</p>
+                        </div>`;
                 });
         });
 
@@ -133,6 +154,16 @@
             }
         });
 
+        // Buscar valor en un objeto ignorando mayúsculas/minúsculas/espacios
+        function obtenerValorCampoSensible(item, posiblesNombres) {
+            const keys = Object.keys(item);
+            for (const nombre of posiblesNombres) {
+                const keyEncontrada = keys.find(k => k.trim().toLowerCase() === nombre.toLowerCase());
+                if (keyEncontrada && item[keyEncontrada] !== '-') return { key: keyEncontrada, val: item[keyEncontrada] };
+            }
+            return null;
+        }
+
         function renderizarTarjetas(datos) {
             const contenedor = document.getElementById('grilla-resultados');
             
@@ -145,11 +176,19 @@
             }
 
             contenedor.innerHTML = datos.map(item => {
-                const practica = item.PRACTICA || item.DESCRIPCION || item.PRESTACION || 'Sin Descripción';
-                const categoria = item.CATEGORIA || item.ESPECIALIDAD || item.RUBRO || 'GENERAL';
-                
+                // Extracción flexible de Práctica y Categoría
+                const practicaMatch = obtenerValorCampoSensible(item, ['PRACTICA', 'PRACTICAS', 'DESCRIPCION', 'PRESTACION', 'SERVICIO', 'DETALLE']);
+                const practica = practicaMatch ? practicaMatch.val : 'Sin Descripción';
+
+                const categoriaMatch = obtenerValorCampoSensible(item, ['CATEGORIA', 'ESPECIALIDAD', 'RUBRO', 'TIPO']);
+                const categoria = categoriaMatch ? categoriaMatch.val : 'GENERAL';
+
+                // Claves utilizadas para el título/categoría para no repetirlas en los precios
+                const llavesUsadas = [practicaMatch?.key, categoriaMatch?.key, 'CODIGO', 'Codigo', 'Código', 'ID'].filter(Boolean);
+
+                // Renderizar las columnas de precios
                 const planesHTML = Object.keys(item)
-                    .filter(key => key !== 'PRACTICA' && key !== 'DESCRIPCION' && key !== 'CATEGORIA' && key !== 'ESPECIALIDAD' && key !== 'CODIGO' && item[key] !== '-')
+                    .filter(key => !llavesUsadas.includes(key) && item[key] !== '-')
                     .map(key => {
                         const valor = item[key];
                         const precioFormat = typeof valor === 'number' 
