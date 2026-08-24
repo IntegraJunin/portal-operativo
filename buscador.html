@@ -1,345 +1,82 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>integra | Buscador de Precios y Servicios</title>
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Fuse.js -->
-  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-  <!-- SheetJS -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-
-  <!-- Google Fonts: Comfortaa, Outfit (Títulos/Marca) y Plus Jakarta Sans (Texto/Precios) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            brand: ['Comfortaa', 'cursive', 'sans-serif'],
-            display: ['Outfit', 'sans-serif'],
-            sans: ['Plus Jakarta Sans', 'sans-serif'],
-          },
-          colors: {
-            terra: {
-              bg: '#F9F6F0',        /* Arena / Lino suave */
-              card: '#FFFFFF',      /* Blanco cálido */
-              dark: '#3D312A',      /* Arcilla/Café oscuro para títulos */
-              muted: '#786C64',     /* Tono tierra medio para descripciones */
-              accent: '#8C6D58',    /* Terracota suave */
-              olive: '#7A8B6E',     /* Verde oliva pastel */
-              clay: '#D9C8B4',      /* Arcilla clara para bordes */
-              clayLight: '#F3EDE6', /* Fondo suave para tablas de precios */
-            }
-          }
-        }
-      }
-    }
-  </script>
-  <style>
-    body {
-      background-color: #F9F6F0;
-      background-image: 
-        radial-gradient(at 10% 10%, rgba(140, 109, 88, 0.08) 0px, transparent 40%),
-        radial-gradient(at 90% 90%, rgba(122, 139, 110, 0.08) 0px, transparent 40%);
-      background-attachment: fixed;
-    }
-
-    .terra-card {
-      background: #FFFFFF;
-      border: 1px solid #EAE3D9;
-      box-shadow: 0 4px 20px -2px rgba(61, 49, 42, 0.04);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Operativo INTEGRA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .iframe-container { width: 100%; height: calc(100vh - 80px); border: none; }
+    </style>
 </head>
+<body>
 
-<body class="text-slate-800 antialiased min-h-screen p-4 md:p-8 font-sans">
-
-  <div class="max-w-6xl mx-auto space-y-6">
-    
-    <!-- Header -->
-    <header class="terra-card p-6 md:p-8 rounded-[32px] flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-      <div>
-        <div class="flex items-center gap-2 mb-1">
-          <h1 class="text-4xl md:text-5xl font-extrabold text-terra-dark font-brand tracking-tight lowercase flex items-center gap-1.5">
-            <span>integra</span>
-            <svg class="w-8 h-8 md:w-9 md:h-9 text-terra-accent inline-block flex-shrink-0" viewBox="0 0 100 100" fill="currentColor">
-              <rect x="42" y="5" width="16" height="90" rx="8" />
-              <rect x="42" y="5" width="16" height="90" rx="8" transform="rotate(45 50 50)" />
-              <rect x="42" y="5" width="16" height="90" rx="8" transform="rotate(90 50 50)" />
-              <rect x="42" y="5" width="16" height="90" rx="8" transform="rotate(135 50 50)" />
-            </svg>
-          </h1>
+    <!-- Navegación Superior -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+        <a class="navbar-brand fw-bold" href="#">Portal Operativo INTEGRA</a>
+        <div class="ms-auto d-flex gap-2">
+            <button class="btn btn-primary" onclick="mostrarSeccion('manuales')">📄 Manuales de Procedimiento</button>
+            <button class="btn btn-outline-light" onclick="mostrarSeccion('precios')">🔍 Buscador de Precios</button>
         </div>
-        <p class="text-xs md:text-sm font-medium text-terra-muted tracking-wide font-display">Tres niveles de cobertura para acompañarte en cada etapa</p>
-      </div>
+    </nav>
 
-      <!-- Botón de Carga -->
-      <div class="flex flex-wrap gap-3 w-full md:w-auto">
-        <label class="w-full md:w-auto cursor-pointer bg-terra-dark hover:bg-[#2B221D] text-terra-bg text-sm font-bold py-3.5 px-6 rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 group font-display">
-          <svg class="w-5 h-5 text-terra-accent group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
-          </svg>
-          <span>Actualizar Excel</span>
-          <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" class="hidden">
-        </label>
-      </div>
-    </header>
-
-    <!-- Buscador -->
-    <div class="relative group">
-      <input type="text" id="searchInput" 
-        placeholder="Escriba lo que desea buscar (ej: consulta, quincho, sepelio, 180)..." 
-        class="w-full bg-white p-5 pl-14 rounded-2xl border border-[#EAE3D9] text-terra-dark text-base md:text-lg focus:outline-none focus:ring-4 focus:ring-terra-accent/15 focus:border-terra-accent shadow-sm transition-all placeholder:text-terra-muted/60 font-medium font-display"
-      >
-      <svg class="w-6 h-6 text-terra-muted group-focus-within:text-terra-accent absolute left-5 top-1/2 transform -translate-y-1/2 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-      </svg>
-    </div>
-
-    <!-- Barra de Estado -->
-    <div class="flex justify-between items-center bg-[#F3EDE6]/80 px-6 py-3 rounded-2xl border border-[#EAE3D9] text-xs font-semibold text-terra-dark font-display">
-      <div class="flex items-center gap-2.5">
-        <span class="relative flex h-2.5 w-2.5">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-terra-olive opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-terra-olive"></span>
-        </span>
-        <span id="resultsCount" class="tracking-wide">Buscando datos guardados...</span>
-      </div>
-      <div class="bg-white text-terra-dark font-bold px-3 py-1 rounded-full text-[11px] border border-[#EAE3D9]" id="storageStatus">
-        Guardado localmente
-      </div>
-    </div>
-
-    <!-- Resultados -->
-    <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
-      <!-- Contenido dinámico -->
-    </div>
-
-  </div>
-
-  <script>
-    let serviciosAgrupados = [];
-    let fuseInstance = null;
-
-    function parseCustomExcelAgrupado(sheet) {
-      const parsedData = [];
-      const matrix = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-      let currentCategory = "GENERAL";
-      let planHeaders = [];
-
-      for (let rowIndex = 0; rowIndex < matrix.length; rowIndex++) {
-        const row = matrix[rowIndex];
-        if (!row || row.length === 0) continue;
-
-        const firstColText = String(row[0] || '').trim();
-
-        if (firstColText.length > 0) {
-          if (row.some(cell => String(cell).toUpperCase().includes("INTEGRA"))) {
-            planHeaders = [];
-            for (let colIndex = 1; colIndex < row.length; colIndex++) {
-              const headerVal = String(row[colIndex] || '').trim();
-              if (headerVal !== '') {
-                planHeaders[colIndex] = headerVal.toUpperCase();
-              }
-            }
-            if (!firstColText.toUpperCase().includes("INTEGRA")) {
-              currentCategory = firstColText;
-            }
-            continue;
-          }
-          
-          if (row.slice(1).every(cell => cell === undefined || cell === null || String(cell).trim() === '')) {
-            currentCategory = firstColText;
-            continue;
-          }
-        }
-
-        if (firstColText !== "") {
-          const itemNombre = firstColText;
-          const preciosPorPlan = {};
-          let tienePrecios = false;
-
-          for (let colIndex = 1; colIndex < row.length; colIndex++) {
-            const rawValor = row[colIndex];
-
-            if (rawValor !== undefined && rawValor !== null && String(rawValor).trim() !== "") {
-              let planNombre = planHeaders[colIndex] || "INTEGRA";
-              if (planNombre === "INTEGRA") {
-                for (let k = colIndex; k >= 1; k--) {
-                  if (planHeaders[k]) {
-                    planNombre = planHeaders[k];
-                    break;
-                  }
-                }
-              }
-
-              let precioTexto = String(rawValor).trim();
-              if (!isNaN(precioTexto)) {
-                precioTexto = "$" + Number(precioTexto).toLocaleString('es-AR');
-              }
-
-              preciosPorPlan[planNombre] = precioTexto;
-              tienePrecios = true;
-            }
-          }
-
-          if (tienePrecios) {
-            parsedData.push({
-              id: currentCategory + "_" + itemNombre,
-              categoria: currentCategory,
-              nombre: itemNombre,
-              precios: preciosPorPlan,
-              textoBusqueda: `${currentCategory} ${itemNombre} ${Object.keys(preciosPorPlan).join(" ")} ${Object.values(preciosPorPlan).join(" ")}`
-            });
-          }
-        }
-      }
-
-      return parsedData;
-    }
-
-    function initSearchEngine(data) {
-      const options = {
-        includeScore: true,
-        threshold: 0.2,
-        ignoreLocation: true,
-        keys: ['nombre', 'categoria', 'textoBusqueda']
-      };
-
-      fuseInstance = new Fuse(data, options);
-      renderResults(data);
-    }
-
-    function renderResults(data) {
-      const grid = document.getElementById('resultsGrid');
-      const count = document.getElementById('resultsCount');
-      
-      count.textContent = `Se encontraron ${data.length} práctica(s) / servicio(s)`;
-      grid.innerHTML = '';
-
-      if (data.length === 0) {
-        grid.innerHTML = `
-          <div class="col-span-full text-center py-12 bg-white rounded-2xl border border-[#EAE3D9] shadow-sm font-display">
-            <p class="text-lg font-bold text-terra-dark mb-1">No se encontraron coincidencias</p>
-            <p class="text-terra-muted text-xs">Intente buscar con un término o código diferente.</p>
-          </div>
-        `;
-        return;
-      }
-
-      data.forEach(item => {
-        const card = document.createElement('div');
-        card.className = "terra-card rounded-2xl p-5 hover:border-terra-accent/40 transition-all duration-200 flex flex-col justify-between";
-
-        let preciosRowsHtml = '';
+    <!-- Contenido Principal -->
+    <div class="container-fluid p-0">
         
-        Object.entries(item.precios).forEach(([plan, valor]) => {
-          /* Estilos de Insignias/Badges con paleta Pastel / Tierra */
-          let badgeColor = "bg-[#F3EDE6] text-[#63554B] border-[#E2D8CC]";
-          if (plan.includes("90")) badgeColor = "bg-[#FCEAE1] text-[#915038] border-[#F2CBB8] font-bold";     /* Melocotón pastel */
-          if (plan.includes("180")) badgeColor = "bg-[#EBF2E8] text-[#425938] border-[#C2D6BB] font-bold";    /* Verde sabio pastel */
-          if (plan.includes("360")) badgeColor = "bg-[#F6EFE3] text-[#7A5E32] border-[#E8D7BE] font-bold";    /* Arena / Miel pastel */
-          if (plan.includes("SEC")) badgeColor = "bg-[#F3EBF5] text-[#63426B] border-[#DFC9E3] font-bold";    /* Lavanda tierra pastel */
-          if (plan.includes("ASISTENCIAL")) badgeColor = "bg-[#E6F0F2] text-[#2E5B63] border-[#B9D8DE] font-bold"; /* Arcilla azulada pastel */
-
-          preciosRowsHtml += `
-            <div class="flex justify-between items-center py-2 border-b border-[#EAE3D9] last:border-b-0">
-              <span class="text-[11px] px-2.5 py-0.5 rounded-md border ${badgeColor} font-display tracking-wide">${plan}</span>
-              <span class="text-base font-extrabold text-terra-dark tracking-tight font-sans">${valor}</span>
+        <!-- SECCIÓN 1: MANUALES -->
+        <div id="sec-manuales" class="row g-0">
+            <div class="col-md-3 bg-white border-end p-3" style="height: calc(100vh - 56px); overflow-y: auto;">
+                <h6 class="fw-bold text-secondary mb-3">SELECCIONE UN MANUAL</h6>
+                <div class="list-group list-group-flush">
+                    
+                    <span class="text-uppercase small fw-bold text-muted mt-2">Diagnóstico por Imágenes</span>
+                    <button class="list-group-item list-group-item-action border-0 ps-0" onclick="cargarPdf('manuales/CONVENIOS IMAGENES.pdf')">• Convenios Imágenes (COMED / Capponi)</button>
+                    
+                    <span class="text-uppercase small fw-bold text-muted mt-3">Laboratorio</span>
+                    <button class="list-group-item list-group-item-action border-0 ps-0" onclick="cargarPdf('manuales/ORDENES LABORATORIO.pdf')">• Emisión Órdenes Laboratorio</button>
+                    
+                    <span class="text-uppercase small fw-bold text-muted mt-3">Altas y Afiliaciones</span>
+                    <button class="list-group-item list-group-item-action border-0 ps-0" onclick="cargarPdf('manuales/PROCESO ALTAS Y ASOCIACIONES.pdf')">• Proceso Altas y Asociaciones</button>
+                    
+                    <span class="text-uppercase small fw-bold text-muted mt-3">Oftalmología</span>
+                    <button class="list-group-item list-group-item-action border-0 ps-0" onclick="cargarPdf('manuales/TOMOGRAFÍAS OPTICAS.pdf')">• Tomografías Ópticas (OCT / HRT)</button>
+                    
+                    <span class="text-uppercase small fw-bold text-muted mt-3">Consultas Médicas</span>
+                    <button class="list-group-item list-group-item-action border-0 ps-0" onclick="cargarPdf('manuales/Consultas_Medicas_Integra_360.pdf')">• Procedimiento Consultas Médicas</button>
+                
+                </div>
             </div>
-          `;
-        });
-
-        card.innerHTML = `
-          <div>
-            <div class="flex items-center gap-2 mb-2.5">
-              <span class="text-[10px] font-bold tracking-wider px-2.5 py-1 bg-[#F3EDE6] text-terra-muted rounded-md uppercase border border-[#E2D8CC] font-display">
-                ${item.categoria}
-              </span>
+            <div class="col-md-9">
+                <iframe id="viewer-pdf" class="iframe-container bg-white" src="about:blank"></iframe>
             </div>
+        </div>
 
-            <h3 class="font-bold text-terra-dark text-base mb-4 leading-snug font-display">${item.nombre}</h3>
-            
-            <div class="bg-terra-clayLight/60 rounded-xl p-3.5 border border-[#EAE3D9]">
-              <p class="text-[10px] font-bold text-terra-muted uppercase tracking-wider mb-1.5 font-display">Valores por Tipo de Plan / Socio</p>
-              <div class="space-y-0.5">
-                ${preciosRowsHtml}
-              </div>
-            </div>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-    }
+        <!-- SECCIÓN 2: BUSCADOR DE PRECIOS -->
+        <div id="sec-precios" class="d-none">
+            <iframe src="buscador.html" class="iframe-container bg-white"></iframe>
+        </div>
 
-    function cargarDatosGuardados() {
-      const cached = localStorage.getItem('integra_excel_data');
-      if (cached) {
-        try {
-          serviciosAgrupados = JSON.parse(cached);
-          initSearchEngine(serviciosAgrupados);
-          document.getElementById('storageStatus').textContent = "Base de Datos Cargada";
-        } catch (e) {
-          console.error("Error al cargar caché", e);
+    </div>
+
+    <!-- JavaScript de Control -->
+    <script>
+        function cargarPdf(ruta) {
+            document.getElementById('viewer-pdf').src = ruta;
         }
-      } else {
-        document.getElementById('resultsCount').textContent = "Por favor cargue la planilla de Excel la primera vez";
-      }
-    }
 
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-      const query = e.target.value.trim();
-      if (!query) {
-        renderResults(serviciosAgrupados);
-        return;
-      }
+        function mostrarSeccion(seccion) {
+            const secManuales = document.getElementById('sec-manuales');
+            const secPrecios = document.getElementById('sec-precios');
 
-      if (!fuseInstance) return;
-
-      const results = fuseInstance.search(query).map(r => r.item);
-      renderResults(results);
-    });
-
-    document.getElementById('excelInput').addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        try {
-          const data = new Uint8Array(event.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-          const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-
-          serviciosAgrupados = parseCustomExcelAgrupado(firstSheet);
-
-          if (serviciosAgrupados.length > 0) {
-            localStorage.setItem('integra_excel_data', JSON.stringify(serviciosAgrupados));
-            
-            initSearchEngine(serviciosAgrupados);
-            document.getElementById('searchInput').value = '';
-            document.getElementById('storageStatus').textContent = "Base de Datos Guardada";
-            alert(`¡Planilla guardada con éxito! Se agruparon ${serviciosAgrupados.length} prácticas/servicios.`);
-          } else {
-            alert('No se pudieron extraer datos del Excel.');
-          }
-        } catch (err) {
-          console.error(err);
-          alert('Error al leer el archivo Excel.');
+            if (seccion === 'manuales') {
+                secManuales.classList.remove('d-none');
+                secPrecios.classList.add('d-none');
+            } else if (seccion === 'precios') {
+                secManuales.classList.add('d-none');
+                secPrecios.classList.remove('d-none');
+            }
         }
-      };
-      reader.readAsArrayBuffer(file);
-    });
-
-    cargarDatosGuardados();
-  </script>
+    </script>
 </body>
 </html>
