@@ -1,0 +1,12 @@
+Portal-Operativo-INTEGRA/
+│
+├── index.html                   <-- Archivo principal con todo el portal y login
+├── precios.xlsx                 <-- Archivo Excel con la lista de precios y aranceles
+│
+└── manuales/                    <-- Carpeta con los documentos PDF
+    ├── CONVENIOS_IMAGENES.pdf
+    ├── ORDENES_LABORATORIO.pdf
+    ├── PROCESO_ALTAS_ASOCIACIONES.pdf
+    ├── TOMOGRAFIA_OPTICA.pdf
+    ├── CONSULTAS_MEDICAS.pdf
+    └── ESPACIO_NEXO_TERAPEUTICO.pdf
