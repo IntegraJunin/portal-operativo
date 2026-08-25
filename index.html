@@ -1,108 +1,372 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Operativo INTEGRA</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #f8f9fa; }
-        .iframe-container { width: 100%; height: calc(100vh - 65px); border: none; }
-        
-        /* Botones de manuales en la columna izquierda */
-        .btn-manual {
-            background-color: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-left: 4px solid #0d6efd;
-            border-radius: 8px;
-            padding: 12px 16px;
-            text-align: left;
-            font-weight: 600;
-            color: #333;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-            width: 100%;
-            margin-bottom: 10px;
-        }
-        .btn-manual:hover {
-            background-color: #eef5ff;
-            border-left-color: #0b5ed7;
-            transform: translateX(3px);
-            color: #0d6efd;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal Operativo INTEGRA</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+    :root{
+        --bg:#f7f5f0;
+        --card:#ffffff;
+        --inner:#fcfbfa;
+        --brand:#5c4b3f;
+        --brand-soft:#8c7a6b;
+        --pill:#efeadd;
+        --line:#e7e2d6;
+        --accent:#c1653f;
+    }
+    *{ box-sizing:border-box; }
+    body{
+        margin:0;
+        background:var(--bg);
+        font-family:'Comfortaa', cursive;
+        color:#3a332c;
+        min-height:100vh;
+    }
+    h1,h2,h3,.font-outfit{ font-family:'Outfit', sans-serif; }
+
+    ::-webkit-scrollbar{ width:8px; }
+    ::-webkit-scrollbar-track{ background:transparent; }
+    ::-webkit-scrollbar-thumb{ background:#d1cdb8; border-radius:10px; }
+
+    .wrap{ max-width:1400px; margin:0 auto; padding:1.25rem clamp(1rem, 3vw, 2rem) 2rem; }
+
+    /* Encabezado, mismo lenguaje visual que el buscador */
+    .topbar{
+        background:var(--card);
+        border-radius:2rem;
+        padding:1.5rem 2rem;
+        box-shadow:0 2px 10px rgba(0,0,0,0.04);
+        display:flex;
+        flex-wrap:wrap;
+        gap:1rem;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:1.25rem;
+    }
+    .brand{
+        font-family:'Outfit', sans-serif;
+        font-weight:800;
+        font-size:2rem;
+        color:var(--brand);
+        display:flex;
+        align-items:center;
+        gap:.5rem;
+        margin:0;
+    }
+    .brand span{ color:var(--brand-soft); font-size:1.6rem; }
+    .brand small{
+        display:block;
+        font-family:'Comfortaa', cursive;
+        font-weight:600;
+        font-size:.8rem;
+        color:#9a8d7d;
+        letter-spacing:.02em;
+    }
+    .tabs{ display:flex; gap:.6rem; flex-wrap:wrap; }
+    .tab-btn{
+        border:none;
+        cursor:pointer;
+        font-family:'Outfit', sans-serif;
+        font-weight:700;
+        font-size:.92rem;
+        padding:.8rem 1.4rem;
+        border-radius:999px;
+        background:var(--pill);
+        color:var(--brand);
+        transition:all .2s ease;
+        display:flex; align-items:center; gap:.5rem;
+    }
+    .tab-btn:hover{ background:#e4dcc8; }
+    .tab-btn.active{ background:var(--brand); color:#fff; box-shadow:0 4px 12px rgba(92,75,63,.25); }
+
+    .hidden{ display:none !important; }
+
+    /* Sección Manuales */
+    .manuales-grid{
+        display:grid;
+        grid-template-columns:340px 1fr;
+        gap:1.25rem;
+        align-items:start;
+    }
+    @media (max-width: 860px){
+        .manuales-grid{ grid-template-columns:1fr; }
+    }
+
+    .lista-manuales{
+        background:var(--card);
+        border-radius:2rem;
+        padding:1.25rem;
+        box-shadow:0 2px 10px rgba(0,0,0,0.04);
+        display:flex; flex-direction:column; gap:.6rem;
+    }
+    .lista-manuales h2{
+        font-size:.75rem;
+        text-transform:uppercase;
+        letter-spacing:.12em;
+        color:#9a8d7d;
+        font-weight:700;
+        margin:.25rem .5rem .25rem;
+    }
+    .btn-manual{
+        background:var(--inner);
+        border:1px solid var(--line);
+        border-left:4px solid var(--brand-soft);
+        border-radius:14px;
+        padding:14px 16px;
+        text-align:left;
+        font-family:'Outfit', sans-serif;
+        font-weight:700;
+        font-size:.95rem;
+        color:#3a332c;
+        cursor:pointer;
+        transition:all .2s ease;
+        display:flex; align-items:center; gap:.6rem;
+    }
+    .btn-manual .ico{ font-size:1.1rem; }
+    .btn-manual:hover{
+        background:#fff;
+        border-left-color:var(--accent);
+        transform:translateX(4px);
+        box-shadow:0 3px 10px rgba(0,0,0,.05);
+    }
+    .btn-manual.active{
+        background:var(--brand);
+        color:#fff;
+        border-left-color:var(--accent);
+    }
+
+    .visor-panel{
+        background:var(--card);
+        border-radius:2rem;
+        box-shadow:0 2px 10px rgba(0,0,0,0.04);
+        min-height:calc(100vh - 220px);
+        overflow:hidden;
+        position:relative;
+        display:flex;
+        flex-direction:column;
+    }
+    .visor-header{
+        padding:1rem 1.5rem;
+        border-bottom:1px solid var(--line);
+        display:flex; justify-content:space-between; align-items:center; gap:1rem;
+        flex-wrap:wrap;
+    }
+    .visor-header h3{ margin:0; font-size:1.1rem; color:var(--brand); }
+    .visor-header a{
+        font-family:'Outfit', sans-serif;
+        font-weight:700;
+        font-size:.85rem;
+        color:var(--accent);
+        text-decoration:none;
+        background:var(--pill);
+        padding:.5rem 1rem;
+        border-radius:999px;
+    }
+    .visor-body{ flex:1; position:relative; }
+    .visor-body iframe{ width:100%; height:100%; border:none; min-height:70vh; }
+
+    .estado-vacio, .estado-error{
+        position:absolute; inset:0;
+        display:flex; flex-direction:column; align-items:center; justify-content:center;
+        text-align:center; padding:2rem; gap:.75rem;
+    }
+    .estado-vacio .ico, .estado-error .ico{ font-size:2.6rem; }
+    .estado-vacio p{ color:#9a8d7d; font-weight:600; max-width:340px; }
+    .estado-error p{ color:#b3543b; font-weight:700; max-width:380px; }
+    .estado-error small{ color:#9a8d7d; font-weight:600; }
+    .spinner{
+        width:34px; height:34px; border-radius:50%;
+        border:4px solid var(--pill); border-top-color:var(--accent);
+        animation:girar 0.8s linear infinite;
+    }
+    @keyframes girar{ to{ transform:rotate(360deg); } }
+
+    /* Sección buscador */
+    .buscador-frame-wrap{
+        background:var(--card);
+        border-radius:2rem;
+        box-shadow:0 2px 10px rgba(0,0,0,0.04);
+        overflow:hidden;
+        min-height:calc(100vh - 190px);
+    }
+    .buscador-frame-wrap iframe{ width:100%; height:calc(100vh - 190px); min-height:600px; border:none; display:block; }
+</style>
 </head>
 <body>
 
-    <!-- Navegación Superior -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-        <a class="navbar-brand fw-bold" href="#">Portal Operativo INTEGRA</a>
-        <div class="ms-auto d-flex gap-2">
-            <button class="btn btn-primary" onclick="mostrarSeccion('manuales')">📄 Manuales de Procedimiento</button>
-            <button class="btn btn-outline-light" onclick="mostrarSeccion('precios')">🔍 Buscador de Precios</button>
-        </div>
-    </nav>
+<div class="wrap">
 
-    <!-- Contenido Principal -->
-    <div class="container-fluid p-0">
-        
-        <!-- SECCIÓN 1: MANUALES -->
-        <div id="sec-manuales" class="row g-0">
-            <div class="col-md-3 bg-white border-end p-3" style="height: calc(100vh - 56px); overflow-y: auto;">
-                <div class="d-flex flex-column gap-1 mt-2">
-                    
-                    <button class="btn-manual" onclick="cargarPdf('manuales/CONVENIOS IMAGENES.pdf')">
-                        📄 Convenios Imágenes (COMED / Capponi)
-                    </button>
-                    
-                    <button class="btn-manual" onclick="cargarPdf('manuales/ORDENES LABORATORIO.pdf')">
-                        📄 Emisión Órdenes Laboratorio
-                    </button>
-                    
-                    <button class="btn-manual" onclick="cargarPdf('manuales/PROCESO ALTAS Y ASOCIACIONES.pdf')">
-                        📄 Proceso Altas y Asociaciones
-                    </button>
-                    
-                    <button class="btn-manual" onclick="cargarPdf('manuales/TOMOGRAFÍAS OPTICAS.pdf')">
-                        📄 Tomografías Ópticas (OCT / HRT)
-                    </button>
-                    
-                    <button class="btn-manual" onclick="cargarPdf('manuales/Consultas_Medicas_Integra_360.pdf')">
-                        📄 Procedimiento Consultas Médicas
-                    </button>
-                
-                </div>
-            </div>
-            <div class="col-md-9">
-                <iframe id="viewer-pdf" class="iframe-container bg-white" src="about:blank"></iframe>
-            </div>
+    <div class="topbar">
+        <h1 class="brand">Portal Operativo INTEGRA <span>✳</span></h1>
+        <div class="tabs">
+            <button class="tab-btn active" id="tab-manuales" onclick="mostrarSeccion('manuales')">📄 Manuales de Procedimiento</button>
+            <button class="tab-btn" id="tab-precios" onclick="mostrarSeccion('precios')">🔍 Buscador de Precios</button>
         </div>
-
-        <!-- SECCIÓN 2: BUSCADOR DE PRECIOS -->
-        <div id="sec-precios" class="d-none">
-            <iframe src="buscador.html" class="iframe-container bg-white"></iframe>
-        </div>
-
     </div>
 
-    <!-- JavaScript de Control -->
-    <script>
-        function cargarPdf(ruta) {
-            document.getElementById('viewer-pdf').src = ruta;
+    <!-- SECCIÓN 1: MANUALES -->
+    <div id="sec-manuales">
+        <div class="manuales-grid">
+            <div class="lista-manuales" id="lista-manuales">
+                <h2>Manuales disponibles</h2>
+                <!-- los botones se generan desde MANUALES -->
+            </div>
+
+            <div class="visor-panel">
+                <div class="visor-header hidden" id="visor-header">
+                    <h3 id="visor-titulo"></h3>
+                    <a id="visor-descarga" href="#" target="_blank" rel="noopener">Abrir en pestaña nueva ↗</a>
+                </div>
+                <div class="visor-body" id="visor-body">
+                    <div class="estado-vacio" id="estado-vacio">
+                        <div class="ico">📄</div>
+                        <p>Elegí un manual de la izquierda para verlo acá.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 2: BUSCADOR DE PRECIOS -->
+    <div id="sec-precios" class="hidden">
+        <div class="buscador-frame-wrap">
+            <iframe src="buscador.html" title="Buscador de precios"></iframe>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Lista de manuales: "nombre" es lo que se muestra, "archivo" es el nombre base
+    // tal cual figura en el repo (se probarán variantes automáticamente si no se encuentra).
+    const MANUALES = [
+        { icono: '📄', nombre: 'Convenios Imágenes (COMED / Capponi)', archivo: 'CONVENIOS IMAGENES' },
+        { icono: '📄', nombre: 'Emisión Órdenes Laboratorio',          archivo: 'ORDENES LABORATORIO' },
+        { icono: '📄', nombre: 'Proceso Altas y Asociaciones',         archivo: 'PROCESO ALTAS Y ASOCIACIONES' },
+        { icono: '📄', nombre: 'Tomografías Ópticas (OCT / HRT)',      archivo: 'TOMOGRAFÍAS OPTICAS' },
+        { icono: '📄', nombre: 'Procedimiento Consultas Médicas',      archivo: 'Consultas_Medicas_Integra_360' },
+    ];
+
+    const CARPETA = 'manuales/';
+    const cacheRutas = {}; // archivo -> ruta válida encontrada (o null)
+
+    function quitarAcentos(str){
+        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    // Genera variantes de nombre de archivo para tolerar diferencias de
+    // mayúsculas / acentos / espacios vs guion bajo entre Windows (donde no
+    // importa) y GitHub Pages (Linux, sensible a mayúsculas y sin acentos raros).
+    function generarVariantes(base){
+        const variantes = new Set();
+        const formas = [
+            base,
+            base.replace(/_/g, ' '),
+            base.replace(/ /g, '_'),
+        ];
+        formas.forEach(f => {
+            [f, f.toUpperCase(), f.toLowerCase(), quitarAcentos(f), quitarAcentos(f).toUpperCase(), quitarAcentos(f).toLowerCase()]
+                .forEach(v => variantes.add(v));
+        });
+        const rutas = [];
+        variantes.forEach(v => rutas.push(CARPETA + v + '.pdf'));
+        return rutas;
+    }
+
+    async function existeArchivo(ruta){
+        try {
+            const res = await fetch(ruta, { method: 'HEAD' });
+            if (res.ok) return true;
+            // Algunos servidores estáticos no soportan HEAD: reintentar con GET liviano
+            if (res.status === 405) {
+                const res2 = await fetch(ruta, { method: 'GET' });
+                return res2.ok;
+            }
+            return false;
+        } catch (e) {
+            return false;
         }
+    }
 
-        function mostrarSeccion(seccion) {
-            const secManuales = document.getElementById('sec-manuales');
-            const secPrecios = document.getElementById('sec-precios');
-
-            if (seccion === 'manuales') {
-                secManuales.classList.remove('d-none');
-                secPrecios.classList.add('d-none');
-            } else if (seccion === 'precios') {
-                secManuales.classList.add('d-none');
-                secPrecios.classList.remove('d-none');
+    async function resolverRuta(archivoBase){
+        if (cacheRutas[archivoBase] !== undefined) return cacheRutas[archivoBase];
+        const candidatos = generarVariantes(archivoBase);
+        for (const ruta of candidatos) {
+            if (await existeArchivo(ruta)) {
+                cacheRutas[archivoBase] = ruta;
+                return ruta;
             }
         }
-    </script>
+        cacheRutas[archivoBase] = null;
+        return null;
+    }
+
+    function renderizarListaManuales(){
+        const cont = document.getElementById('lista-manuales');
+        MANUALES.forEach((m, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-manual';
+            btn.id = 'btn-manual-' + i;
+            btn.innerHTML = `<span class="ico">${m.icono}</span><span>${m.nombre}</span>`;
+            btn.onclick = () => cargarManual(i);
+            cont.appendChild(btn);
+        });
+    }
+
+    async function cargarManual(indice){
+        const manual = MANUALES[indice];
+
+        document.querySelectorAll('.btn-manual').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-manual-' + indice).classList.add('active');
+
+        const cuerpo = document.getElementById('visor-body');
+        const header = document.getElementById('visor-header');
+        header.classList.add('hidden');
+
+        cuerpo.innerHTML = `
+            <div class="estado-vacio">
+                <div class="spinner"></div>
+                <p>Buscando "${manual.nombre}"...</p>
+            </div>`;
+
+        const ruta = await resolverRuta(manual.archivo);
+
+        if (!ruta) {
+            cuerpo.innerHTML = `
+                <div class="estado-error">
+                    <div class="ico">⚠️</div>
+                    <p>No se pudo encontrar el PDF de "${manual.nombre}".</p>
+                    <small>Verificá que el archivo esté dentro de la carpeta /manuales en el repositorio, con un nombre parecido a "${manual.archivo}.pdf".</small>
+                </div>`;
+            return;
+        }
+
+        cuerpo.innerHTML = `<iframe src="${ruta}" title="${manual.nombre}"></iframe>`;
+        document.getElementById('visor-titulo').textContent = manual.nombre;
+        document.getElementById('visor-descarga').href = ruta;
+        header.classList.remove('hidden');
+    }
+
+    function mostrarSeccion(seccion){
+        const secManuales = document.getElementById('sec-manuales');
+        const secPrecios = document.getElementById('sec-precios');
+        const tabManuales = document.getElementById('tab-manuales');
+        const tabPrecios = document.getElementById('tab-precios');
+
+        const esManuales = seccion === 'manuales';
+        secManuales.classList.toggle('hidden', !esManuales);
+        secPrecios.classList.toggle('hidden', esManuales);
+        tabManuales.classList.toggle('active', esManuales);
+        tabPrecios.classList.toggle('active', !esManuales);
+    }
+
+    renderizarListaManuales();
+</script>
 </body>
 </html>

@@ -14,26 +14,34 @@
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
 
     <style>
-        body { 
-            background-color: #f7f5f0; 
+        body {
+            background-color: #f7f5f0;
             font-family: 'Comfortaa', cursive;
         }
-        h1, h2, h3, .font-outfit { 
-            font-family: 'Outfit', sans-serif; 
+        h1, h2, h3, .font-outfit {
+            font-family: 'Outfit', sans-serif;
         }
         .bg-card { background-color: #ffffff; }
         .bg-inner-card { background-color: #fcfbfa; }
         .text-brand { color: #5c4b3f; }
-        
+
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #d1cdb8; border-radius: 10px; }
+
+        .chip-filtro {
+            transition: all .15s ease;
+        }
+        .chip-filtro.activo {
+            background-color: #5c4b3f !important;
+            color: #fff !important;
+        }
     </style>
 </head>
 <body class="text-slate-800 min-h-screen p-4 md:p-8">
 
     <div class="max-w-5xl mx-auto">
-        
+
         <!-- Encabezado -->
         <div class="bg-card rounded-[2rem] p-8 md:p-10 shadow-sm mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
@@ -47,16 +55,19 @@
         </div>
 
         <!-- Buscador -->
-        <div class="relative mb-6">
+        <div class="relative mb-4">
             <span class="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl">🔍</span>
-            <input 
-                type="text" 
-                id="input-busqueda" 
-                placeholder="Buscar por práctica, código o especialidad..." 
+            <input
+                type="text"
+                id="input-busqueda"
+                placeholder="Buscar por práctica, código o especialidad..."
                 class="w-full pl-14 pr-6 py-5 rounded-full border-none shadow-sm focus:ring-4 focus:ring-orange-100 text-lg bg-card outline-none font-outfit font-semibold text-gray-700 transition disabled:opacity-50"
                 disabled
             >
         </div>
+
+        <!-- Filtros por plan -->
+        <div id="fila-filtros" class="flex flex-wrap gap-2 mb-6"></div>
 
         <!-- Estado -->
         <div class="flex flex-col md:flex-row justify-between items-center mb-6 bg-[#efeadd] px-6 py-3 rounded-full text-sm shadow-sm gap-3">
@@ -75,8 +86,52 @@
     </div>
 
     <script>
+        // ------------------------------------------------------------------
+        // CONFIGURACIÓN DE PLANES VISIBLES
+        // El excel trae, para cada rubro, una fila de encabezado con los
+        // nombres de los planes en distintas columnas. Acá se define qué
+        // encabezados reconocemos y con qué nombre se muestran. Cualquier
+        // columna que NO matchee un patrón de acá se descarta (no se muestra).
+        // ------------------------------------------------------------------
+        const PATRONES_PLAN = [
+            { rx: /^integra\s*90\s*osecac$/i, nombre: 'INTEGRA 90 OSECAC' },
+            { rx: /^integra\s*90$/i,          nombre: 'INTEGRA 90' },
+            { rx: /^integra\s*180$/i,         nombre: 'INTEGRA 180' },
+            { rx: /^integra\s*360$/i,         nombre: 'INTEGRA 360' },
+            { rx: /^integra\s*sec$/i,         nombre: 'INTEGRA SEC' },
+            { rx: /^(activo\s*)?asistencial$/i, nombre: 'ASISTENCIAL' },
+        ];
+        // Orden fijo en el que se muestran los planes dentro de cada tarjeta
+        const ORDEN_PLANES = ['INTEGRA 90', 'INTEGRA 90 OSECAC', 'INTEGRA 180', 'INTEGRA 360', 'INTEGRA SEC', 'ASISTENCIAL'];
+
+        function normalizar(v){ return String(v ?? '').trim(); }
+
+        function detectarPlan(valorCelda){
+            const texto = normalizar(valorCelda);
+            if (!texto) return null;
+            for (const p of PATRONES_PLAN) {
+                if (p.rx.test(texto)) return p.nombre;
+            }
+            return null;
+        }
+
+        // Una fila es "de encabezado" si al menos 2 celdas (fuera de la col A)
+        // matchean alguno de los patrones de plan reconocidos.
+        function esFilaEncabezado(fila){
+            let matches = 0;
+            for (let c = 1; c < fila.length; c++) {
+                if (detectarPlan(fila[c])) matches++;
+            }
+            return matches >= 2;
+        }
+
+        function filaVacia(fila){
+            return !fila || fila.every(cell => normalizar(cell) === '');
+        }
+
         let baseDeDatos = [];
         let fuseInstance = null;
+        let filtroActivo = null;
 
         async function descargarExcel() {
             const variantes = ['precios.xlsx', 'Precios.xlsx', 'PRECIOS.xlsx', './precios.xlsx'];
@@ -89,72 +144,73 @@
             throw new Error('No se pudo encontrar precios.xlsx');
         }
 
+        function parsearFilas(filas){
+            const registros = [];
+            let categoriaActual = '';
+            let mapaColumnas = {}; // colIndex -> nombre de plan
+
+            for (let i = 0; i < filas.length; i++) {
+                const fila = filas[i];
+                if (filaVacia(fila)) continue;
+
+                if (esFilaEncabezado(fila)) {
+                    const nuevaCategoria = normalizar(fila[0]);
+                    if (nuevaCategoria) categoriaActual = nuevaCategoria;
+
+                    mapaColumnas = {};
+                    for (let c = 1; c < fila.length; c++) {
+                        const plan = detectarPlan(fila[c]);
+                        if (plan) mapaColumnas[c] = plan;
+                    }
+                    continue;
+                }
+
+                const nombreItem = normalizar(fila[0]);
+                if (!nombreItem) continue;
+
+                const precios = {};
+                Object.entries(mapaColumnas).forEach(([colIndex, nombrePlan]) => {
+                    const valor = fila[Number(colIndex)];
+                    if (valor !== undefined && valor !== '') {
+                        precios[nombrePlan] = valor;
+                    }
+                });
+
+                if (Object.keys(precios).length === 0) continue; // sin valores útiles, se descarta
+
+                registros.push({ item: nombreItem, categoria: categoriaActual || 'GENERAL', precios });
+            }
+            return registros;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             descargarExcel()
                 .then(data => {
                     const workbook = XLSX.read(data, { type: 'array' });
                     const primeraHoja = workbook.Sheets[workbook.SheetNames[0]];
-                    
-                    // Convertir a matriz raw (filas y columnas)
                     const filas = XLSX.utils.sheet_to_json(primeraHoja, { header: 1, defval: '' });
 
                     if (filas.length === 0) throw new Error('El Excel está vacío');
 
-                    // 1. Encontrar la fila real de encabezados (primera fila que contenga texto relevante)
-                    let indexEncabezado = 0;
-                    for (let i = 0; i < Math.min(filas.length, 10); i++) {
-                        const textoFila = filas[i].join(' ').toUpperCase();
-                        if (textoFila.includes('PRACTICA') || textoFila.includes('DESCRIPCION') || textoFila.includes('PRESTACION') || textoFila.includes('INTEGRA') || textoFila.includes('CATEGORIA') || textoFila.includes('VALOR')) {
-                            indexEncabezado = i;
-                            break;
-                        }
-                    }
+                    baseDeDatos = parsearFilas(filas);
+                    if (baseDeDatos.length === 0) throw new Error('No se detectaron registros con precios');
 
-                    const encabezados = filas[indexEncabezado].map(h => String(h).trim());
-
-                    // 2. Procesar las filas de datos desde la fila siguiente al encabezado
-                    baseDeDatos = [];
-                    for (let i = indexEncabezado + 1; i < filas.length; i++) {
-                        const fila = filas[i];
-                        if (!fila || fila.every(cell => cell === '')) continue; // Ignorar filas totalmente vacías
-
-                        let registro = {};
-                        let tieneDatosValidos = false;
-
-                        encabezados.forEach((nombreCol, colIndex) => {
-                            // Ignorar columnas vacías o nombres por defecto
-                            if (!nombreCol || nombreCol.startsWith('__EMPTY')) return;
-
-                            const valor = fila[colIndex];
-                            if (valor !== undefined && valor !== '') {
-                                registro[nombreCol] = valor;
-                                tieneDatosValidos = true;
-                            }
-                        });
-
-                        if (tieneDatosValidos) {
-                            baseDeDatos.push(registro);
-                        }
-                    }
-
-                    // Configurar motor de búsqueda difusa
-                    const llavesBusqueda = Object.keys(baseDeDatos[0] || {});
                     fuseInstance = new Fuse(baseDeDatos, {
                         includeScore: true,
                         threshold: 0.35,
-                        keys: llavesBusqueda
+                        keys: ['item', 'categoria'],
                     });
 
-                    // Actualizar interfaz
                     document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
                     document.getElementById('texto-resultados').textContent = `Base lista (${baseDeDatos.length} registros cargados). Esperando búsqueda...`;
                     document.getElementById('badge-estado').textContent = 'Base Cargada';
                     document.getElementById('badge-estado').classList.add('text-emerald-600');
-                    
+
                     const input = document.getElementById('input-busqueda');
                     input.disabled = false;
                     input.focus();
 
+                    renderizarFiltros();
                     renderizarTarjetas(baseDeDatos.slice(0, 10));
                 })
                 .catch(err => {
@@ -171,25 +227,58 @@
                 });
         });
 
-        document.getElementById('input-busqueda').addEventListener('input', (e) => {
-            const termino = e.target.value.trim();
+        function aplicarBusquedaYFiltro(){
+            const termino = document.getElementById('input-busqueda').value.trim();
+            let resultados = termino && fuseInstance
+                ? fuseInstance.search(termino).map(r => r.item)
+                : baseDeDatos.slice(0, termino ? 0 : 10);
+
+            if (filtroActivo) {
+                resultados = resultados.filter(r => Object.prototype.hasOwnProperty.call(r.precios, filtroActivo));
+            }
+
+            renderizarTarjetas(resultados);
 
             if (!termino) {
-                renderizarTarjetas(baseDeDatos.slice(0, 10));
-                document.getElementById('texto-resultados').textContent = `Mostrando sugerencias...`;
-                return;
-            }
-
-            if (fuseInstance) {
-                const resultados = fuseInstance.search(termino).map(res => res.item);
-                renderizarTarjetas(resultados);
+                document.getElementById('texto-resultados').textContent = filtroActivo
+                    ? `Mostrando sugerencias de ${filtroActivo}...`
+                    : 'Mostrando sugerencias...';
+            } else {
                 document.getElementById('texto-resultados').textContent = `Se encontraron ${resultados.length} práctica(s) / servicio(s)`;
             }
-        });
+        }
+
+        document.getElementById('input-busqueda').addEventListener('input', aplicarBusquedaYFiltro);
+
+        function renderizarFiltros(){
+            const planesPresentes = new Set();
+            baseDeDatos.forEach(r => Object.keys(r.precios).forEach(p => planesPresentes.add(p)));
+
+            const cont = document.getElementById('fila-filtros');
+            const planesOrdenados = ORDEN_PLANES.filter(p => planesPresentes.has(p));
+
+            cont.innerHTML = `
+                <button class="chip-filtro activo px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-plan="">
+                    Todos los planes
+                </button>` +
+                planesOrdenados.map(p => `
+                    <button class="chip-filtro px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-plan="${p}">
+                        ${p}
+                    </button>`).join('');
+
+            cont.querySelectorAll('.chip-filtro').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filtroActivo = btn.dataset.plan || null;
+                    cont.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
+                    btn.classList.add('activo');
+                    aplicarBusquedaYFiltro();
+                });
+            });
+        }
 
         function renderizarTarjetas(datos) {
             const contenedor = document.getElementById('grilla-resultados');
-            
+
             if (datos.length === 0) {
                 contenedor.innerHTML = `
                     <div class="col-span-1 md:col-span-2 text-center py-10 bg-card rounded-[2rem] shadow-sm">
@@ -198,29 +287,18 @@
                 return;
             }
 
-            contenedor.innerHTML = datos.map(item => {
-                const llaves = Object.keys(item);
-                
-                // Detectar el nombre de la práctica/servicio
-                const llavePractica = llaves.find(k => /PRACTICA|DESCRIPCION|PRESTACION|SERVICIO|DETALLE|CONCEPTO/i.test(k)) || llaves[0];
-                const practica = item[llavePractica] || 'Sin Descripción';
-
-                // Detectar la categoría
-                const llaveCategoria = llaves.find(k => /CATEGORIA|ESPECIALIDAD|RUBRO|TIPO/i.test(k));
-                const categoria = llaveCategoria ? item[llaveCategoria] : 'GENERAL';
-
-                // Renderizar las líneas de precios (las demás columnas que no son título/categoría)
-                const planesHTML = llaves
-                    .filter(key => key !== llavePractica && key !== llaveCategoria && !/CODIGO|ID/i.test(key))
-                    .map(key => {
-                        const valor = item[key];
-                        const precioFormat = typeof valor === 'number' 
+            contenedor.innerHTML = datos.map(registro => {
+                const planesHTML = ORDEN_PLANES
+                    .filter(plan => Object.prototype.hasOwnProperty.call(registro.precios, plan))
+                    .map(plan => {
+                        const valor = registro.precios[plan];
+                        const precioFormat = typeof valor === 'number'
                             ? new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(valor)
                             : valor;
 
                         return `
                         <div class="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
-                            <span class="text-xs font-bold text-red-800 bg-red-50 px-2 py-1 rounded shadow-sm">${key.toUpperCase()}</span>
+                            <span class="text-xs font-bold text-red-800 bg-red-50 px-2 py-1 rounded shadow-sm">${plan}</span>
                             <span class="font-outfit font-bold text-gray-800 text-lg">${precioFormat}</span>
                         </div>`;
                     }).join('');
@@ -229,13 +307,13 @@
                     <div class="bg-card rounded-[2rem] p-6 md:p-8 shadow-sm border-2 border-transparent hover:border-[#efeadd] transition duration-300 flex flex-col h-full">
                         <div class="mb-4">
                             <span class="text-[10px] font-extrabold text-brand bg-[#efeadd] px-3 py-1.5 rounded-md tracking-widest uppercase shadow-sm">
-                                ${categoria}
+                                ${registro.categoria}
                             </span>
                         </div>
                         <h3 class="font-outfit text-xl font-extrabold text-gray-800 mb-6 flex-grow leading-tight">
-                            ${practica}
+                            ${registro.item}
                         </h3>
-                        
+
                         <div class="bg-inner-card rounded-2xl p-5 border border-gray-100 shadow-inner mt-auto">
                             <p class="text-[10px] font-bold text-gray-400 mb-4 uppercase tracking-widest">Valores por tipo de plan / socio</p>
                             <div class="flex flex-col gap-1">
