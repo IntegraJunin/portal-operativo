@@ -3,248 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>integra | Buscador de Precios y Servicios</title>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
-
+    <title>Portal Operativo INTEGRA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { 
-            background-color: #f7f5f0; 
-            font-family: 'Comfortaa', cursive;
-        }
-        h1, h2, h3, .font-outfit { 
-            font-family: 'Outfit', sans-serif; 
-        }
-        .bg-card { background-color: #ffffff; }
-        .bg-inner-card { background-color: #fcfbfa; }
-        .text-brand { color: #5c4b3f; }
+        body { background-color: #f8f9fa; }
+        .iframe-container { width: 100%; height: calc(100vh - 65px); border: none; }
         
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #d1cdb8; border-radius: 10px; }
+        /* Botones de manuales en la columna izquierda */
+        .btn-manual {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-left: 4px solid #0d6efd;
+            border-radius: 8px;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .btn-manual:hover {
+            background-color: #eef5ff;
+            border-left-color: #0b5ed7;
+            transform: translateX(3px);
+            color: #0d6efd;
+        }
     </style>
 </head>
-<body class="text-slate-800 min-h-screen p-4 md:p-8">
+<body>
 
-    <div class="max-w-5xl mx-auto">
+    <!-- Navegación Superior -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+        <a class="navbar-brand fw-bold" href="#">Portal Operativo INTEGRA</a>
+        <div class="ms-auto d-flex gap-2">
+            <button class="btn btn-primary" onclick="mostrarSeccion('manuales')">📄 Manuales de Procedimiento</button>
+            <button class="btn btn-outline-light" onclick="mostrarSeccion('precios')">🔍 Buscador de Precios</button>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <div class="container-fluid p-0">
         
-        <!-- Encabezado -->
-        <div class="bg-card rounded-[2rem] p-8 md:p-10 shadow-sm mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-                <h1 class="text-5xl font-extrabold text-brand flex items-center gap-2">
-                    integra <span class="text-4xl" style="color: #8c7a6b;">✳</span>
-                </h1>
-                <p class="text-gray-500 font-semibold mt-2 text-sm md:text-base">
-                    Tres niveles de cobertura para acompañarte en cada etapa
-                </p>
+        <!-- SECCIÓN 1: MANUALES -->
+        <div id="sec-manuales" class="row g-0">
+            <div class="col-md-3 bg-white border-end p-3" style="height: calc(100vh - 56px); overflow-y: auto;">
+                <div class="d-flex flex-column gap-1 mt-2">
+                    
+                    <button class="btn-manual" onclick="cargarPdf('manuales/CONVENIOS IMAGENES.pdf')">
+                        📄 Convenios Imágenes (COMED / Capponi)
+                    </button>
+                    
+                    <button class="btn-manual" onclick="cargarPdf('manuales/ORDENES LABORATORIO.pdf')">
+                        📄 Emisión Órdenes Laboratorio
+                    </button>
+                    
+                    <button class="btn-manual" onclick="cargarPdf('manuales/PROCESO ALTAS Y ASOCIACIONES.pdf')">
+                        📄 Proceso Altas y Asociaciones
+                    </button>
+                    
+                    <button class="btn-manual" onclick="cargarPdf('manuales/TOMOGRAFÍAS OPTICAS.pdf')">
+                        📄 Tomografías Ópticas (OCT / HRT)
+                    </button>
+                    
+                    <button class="btn-manual" onclick="cargarPdf('manuales/Consultas_Medicas_Integra_360.pdf')">
+                        📄 Procedimiento Consultas Médicas
+                    </button>
+                
+                </div>
+            </div>
+            <div class="col-md-9">
+                <iframe id="viewer-pdf" class="iframe-container bg-white" src="about:blank"></iframe>
             </div>
         </div>
 
-        <!-- Buscador -->
-        <div class="relative mb-6">
-            <span class="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl">🔍</span>
-            <input 
-                type="text" 
-                id="input-busqueda" 
-                placeholder="Buscar por práctica, código o especialidad..." 
-                class="w-full pl-14 pr-6 py-5 rounded-full border-none shadow-sm focus:ring-4 focus:ring-orange-100 text-lg bg-card outline-none font-outfit font-semibold text-gray-700 transition disabled:opacity-50"
-                disabled
-            >
+        <!-- SECCIÓN 2: BUSCADOR DE PRECIOS -->
+        <div id="sec-precios" class="d-none">
+            <iframe src="buscador.html" class="iframe-container bg-white"></iframe>
         </div>
-
-        <!-- Estado -->
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6 bg-[#efeadd] px-6 py-3 rounded-full text-sm shadow-sm gap-3">
-            <div class="flex items-center gap-3 font-bold text-gray-700">
-                <span id="indicador-color" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-                <span id="texto-resultados">Cargando base de datos...</span>
-            </div>
-            <div id="badge-estado" class="bg-white px-4 py-1.5 rounded-full font-bold text-gray-500 text-xs shadow-sm uppercase tracking-wider">
-                Conectando...
-            </div>
-        </div>
-
-        <!-- Resultados -->
-        <div id="grilla-resultados" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
 
     </div>
 
+    <!-- JavaScript de Control -->
     <script>
-        let baseDeDatos = [];
-        let fuseInstance = null;
-
-        async function descargarExcel() {
-            const variantes = ['precios.xlsx', 'Precios.xlsx', 'PRECIOS.xlsx', './precios.xlsx'];
-            for (const url of variantes) {
-                try {
-                    const res = await fetch(url);
-                    if (res.ok) return await res.arrayBuffer();
-                } catch (e) {}
-            }
-            throw new Error('No se pudo encontrar precios.xlsx');
+        function cargarPdf(ruta) {
+            document.getElementById('viewer-pdf').src = ruta;
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            descargarExcel()
-                .then(data => {
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const primeraHoja = workbook.Sheets[workbook.SheetNames[0]];
-                    
-                    // Convertir a matriz raw (filas y columnas)
-                    const filas = XLSX.utils.sheet_to_json(primeraHoja, { header: 1, defval: '' });
+        function mostrarSeccion(seccion) {
+            const secManuales = document.getElementById('sec-manuales');
+            const secPrecios = document.getElementById('sec-precios');
 
-                    if (filas.length === 0) throw new Error('El Excel está vacío');
-
-                    // 1. Encontrar la fila real de encabezados (primera fila que contenga texto relevante)
-                    let indexEncabezado = 0;
-                    for (let i = 0; i < Math.min(filas.length, 10); i++) {
-                        const textoFila = filas[i].join(' ').toUpperCase();
-                        if (textoFila.includes('PRACTICA') || textoFila.includes('DESCRIPCION') || textoFila.includes('PRESTACION') || textoFila.includes('INTEGRA') || textoFila.includes('CATEGORIA') || textoFila.includes('VALOR')) {
-                            indexEncabezado = i;
-                            break;
-                        }
-                    }
-
-                    const encabezados = filas[indexEncabezado].map(h => String(h).trim());
-
-                    // 2. Procesar las filas de datos desde la fila siguiente al encabezado
-                    baseDeDatos = [];
-                    for (let i = indexEncabezado + 1; i < filas.length; i++) {
-                        const fila = filas[i];
-                        if (!fila || fila.every(cell => cell === '')) continue; // Ignorar filas totalmente vacías
-
-                        let registro = {};
-                        let tieneDatosValidos = false;
-
-                        encabezados.forEach((nombreCol, colIndex) => {
-                            // Ignorar columnas vacías o nombres por defecto
-                            if (!nombreCol || nombreCol.startsWith('__EMPTY')) return;
-
-                            const valor = fila[colIndex];
-                            if (valor !== undefined && valor !== '') {
-                                registro[nombreCol] = valor;
-                                tieneDatosValidos = true;
-                            }
-                        });
-
-                        if (tieneDatosValidos) {
-                            baseDeDatos.push(registro);
-                        }
-                    }
-
-                    // Configurar motor de búsqueda difusa
-                    const llavesBusqueda = Object.keys(baseDeDatos[0] || {});
-                    fuseInstance = new Fuse(baseDeDatos, {
-                        includeScore: true,
-                        threshold: 0.35,
-                        keys: llavesBusqueda
-                    });
-
-                    // Actualizar interfaz
-                    document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
-                    document.getElementById('texto-resultados').textContent = `Base lista (${baseDeDatos.length} registros cargados). Esperando búsqueda...`;
-                    document.getElementById('badge-estado').textContent = 'Base Cargada';
-                    document.getElementById('badge-estado').classList.add('text-emerald-600');
-                    
-                    const input = document.getElementById('input-busqueda');
-                    input.disabled = false;
-                    input.focus();
-
-                    renderizarTarjetas(baseDeDatos.slice(0, 10));
-                })
-                .catch(err => {
-                    console.error(err);
-                    document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-red-500';
-                    document.getElementById('texto-resultados').textContent = 'Error al cargar el archivo de precios';
-                    document.getElementById('badge-estado').textContent = 'Error Excel';
-                    document.getElementById('badge-estado').classList.add('text-red-600');
-                    document.getElementById('grilla-resultados').innerHTML = `
-                        <div class="col-span-1 md:col-span-2 text-center py-10 bg-card rounded-[2rem] shadow-sm">
-                            <p class="text-red-500 font-bold text-lg">No se pudo procesar 'precios.xlsx'.</p>
-                            <p class="text-gray-400 text-sm mt-2">Verifica la estructura del archivo en GitHub.</p>
-                        </div>`;
-                });
-        });
-
-        document.getElementById('input-busqueda').addEventListener('input', (e) => {
-            const termino = e.target.value.trim();
-
-            if (!termino) {
-                renderizarTarjetas(baseDeDatos.slice(0, 10));
-                document.getElementById('texto-resultados').textContent = `Mostrando sugerencias...`;
-                return;
+            if (seccion === 'manuales') {
+                secManuales.classList.remove('d-none');
+                secPrecios.classList.add('d-none');
+            } else if (seccion === 'precios') {
+                secManuales.classList.add('d-none');
+                secPrecios.classList.remove('d-none');
             }
-
-            if (fuseInstance) {
-                const resultados = fuseInstance.search(termino).map(res => res.item);
-                renderizarTarjetas(resultados);
-                document.getElementById('texto-resultados').textContent = `Se encontraron ${resultados.length} práctica(s) / servicio(s)`;
-            }
-        });
-
-        function renderizarTarjetas(datos) {
-            const contenedor = document.getElementById('grilla-resultados');
-            
-            if (datos.length === 0) {
-                contenedor.innerHTML = `
-                    <div class="col-span-1 md:col-span-2 text-center py-10 bg-card rounded-[2rem] shadow-sm">
-                        <p class="text-gray-400 font-bold text-lg">No se encontraron resultados.</p>
-                    </div>`;
-                return;
-            }
-
-            contenedor.innerHTML = datos.map(item => {
-                const llaves = Object.keys(item);
-                
-                // Detectar el nombre de la práctica/servicio
-                const llavePractica = llaves.find(k => /PRACTICA|DESCRIPCION|PRESTACION|SERVICIO|DETALLE|CONCEPTO/i.test(k)) || llaves[0];
-                const practica = item[llavePractica] || 'Sin Descripción';
-
-                // Detectar la categoría
-                const llaveCategoria = llaves.find(k => /CATEGORIA|ESPECIALIDAD|RUBRO|TIPO/i.test(k));
-                const categoria = llaveCategoria ? item[llaveCategoria] : 'GENERAL';
-
-                // Renderizar las líneas de precios (las demás columnas que no son título/categoría)
-                const planesHTML = llaves
-                    .filter(key => key !== llavePractica && key !== llaveCategoria && !/CODIGO|ID/i.test(key))
-                    .map(key => {
-                        const valor = item[key];
-                        const precioFormat = typeof valor === 'number' 
-                            ? new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(valor)
-                            : valor;
-
-                        return `
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
-                            <span class="text-xs font-bold text-red-800 bg-red-50 px-2 py-1 rounded shadow-sm">${key.toUpperCase()}</span>
-                            <span class="font-outfit font-bold text-gray-800 text-lg">${precioFormat}</span>
-                        </div>`;
-                    }).join('');
-
-                return `
-                    <div class="bg-card rounded-[2rem] p-6 md:p-8 shadow-sm border-2 border-transparent hover:border-[#efeadd] transition duration-300 flex flex-col h-full">
-                        <div class="mb-4">
-                            <span class="text-[10px] font-extrabold text-brand bg-[#efeadd] px-3 py-1.5 rounded-md tracking-widest uppercase shadow-sm">
-                                ${categoria}
-                            </span>
-                        </div>
-                        <h3 class="font-outfit text-xl font-extrabold text-gray-800 mb-6 flex-grow leading-tight">
-                            ${practica}
-                        </h3>
-                        
-                        <div class="bg-inner-card rounded-2xl p-5 border border-gray-100 shadow-inner mt-auto">
-                            <p class="text-[10px] font-bold text-gray-400 mb-4 uppercase tracking-widest">Valores por tipo de plan / socio</p>
-                            <div class="flex flex-col gap-1">
-                                ${planesHTML || '<p class="text-sm text-gray-400">Sin valores asignados</p>'}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
         }
     </script>
 </body>
