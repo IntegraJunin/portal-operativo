@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="auth.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -89,34 +90,46 @@
         // ------------------------------------------------------------------
         // CONFIGURACIÓN DE PLANES VISIBLES
         // El excel trae, para cada rubro, una fila de encabezado con los
-        // nombres de los planes en distintas columnas. Acá se define qué
-        // encabezados reconocemos y con qué nombre se muestran. Cualquier
-        // columna que NO matchee un patrón de acá se descarta (no se muestra).
+        // nombres de los planes en distintas columnas. Acá se listan TODOS
+        // los textos de encabezado que reconocemos como "columna de plan".
+        // Si en el futuro agregás un plan nuevo con un encabezado que no
+        // esté en esta lista, esa columna se va a ignorar hasta que se
+        // agregue su texto acá (no hace falta tocar el excel).
+        //
+        // La comparación ignora mayúsculas/minúsculas y espacios de más,
+        // pero el nombre que se MUESTRA en pantalla es el que está escrito
+        // tal cual en el excel (respeta "In 90", "Afiliado SEC", etc.)
         // ------------------------------------------------------------------
-        const PATRONES_PLAN = [
-            { rx: /^integra\s*90\s*osecac$/i, nombre: 'INTEGRA 90 OSECAC' },
-            { rx: /^integra\s*90$/i,          nombre: 'INTEGRA 90' },
-            { rx: /^integra\s*180$/i,         nombre: 'INTEGRA 180' },
-            { rx: /^integra\s*360$/i,         nombre: 'INTEGRA 360' },
-            { rx: /^integra\s*sec$/i,         nombre: 'INTEGRA SEC' },
-            { rx: /^(activo\s*)?asistencial$/i, nombre: 'ASISTENCIAL' },
+        const ENCABEZADOS_RECONOCIDOS = [
+            'INTEGRA 90', 'IN 90',
+            'INTEGRA 90 OSECAC', 'IN 90 OSECAC',
+            'AD',
+            'COS',
+            'MM', 'MM/COM',
+            'INTEGRA 180', 'IN 180',
+            'INTEGRA 360', 'IN 360',
+            'INTEGRA SEC', 'AFILIADO SEC',
+            'ASISTENCIAL', 'ACTIVO ASISTENCIAL',
+            'NO AFILIDO OSECAC', 'NO AFILIADO OSECAC',
+            'MON/OP NO COS',
         ];
-        // Orden fijo en el que se muestran los planes dentro de cada tarjeta
-        const ORDEN_PLANES = ['INTEGRA 90', 'INTEGRA 90 OSECAC', 'INTEGRA 180', 'INTEGRA 360', 'INTEGRA SEC', 'ASISTENCIAL'];
+        // Orden en el que se muestran los planes dentro de cada tarjeta.
+        // Se arma solo, en el orden en que las columnas aparecen en el excel.
+        let ORDEN_PLANES = [];
 
         function normalizar(v){ return String(v ?? '').trim(); }
+        function claveComparable(v){ return normalizar(v).replace(/\s+/g, ' ').toUpperCase(); }
 
+        // Devuelve el texto EXACTO de la celda (tal cual está en el excel)
+        // si matchea un encabezado reconocido, o null si no matchea.
         function detectarPlan(valorCelda){
             const texto = normalizar(valorCelda);
             if (!texto) return null;
-            for (const p of PATRONES_PLAN) {
-                if (p.rx.test(texto)) return p.nombre;
-            }
-            return null;
+            return ENCABEZADOS_RECONOCIDOS.includes(claveComparable(texto)) ? texto : null;
         }
 
         // Una fila es "de encabezado" si al menos 2 celdas (fuera de la col A)
-        // matchean alguno de los patrones de plan reconocidos.
+        // matchean alguno de los encabezados reconocidos.
         function esFilaEncabezado(fila){
             let matches = 0;
             for (let c = 1; c < fila.length; c++) {
@@ -144,10 +157,16 @@
             throw new Error('No se pudo encontrar precios.xlsx');
         }
 
+        // Texto de exhibición para cada plan (primera vez que aparece en el
+        // excel, tal cual está escrito), indexado por su clave canónica.
+        let etiquetaPorClave = {};
+
         function parsearFilas(filas){
             const registros = [];
             let categoriaActual = '';
-            let mapaColumnas = {}; // colIndex -> nombre de plan
+            let mapaColumnas = {}; // colIndex -> clave canónica de plan
+            etiquetaPorClave = {};
+            ORDEN_PLANES = [];
 
             for (let i = 0; i < filas.length; i++) {
                 const fila = filas[i];
@@ -159,8 +178,14 @@
 
                     mapaColumnas = {};
                     for (let c = 1; c < fila.length; c++) {
-                        const plan = detectarPlan(fila[c]);
-                        if (plan) mapaColumnas[c] = plan;
+                        const etiqueta = detectarPlan(fila[c]);
+                        if (!etiqueta) continue;
+                        const clave = claveComparable(etiqueta);
+                        mapaColumnas[c] = clave;
+                        if (!(clave in etiquetaPorClave)) {
+                            etiquetaPorClave[clave] = etiqueta;
+                            ORDEN_PLANES.push(clave);
+                        }
                     }
                     continue;
                 }
@@ -169,10 +194,10 @@
                 if (!nombreItem) continue;
 
                 const precios = {};
-                Object.entries(mapaColumnas).forEach(([colIndex, nombrePlan]) => {
+                Object.entries(mapaColumnas).forEach(([colIndex, clave]) => {
                     const valor = fila[Number(colIndex)];
                     if (valor !== undefined && valor !== '') {
-                        precios[nombrePlan] = valor;
+                        precios[clave] = valor;
                     }
                 });
 
@@ -261,9 +286,9 @@
                 <button class="chip-filtro activo px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-plan="">
                     Todos los planes
                 </button>` +
-                planesOrdenados.map(p => `
-                    <button class="chip-filtro px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-plan="${p}">
-                        ${p}
+                planesOrdenados.map(clave => `
+                    <button class="chip-filtro px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-plan="${clave}">
+                        ${etiquetaPorClave[clave] || clave}
                     </button>`).join('');
 
             cont.querySelectorAll('.chip-filtro').forEach(btn => {
@@ -274,6 +299,22 @@
                     aplicarBusquedaYFiltro();
                 });
             });
+        }
+
+        function formatearValor(valor){
+            if (typeof valor === 'number') {
+                return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(valor);
+            }
+            const texto = normalizar(valor);
+            // Algunos precios vienen guardados como texto numérico ("61950")
+            // en vez de número; los formateamos igual como moneda.
+            if (/^-?\d+([.,]\d+)?$/.test(texto)) {
+                const numero = parseFloat(texto.replace(',', '.'));
+                if (!isNaN(numero)) {
+                    return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(numero);
+                }
+            }
+            return texto; // texto libre, ej. "$20 anual"
         }
 
         function renderizarTarjetas(datos) {
@@ -289,17 +330,14 @@
 
             contenedor.innerHTML = datos.map(registro => {
                 const planesHTML = ORDEN_PLANES
-                    .filter(plan => Object.prototype.hasOwnProperty.call(registro.precios, plan))
-                    .map(plan => {
-                        const valor = registro.precios[plan];
-                        const precioFormat = typeof valor === 'number'
-                            ? new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(valor)
-                            : valor;
-
+                    .filter(clave => Object.prototype.hasOwnProperty.call(registro.precios, clave))
+                    .map(clave => {
+                        const valor = registro.precios[clave];
+                        const etiqueta = etiquetaPorClave[clave] || clave;
                         return `
                         <div class="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
-                            <span class="text-xs font-bold text-red-800 bg-red-50 px-2 py-1 rounded shadow-sm">${plan}</span>
-                            <span class="font-outfit font-bold text-gray-800 text-lg">${precioFormat}</span>
+                            <span class="text-xs font-bold text-red-800 bg-red-50 px-2 py-1 rounded shadow-sm">${etiqueta.toUpperCase()}</span>
+                            <span class="font-outfit font-bold text-gray-800 text-lg">${formatearValor(valor)}</span>
                         </div>`;
                     }).join('');
 

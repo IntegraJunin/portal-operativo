@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="auth.js"></script>
 
 <style>
     :root{
@@ -246,12 +247,17 @@
     // Lista de manuales: "nombre" es lo que se muestra, "archivo" es el nombre base
     // tal cual figura en el repo (se probarán variantes automáticamente si no se encuentra).
     const MANUALES = [
-        { icono: '📄', nombre: 'Convenios Imágenes (COMED / Capponi)', archivo: 'CONVENIOS IMAGENES' },
-        { icono: '📄', nombre: 'Emisión Órdenes Laboratorio',          archivo: 'ORDENES LABORATORIO' },
-        { icono: '📄', nombre: 'Proceso Altas y Asociaciones',         archivo: 'PROCESO ALTAS Y ASOCIACIONES' },
-        { icono: '📄', nombre: 'Tomografías Ópticas (OCT / HRT)',      archivo: 'TOMOGRAFÍAS OPTICAS' },
-        { icono: '📄', nombre: 'Procedimiento Consultas Médicas',      archivo: 'Consultas_Medicas_Integra_360' },
-        { icono: '📄', nombre: 'PROTOCOLO EMERGENCIAS',                archivo: 'PROTOCOLO EMERGENCIAS' },
+        { icono: '📄', nombre: 'Consultas Médicas',              archivo: 'CONSULTAS MEDICAS' },
+        { icono: '📄', nombre: 'Convenio Laboratorio',            archivo: 'CONVENIO LABORATORIO' },
+        { icono: '📄', nombre: 'Convenio Nexo Terapéutico',       archivo: 'CONVENIO NEXO TERAPEUTICO' },
+        { icono: '📄', nombre: 'Convenios Imágenes',              archivo: 'CONVENIOS IMAGENES' },
+        { icono: '📄', nombre: 'Convenios Prácticas Médicas',     archivo: 'CONVENIOS PRACTICAS MEDICAS' },
+        { icono: '📄', nombre: 'Electrocardiograma',              archivo: 'ELECTROCARDIOGRAMA' },
+        { icono: '📄', nombre: 'Notas de Crédito',                archivo: 'NOTAS DE CREDITO' },
+        { icono: '📄', nombre: 'Proceso Altas y Asociaciones',    archivo: 'PROCESO ALTAS Y ASOCIACIONES' },
+        { icono: '📄', nombre: 'Protocolo Emergencias',           archivo: 'PROTOCOLO EMERGENCIAS' },
+        { icono: '📄', nombre: 'Salones',                         archivo: 'SALONES' },
+        { icono: '📄', nombre: 'Tomografías Ópticas (OCT / HRT)', archivo: 'TOMOGRAFÍAS OPTICAS' },
     ];
 
     const CARPETA = 'manuales/';
