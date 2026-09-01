@@ -161,7 +161,7 @@
         // RESTRICCIONES DE VISUALIZACIÓN
         // ------------------------------------------------------------------
         // Estas columnas NUNCA se muestran, en ningún rubro.
-        const PLANES_SIEMPRE_BLOQUEADOS = ['AD', 'COS', 'MM', 'MM/COM'];
+        const PLANES_SIEMPRE_BLOQUEADOS = ['AD', 'COS', 'MM', 'MM/COM', 'MON/OP NO COS'];
 
         // "IN 90" (Int. 90) está bloqueado por defecto, salvo en estos rubros
         // puntuales, donde sí debe mostrarse. Los nombres deben coincidir con
@@ -272,7 +272,7 @@
                     input.focus();
 
                     renderizarFiltros();
-                    renderizarTarjetas(baseDeDatos.slice(0, 10));
+                    renderizarTarjetas(baseDeDatos.slice(0, 10), filtroActivo);
                 })
                 .catch(err => {
                     console.error(err);
@@ -298,7 +298,7 @@
                 resultados = resultados.filter(r => Object.prototype.hasOwnProperty.call(r.precios, filtroActivo));
             }
 
-            renderizarTarjetas(resultados);
+            renderizarTarjetas(resultados, filtroActivo);
 
             if (!termino) {
                 document.getElementById('texto-resultados').textContent = filtroActivo
@@ -353,7 +353,7 @@
             return texto; // texto libre, ej. "$20 anual"
         }
 
-        function renderizarTarjetas(datos) {
+        function renderizarTarjetas(datos, planFiltrado) {
             const contenedor = document.getElementById('grilla-resultados');
 
             if (datos.length === 0) {
@@ -364,8 +364,12 @@
                 return;
             }
 
+            // Si hay un filtro de plan activo, la tarjeta solo debe mostrar
+            // el precio de ESE plan, no los demás que tenga el ítem.
+            const planesAMostrar = planFiltrado ? [planFiltrado] : ORDEN_PLANES;
+
             contenedor.innerHTML = datos.map(registro => {
-                const planesHTML = ORDEN_PLANES
+                const planesHTML = planesAMostrar
                     .filter(clave => Object.prototype.hasOwnProperty.call(registro.precios, clave))
                     .map(clave => {
                         const valor = registro.precios[clave];
