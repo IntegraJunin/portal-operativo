@@ -207,6 +207,7 @@
         <h1 class="brand">Portal Operativo INTEGRA <span>✳</span></h1>
         <div class="tabs">
             <button class="tab-btn active" id="tab-manuales" onclick="mostrarSeccion('manuales')">📄 Manuales de Procedimiento</button>
+            <button class="tab-btn" id="tab-solicitudes" onclick="mostrarSeccion('solicitudes')">🗂️ Solicitudes</button>
             <button class="tab-btn" id="tab-precios" onclick="mostrarSeccion('precios')">🔍 Buscador de Precios</button>
         </div>
     </div>
@@ -234,7 +235,30 @@
         </div>
     </div>
 
-    <!-- SECCIÓN 2: BUSCADOR DE PRECIOS -->
+    <!-- SECCIÓN 2: SOLICITUDES -->
+    <div id="sec-solicitudes" class="hidden">
+        <div class="manuales-grid">
+            <div class="lista-manuales" id="lista-solicitudes">
+                <h2>Solicitudes disponibles</h2>
+                <!-- los botones se generan desde SOLICITUDES -->
+            </div>
+
+            <div class="visor-panel">
+                <div class="visor-header hidden" id="visor-header-solicitudes">
+                    <h3 id="visor-titulo-solicitudes"></h3>
+                    <a id="visor-descarga-solicitudes" href="#" target="_blank" rel="noopener">Abrir en pestaña nueva ↗</a>
+                </div>
+                <div class="visor-body" id="visor-body-solicitudes">
+                    <div class="estado-vacio">
+                        <div class="ico">🗂️</div>
+                        <p>Elegí una solicitud de la izquierda para verla acá.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 3: BUSCADOR DE PRECIOS -->
     <div id="sec-precios" class="hidden">
         <div class="buscador-frame-wrap">
             <iframe src="buscador.html" title="Buscador de precios"></iframe>
@@ -263,6 +287,16 @@
     const CARPETA = 'manuales/';
     const cacheRutas = {}; // archivo -> ruta válida encontrada (o null)
 
+    // Solicitudes: contratos en PDF. Se buscan dentro de la carpeta "solicitudes/".
+    const SOLICITUDES = [
+        { icono: '🗂️', nombre: 'Solicitud Integra 90',  archivo: 'SOLICITUD INTEGRA 90' },
+        { icono: '🗂️', nombre: 'Solicitud Integra 180', archivo: 'SOLICITUD INTEGRA 180' },
+        { icono: '🗂️', nombre: 'Solicitud Integra 360', archivo: 'SOLICITUD INTEGRA 360' },
+        { icono: '🗂️', nombre: 'Sepelio San Felipe',    archivo: 'SEPELIO SAN FELIPE' },
+    ];
+    const CARPETA_SOLICITUDES = 'solicitudes/';
+    const cacheRutasSolicitudes = {};
+
     function quitarAcentos(str){
         return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     }
@@ -270,7 +304,7 @@
     // Genera variantes de nombre de archivo para tolerar diferencias de
     // mayúsculas / acentos / espacios vs guion bajo entre Windows (donde no
     // importa) y GitHub Pages (Linux, sensible a mayúsculas y sin acentos raros).
-    function generarVariantes(base){
+    function generarVariantes(base, carpeta){
         const variantes = new Set();
         const formas = [
             base,
@@ -282,7 +316,7 @@
                 .forEach(v => variantes.add(v));
         });
         const rutas = [];
-        variantes.forEach(v => rutas.push(CARPETA + v + '.pdf'));
+        variantes.forEach(v => rutas.push(carpeta + v + '.pdf'));
         return rutas;
     }
 
@@ -301,79 +335,116 @@
         }
     }
 
-    async function resolverRuta(archivoBase){
-        if (cacheRutas[archivoBase] !== undefined) return cacheRutas[archivoBase];
-        const candidatos = generarVariantes(archivoBase);
+    async function resolverRuta(archivoBase, carpeta, cache){
+        if (cache[archivoBase] !== undefined) return cache[archivoBase];
+        const candidatos = generarVariantes(archivoBase, carpeta);
         for (const ruta of candidatos) {
             if (await existeArchivo(ruta)) {
-                cacheRutas[archivoBase] = ruta;
+                cache[archivoBase] = ruta;
                 return ruta;
             }
         }
-        cacheRutas[archivoBase] = null;
+        cache[archivoBase] = null;
         return null;
     }
 
-    function renderizarListaManuales(){
-        const cont = document.getElementById('lista-manuales');
-        MANUALES.forEach((m, i) => {
-            const btn = document.createElement('button');
-            btn.className = 'btn-manual';
-            btn.id = 'btn-manual-' + i;
-            btn.innerHTML = `<span class="ico">${m.icono}</span><span>${m.nombre}</span>`;
-            btn.onclick = () => cargarManual(i);
-            cont.appendChild(btn);
-        });
-    }
-
-    async function cargarManual(indice){
-        const manual = MANUALES[indice];
-
-        document.querySelectorAll('.btn-manual').forEach(b => b.classList.remove('active'));
-        document.getElementById('btn-manual-' + indice).classList.add('active');
-
-        const cuerpo = document.getElementById('visor-body');
-        const header = document.getElementById('visor-header');
-        header.classList.add('hidden');
-
-        cuerpo.innerHTML = `
-            <div class="estado-vacio">
-                <div class="spinner"></div>
-                <p>Buscando "${manual.nombre}"...</p>
-            </div>`;
-
-        const ruta = await resolverRuta(manual.archivo);
-
-        if (!ruta) {
-            cuerpo.innerHTML = `
-                <div class="estado-error">
-                    <div class="ico">⚠️</div>
-                    <p>No se pudo encontrar el PDF de "${manual.nombre}".</p>
-                    <small>Verificá que el archivo esté dentro de la carpeta /manuales en el repositorio, con un nombre parecido a "${manual.archivo}.pdf".</small>
-                </div>`;
-            return;
+    // ------------------------------------------------------------------
+    // Visor de documentos genérico: sirve tanto para Manuales como para
+    // Solicitudes, cambiando solo la lista de documentos, la carpeta y
+    // los ids de los elementos del DOM que usa cada pestaña.
+    // ------------------------------------------------------------------
+    function crearVisorDocumentos({ documentos, carpeta, cache, prefijo, listaId, headerId, tituloId, descargaId, bodyId, iconoVacio, textoVacio }){
+        function renderizarLista(){
+            const cont = document.getElementById(listaId);
+            documentos.forEach((doc, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-manual';
+                btn.id = prefijo + '-' + i;
+                btn.innerHTML = `<span class="ico">${doc.icono}</span><span>${doc.nombre}</span>`;
+                btn.onclick = () => cargarDocumento(i);
+                cont.appendChild(btn);
+            });
         }
 
-        cuerpo.innerHTML = `<iframe src="${ruta}" title="${manual.nombre}"></iframe>`;
-        document.getElementById('visor-titulo').textContent = manual.nombre;
-        document.getElementById('visor-descarga').href = ruta;
-        header.classList.remove('hidden');
+        async function cargarDocumento(indice){
+            const doc = documentos[indice];
+
+            document.querySelectorAll('#' + listaId + ' .btn-manual').forEach(b => b.classList.remove('active'));
+            document.getElementById(prefijo + '-' + indice).classList.add('active');
+
+            const cuerpo = document.getElementById(bodyId);
+            const header = document.getElementById(headerId);
+            header.classList.add('hidden');
+
+            cuerpo.innerHTML = `
+                <div class="estado-vacio">
+                    <div class="spinner"></div>
+                    <p>Buscando "${doc.nombre}"...</p>
+                </div>`;
+
+            const ruta = await resolverRuta(doc.archivo, carpeta, cache);
+
+            if (!ruta) {
+                cuerpo.innerHTML = `
+                    <div class="estado-error">
+                        <div class="ico">⚠️</div>
+                        <p>No se pudo encontrar el PDF de "${doc.nombre}".</p>
+                        <small>Verificá que el archivo esté dentro de la carpeta /${carpeta} en el repositorio, con un nombre parecido a "${doc.archivo}.pdf".</small>
+                    </div>`;
+                return;
+            }
+
+            cuerpo.innerHTML = `<iframe src="${ruta}" title="${doc.nombre}"></iframe>`;
+            document.getElementById(tituloId).textContent = doc.nombre;
+            document.getElementById(descargaId).href = ruta;
+            header.classList.remove('hidden');
+        }
+
+        renderizarLista();
+        return { cargarDocumento };
     }
+
+    const visorManuales = crearVisorDocumentos({
+        documentos: MANUALES,
+        carpeta: CARPETA,
+        cache: cacheRutas,
+        prefijo: 'btn-manual',
+        listaId: 'lista-manuales',
+        headerId: 'visor-header',
+        tituloId: 'visor-titulo',
+        descargaId: 'visor-descarga',
+        bodyId: 'visor-body',
+    });
+
+    const visorSolicitudes = crearVisorDocumentos({
+        documentos: SOLICITUDES,
+        carpeta: CARPETA_SOLICITUDES,
+        cache: cacheRutasSolicitudes,
+        prefijo: 'btn-solicitud',
+        listaId: 'lista-solicitudes',
+        headerId: 'visor-header-solicitudes',
+        tituloId: 'visor-titulo-solicitudes',
+        descargaId: 'visor-descarga-solicitudes',
+        bodyId: 'visor-body-solicitudes',
+    });
 
     function mostrarSeccion(seccion){
-        const secManuales = document.getElementById('sec-manuales');
-        const secPrecios = document.getElementById('sec-precios');
-        const tabManuales = document.getElementById('tab-manuales');
-        const tabPrecios = document.getElementById('tab-precios');
+        const secciones = {
+            manuales: document.getElementById('sec-manuales'),
+            solicitudes: document.getElementById('sec-solicitudes'),
+            precios: document.getElementById('sec-precios'),
+        };
+        const tabs = {
+            manuales: document.getElementById('tab-manuales'),
+            solicitudes: document.getElementById('tab-solicitudes'),
+            precios: document.getElementById('tab-precios'),
+        };
 
-        const esManuales = seccion === 'manuales';
-        secManuales.classList.toggle('hidden', !esManuales);
-        secPrecios.classList.toggle('hidden', esManuales);
-        tabManuales.classList.toggle('active', esManuales);
-        tabPrecios.classList.toggle('active', !esManuales);
+        Object.keys(secciones).forEach(clave => {
+            secciones[clave].classList.toggle('hidden', clave !== seccion);
+            tabs[clave].classList.toggle('active', clave === seccion);
+        });
     }
-
-    renderizarListaManuales();
 </script>
 </body>
 </html>
