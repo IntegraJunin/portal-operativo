@@ -157,6 +157,30 @@
             throw new Error('No se pudo encontrar precios.xlsx');
         }
 
+        // ------------------------------------------------------------------
+        // RESTRICCIONES DE VISUALIZACIÓN
+        // ------------------------------------------------------------------
+        // Estas columnas NUNCA se muestran, en ningún rubro.
+        const PLANES_SIEMPRE_BLOQUEADOS = ['AD', 'COS', 'MM', 'MM/COM'];
+
+        // "IN 90" (Int. 90) está bloqueado por defecto, salvo en estos rubros
+        // puntuales, donde sí debe mostrarse. Los nombres deben coincidir con
+        // el texto de la columna A del excel en la fila de encabezado del
+        // rubro (sin importar mayúsculas/minúsculas ni espacios de más).
+        const CATEGORIAS_IN90_PERMITIDAS = new Set([
+            'CIRUGIAS ODONTOLOGICAS',
+            'CONDUCTOS ODONTOLOGICOS',
+            'CAVITADOR (METODO DE LIMPIEZA)',
+            'SELLADOR',
+            'OBSTURACION CON AMALGAMA',
+            'OBSTURACION CON IONOMERO VITRIO',
+            'EXTRACCIONES',
+            'BONOS DE CONSULTA KINESIOLOGIA',
+            'BONOS DE CONSULTA PSIQUIATRIA',
+        ].map(s => s.replace(/\s+/g, ' ').toUpperCase()));
+
+        function normalizarCategoria(s){ return normalizar(s).replace(/\s+/g, ' ').toUpperCase(); }
+
         // Texto de exhibición para cada plan (primera vez que aparece en el
         // excel, tal cual está escrito), indexado por su clave canónica.
         let etiquetaPorClave = {};
@@ -203,7 +227,19 @@
 
                 if (Object.keys(precios).length === 0) continue; // sin valores útiles, se descarta
 
-                registros.push({ item: nombreItem, categoria: categoriaActual || 'GENERAL', precios });
+                const categoriaFinal = categoriaActual || 'GENERAL';
+
+                // Ad, Cos y MM/MM-Com nunca se muestran.
+                PLANES_SIEMPRE_BLOQUEADOS.forEach(clave => { delete precios[clave]; });
+
+                // In 90 solo se muestra en los rubros permitidos.
+                if ('IN 90' in precios && !CATEGORIAS_IN90_PERMITIDAS.has(normalizarCategoria(categoriaFinal))) {
+                    delete precios['IN 90'];
+                }
+
+                if (Object.keys(precios).length === 0) continue; // se quedó sin valores tras el bloqueo
+
+                registros.push({ item: nombreItem, categoria: categoriaFinal, precios });
             }
             return registros;
         }
