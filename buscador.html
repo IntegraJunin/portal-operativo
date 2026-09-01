@@ -6,7 +6,6 @@
     <title>integra | Buscador de Precios y Servicios</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="auth.js"></script>
 
@@ -143,7 +142,6 @@
         }
 
         let baseDeDatos = [];
-        let fuseInstance = null;
         let filtroActivo = null;
 
         async function descargarExcel() {
@@ -163,23 +161,38 @@
         // Estas columnas NUNCA se muestran, en ningún rubro.
         const PLANES_SIEMPRE_BLOQUEADOS = ['AD', 'COS', 'MM', 'MM/COM', 'MON/OP NO COS'];
 
-        // "IN 90" (Int. 90) está bloqueado por defecto, salvo en estos rubros
-        // puntuales, donde sí debe mostrarse. Los nombres deben coincidir con
-        // el texto de la columna A del excel en la fila de encabezado del
-        // rubro (sin importar mayúsculas/minúsculas ni espacios de más).
-        const CATEGORIAS_IN90_PERMITIDAS = new Set([
-            'CIRUGIAS ODONTOLOGICAS',
-            'CONDUCTOS ODONTOLOGICOS',
-            'CAVITADOR (METODO DE LIMPIEZA)',
-            'SELLADOR',
-            'OBSTURACION CON AMALGAMA',
-            'OBSTURACION CON IONOMERO VITRIO',
-            'EXTRACCIONES',
-            'BONOS DE CONSULTA KINESIOLOGIA',
-            'BONOS DE CONSULTA PSIQUIATRIA',
-        ].map(s => s.replace(/\s+/g, ' ').toUpperCase()));
+        // Saca acentos para comparar sin importar tildes.
+        function quitarAcentos(s){ return String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+        function normalizarCategoria(s){ return quitarAcentos(normalizar(s)).replace(/\s+/g, ' ').toUpperCase(); }
 
-        function normalizarCategoria(s){ return normalizar(s).replace(/\s+/g, ' ').toUpperCase(); }
+        // "IN 90" (Int. 90) está bloqueado por defecto, salvo en los rubros
+        // cuyo nombre contenga alguna de estas palabras clave (sin acentos,
+        // sin importar mayúsculas). "IN 90 OSECAC" NO tiene esta restricción:
+        // se muestra siempre que tenga valor, en cualquier rubro.
+        const PALABRAS_CLAVE_IN90_PERMITIDO = [
+            'TURISMO', 'QUINCHO', 'SALON CHICO', 'SALON GRANDE', 'SALON VIP',
+            'PILETA', 'COLONIA', 'MUSICA', 'FUTBOL',
+        ];
+
+        function in90PermitidoEnCategoria(categoria){
+            const cat = normalizarCategoria(categoria);
+            return PALABRAS_CLAVE_IN90_PERMITIDO.some(kw => cat.includes(kw));
+        }
+
+        // "IN 180" se muestra en todos los rubros MENOS: convenios (COMED,
+        // FAMYL, PETRAGLIA y cualquier ítem que diga "convenio"), consultas
+        // médicas (Consulta Médica A/B/C) y psiquiatría.
+        const CATEGORIAS_EXCLUIDAS_IN180 = ['COMED', 'FAMYL', 'PETRAGLIA', 'BONOS DE CONSULTA PSIQUIATRIA']
+            .map(normalizarCategoria);
+
+        function in180PermitidoEn(categoria, item){
+            const cat = normalizarCategoria(categoria);
+            const it = normalizarCategoria(item);
+            if (CATEGORIAS_EXCLUIDAS_IN180.includes(cat)) return false;
+            if (it.includes('CONVENIO')) return false;
+            if (it.startsWith('CONSULTA MEDICA')) return false;
+            return true;
+        }
 
         // Texto de exhibición para cada plan (primera vez que aparece en el
         // excel, tal cual está escrito), indexado por su clave canónica.
@@ -229,12 +242,17 @@
 
                 const categoriaFinal = categoriaActual || 'GENERAL';
 
-                // Ad, Cos y MM/MM-Com nunca se muestran.
+                // Ad, Cos y MM/MM-Com/Mon-Op no cos nunca se muestran.
                 PLANES_SIEMPRE_BLOQUEADOS.forEach(clave => { delete precios[clave]; });
 
-                // In 90 solo se muestra en los rubros permitidos.
-                if ('IN 90' in precios && !CATEGORIAS_IN90_PERMITIDAS.has(normalizarCategoria(categoriaFinal))) {
+                // In 90 solo en los rubros permitidos (In 90 Osecac no tiene esta regla).
+                if ('IN 90' in precios && !in90PermitidoEnCategoria(categoriaFinal)) {
                     delete precios['IN 90'];
+                }
+
+                // In 180: todo menos convenios / consultas médicas / psiquiatría.
+                if ('IN 180' in precios && !in180PermitidoEn(categoriaFinal, nombreItem)) {
+                    delete precios['IN 180'];
                 }
 
                 if (Object.keys(precios).length === 0) continue; // se quedó sin valores tras el bloqueo
@@ -255,12 +273,6 @@
 
                     baseDeDatos = parsearFilas(filas);
                     if (baseDeDatos.length === 0) throw new Error('No se detectaron registros con precios');
-
-                    fuseInstance = new Fuse(baseDeDatos, {
-                        includeScore: true,
-                        threshold: 0.35,
-                        keys: ['item', 'categoria'],
-                    });
 
                     document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
                     document.getElementById('texto-resultados').textContent = `Base lista (${baseDeDatos.length} registros cargados). Esperando búsqueda...`;
@@ -288,11 +300,20 @@
                 });
         });
 
+        function buscarEstricto(termino){
+            const t = quitarAcentos(termino).toLowerCase().trim();
+            if (!t) return [];
+            return baseDeDatos.filter(r =>
+                quitarAcentos(r.item).toLowerCase().includes(t) ||
+                quitarAcentos(r.categoria).toLowerCase().includes(t)
+            );
+        }
+
         function aplicarBusquedaYFiltro(){
             const termino = document.getElementById('input-busqueda').value.trim();
-            let resultados = termino && fuseInstance
-                ? fuseInstance.search(termino).map(r => r.item)
-                : baseDeDatos.slice(0, termino ? 0 : 10);
+            let resultados = termino
+                ? buscarEstricto(termino)
+                : baseDeDatos.slice(0, 10);
 
             if (filtroActivo) {
                 resultados = resultados.filter(r => Object.prototype.hasOwnProperty.call(r.precios, filtroActivo));
