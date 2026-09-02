@@ -101,7 +101,7 @@
         // ------------------------------------------------------------------
         const ENCABEZADOS_RECONOCIDOS = [
             'INTEGRA 90', 'IN 90',
-            'INTEGRA 90 OSECAC', 'IN 90 OSECAC',
+            'INTEGRA 90 OSECAC', 'IN 90 OSECAC', 'IN 90 (OSECAC)', 'INTEGRA 90 (OSECAC)',
             'AD',
             'COS',
             'MM', 'MM/COM',
@@ -145,14 +145,22 @@
         let filtroActivo = null;
 
         async function descargarExcel() {
-            const variantes = ['precios.xlsx', 'Precios.xlsx', 'PRECIOS.xlsx', './precios.xlsx'];
-            for (const url of variantes) {
+            const variantesXlsx = ['precios.xlsx', 'Precios.xlsx', 'PRECIOS.xlsx', './precios.xlsx'];
+            for (const url of variantesXlsx) {
                 try {
                     const res = await fetch(url);
-                    if (res.ok) return await res.arrayBuffer();
+                    if (res.ok) return { tipo: 'array', data: await res.arrayBuffer() };
                 } catch (e) {}
             }
-            throw new Error('No se pudo encontrar precios.xlsx');
+            // Si no hay .xlsx, probamos con un .csv exportado del mismo archivo.
+            const variantesCsv = ['precios.csv', 'Precios.csv', 'PRECIOS.csv', './precios.csv'];
+            for (const url of variantesCsv) {
+                try {
+                    const res = await fetch(url);
+                    if (res.ok) return { tipo: 'string', data: await res.text() };
+                } catch (e) {}
+            }
+            throw new Error('No se pudo encontrar precios.xlsx ni precios.csv');
         }
 
         // ------------------------------------------------------------------
@@ -182,13 +190,12 @@
         // "IN 180" se muestra en todos los rubros MENOS: convenios (COMED,
         // FAMYL, PETRAGLIA y cualquier ítem que diga "convenio"), consultas
         // médicas (Consulta Médica A/B/C) y psiquiatría.
-        const CATEGORIAS_EXCLUIDAS_IN180 = ['COMED', 'FAMYL', 'PETRAGLIA', 'BONOS DE CONSULTA PSIQUIATRIA']
-            .map(normalizarCategoria);
+        const PALABRAS_CLAVE_EXCLUIDAS_IN180 = ['COMED', 'FAMYL', 'PETRAGLIA', 'PSIQUIATRIA'];
 
         function in180PermitidoEn(categoria, item){
             const cat = normalizarCategoria(categoria);
             const it = normalizarCategoria(item);
-            if (CATEGORIAS_EXCLUIDAS_IN180.includes(cat)) return false;
+            if (PALABRAS_CLAVE_EXCLUIDAS_IN180.some(kw => cat.includes(kw))) return false;
             if (it.includes('CONVENIO')) return false;
             if (it.startsWith('CONSULTA MEDICA')) return false;
             return true;
@@ -264,8 +271,10 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             descargarExcel()
-                .then(data => {
-                    const workbook = XLSX.read(data, { type: 'array' });
+                .then(({ tipo, data }) => {
+                    const workbook = tipo === 'array'
+                        ? XLSX.read(data, { type: 'array' })
+                        : XLSX.read(data, { type: 'string' });
                     const primeraHoja = workbook.Sheets[workbook.SheetNames[0]];
                     const filas = XLSX.utils.sheet_to_json(primeraHoja, { header: 1, defval: '' });
 
@@ -294,8 +303,8 @@
                     document.getElementById('badge-estado').classList.add('text-red-600');
                     document.getElementById('grilla-resultados').innerHTML = `
                         <div class="col-span-1 md:col-span-2 text-center py-10 bg-card rounded-[2rem] shadow-sm">
-                            <p class="text-red-500 font-bold text-lg">No se pudo procesar 'precios.xlsx'.</p>
-                            <p class="text-gray-400 text-sm mt-2">Verifica la estructura del archivo en GitHub.</p>
+                            <p class="text-red-500 font-bold text-lg">No se pudo procesar el archivo de precios.</p>
+                            <p class="text-gray-400 text-sm mt-2">Verifica que 'precios.xlsx' (o 'precios.csv') esté en el repositorio y tenga la estructura esperada.</p>
                         </div>`;
                 });
         });
