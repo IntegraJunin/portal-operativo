@@ -89,46 +89,37 @@
         // ------------------------------------------------------------------
         // CONFIGURACIÓN DE PLANES VISIBLES
         // El excel trae, para cada rubro, una fila de encabezado con los
-        // nombres de los planes en distintas columnas. Acá se listan TODOS
-        // los textos de encabezado que reconocemos como "columna de plan".
-        // Si en el futuro agregás un plan nuevo con un encabezado que no
-        // esté en esta lista, esa columna se va a ignorar hasta que se
-        // agregue su texto acá (no hace falta tocar el excel).
-        //
-        // La comparación ignora mayúsculas/minúsculas y espacios de más,
-        // pero el nombre que se MUESTRA en pantalla es el que está escrito
-        // tal cual en el excel (respeta "In 90", "Afiliado SEC", etc.)
+        // nombres de los planes en distintas columnas. Ya NO usamos una
+        // lista fija de nombres reconocidos: CUALQUIER columna que tenga
+        // un título de texto en esa fila se toma como un plan válido y se
+        // muestra. Las columnas sin título (vacías) en ese rubro se
+        // ignoran, aunque tengan un valor cargado.
+        // Esto hace que agregar o sacar un plan sea tan simple como
+        // escribir o borrar su nombre en el encabezado del excel: no hace
+        // falta tocar este archivo.
         // ------------------------------------------------------------------
-        const ENCABEZADOS_RECONOCIDOS = [
-            'INTEGRA 90', 'IN 90',
-            'INTEGRA 90 OSECAC', 'IN 90 OSECAC', 'IN 90 (OSECAC)', 'INTEGRA 90 (OSECAC)',
-            'AD',
-            'COS',
-            'MM', 'MM/COM',
-            'INTEGRA 180', 'IN 180',
-            'INTEGRA 360', 'IN 360',
-            'INTEGRA SEC', 'AFILIADO SEC',
-            'ASISTENCIAL', 'ACTIVO ASISTENCIAL',
-            'NO AFILIDO OSECAC', 'NO AFILIADO OSECAC',
-            'MON/OP NO COS',
-        ];
-        // Orden en el que se muestran los planes dentro de cada tarjeta.
-        // Se arma solo, en el orden en que las columnas aparecen en el excel.
-        let ORDEN_PLANES = [];
+
+        // Estas columnas nunca se muestran, aunque tengan título, por
+        // pedido explícito (quedan bloqueadas incluso si reaparecen).
+        const PLANES_SIEMPRE_BLOQUEADOS = ['AD', 'COS', 'MM', 'MM/COM', 'MON/OP NO COS'];
 
         function normalizar(v){ return String(v ?? '').trim(); }
         function claveComparable(v){ return normalizar(v).replace(/\s+/g, ' ').toUpperCase(); }
 
+        // Un título de plan es cualquier celda no vacía que tenga al menos
+        // una letra (para no confundir con un precio como "35000" o "$0").
+        const TIENE_LETRAS = /[a-zA-ZÀ-ÿ]/;
+
         // Devuelve el texto EXACTO de la celda (tal cual está en el excel)
-        // si matchea un encabezado reconocido, o null si no matchea.
+        // si parece un título de plan, o null si está vacía / es un número.
         function detectarPlan(valorCelda){
             const texto = normalizar(valorCelda);
             if (!texto) return null;
-            return ENCABEZADOS_RECONOCIDOS.includes(claveComparable(texto)) ? texto : null;
+            return TIENE_LETRAS.test(texto) ? texto : null;
         }
 
         // Una fila es "de encabezado" si al menos 2 celdas (fuera de la col A)
-        // matchean alguno de los encabezados reconocidos.
+        // tienen título de plan.
         function esFilaEncabezado(fila){
             let matches = 0;
             for (let c = 1; c < fila.length; c++) {
@@ -140,6 +131,10 @@
         function filaVacia(fila){
             return !fila || fila.every(cell => normalizar(cell) === '');
         }
+
+        // Orden en el que se muestran los planes dentro de cada tarjeta.
+        // Se arma solo, en el orden en que las columnas aparecen en el excel.
+        let ORDEN_PLANES = [];
 
         let baseDeDatos = [];
         let filtroActivo = null;
