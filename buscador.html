@@ -75,7 +75,18 @@
         #tabla-wrap tbody tr:hover td { background-color: #efeadd; }
         #tabla-wrap tbody td { border-bottom: 1px solid #f2efe8; font-family: 'Outfit', sans-serif; font-weight: 700; color: #3a332c; cursor: pointer; }
         #tabla-wrap .celda-item { font-weight: 700; color: #5c4b3f; cursor: default; }
-        #tabla-wrap .celda-categoria { display: block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: #b3543b; margin-bottom: 2px; }
+        #tabla-wrap .celda-categoria {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: #ffffff;
+            background: #b3543b;
+            padding: 2px 8px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+        }
         #tabla-wrap .celda-vacia { color: #c9c2b4; font-weight: 600; cursor: default; }
 
         /* Resaltado potente de fila + columna al seleccionar una celda */
@@ -119,8 +130,8 @@
         <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-4 px-1">Filtro por tipo de socio</p>
 
         <!-- Selector fijo de convenios: recuadro bien diferenciado de los filtros de arriba -->
-        <div class="border-2 border-dashed border-[#e3a98a] rounded-2xl px-4 py-3 mb-6 bg-[#fbeee6]">
-            <p class="text-[10px] font-extrabold uppercase tracking-widest text-[#b3543b] mb-2 px-1">🤝 Filtro por convenio (independiente del de arriba)</p>
+        <div class="border-4 border-[#b3543b] rounded-2xl px-4 py-4 mb-6 bg-[#fbeee6] shadow-md">
+            <p class="text-xs font-extrabold uppercase tracking-widest text-[#b3543b] mb-2 px-1">🤝 Filtro por convenio (independiente del de arriba)</p>
             <div id="fila-convenios" class="flex flex-wrap items-center gap-2"></div>
         </div>
 
@@ -216,14 +227,10 @@
         let filtroActivo = null;
 
         async function descargarExcel() {
-            const variantesXlsx = ['precios.xlsx', 'Precios.xlsx', 'PRECIOS.xlsx', './precios.xlsx'];
-            for (const url of variantesXlsx) {
-                try {
-                    const res = await fetch(url);
-                    if (res.ok) return { tipo: 'array', data: await res.arrayBuffer() };
-                } catch (e) {}
-            }
-            // Si no hay .xlsx, probamos con un .csv exportado del mismo archivo.
+            // Se prueba primero .csv (el formato que se está usando ahora)
+            // y el .xlsx queda como respaldo, por si en algún momento se
+            // vuelve a subir en ese formato. Si tenés un precios.xlsx viejo
+            // dando vueltas en el repo, esto evita que tape al csv nuevo.
             const variantesCsv = ['precios.csv', 'Precios.csv', 'PRECIOS.csv', './precios.csv'];
             for (const url of variantesCsv) {
                 try {
@@ -231,7 +238,14 @@
                     if (res.ok) return { tipo: 'string', data: await res.text() };
                 } catch (e) {}
             }
-            throw new Error('No se pudo encontrar precios.xlsx ni precios.csv');
+            const variantesXlsx = ['precios.xlsx', 'Precios.xlsx', 'PRECIOS.xlsx', './precios.xlsx'];
+            for (const url of variantesXlsx) {
+                try {
+                    const res = await fetch(url);
+                    if (res.ok) return { tipo: 'array', data: await res.arrayBuffer() };
+                } catch (e) {}
+            }
+            throw new Error('No se pudo encontrar precios.csv ni precios.xlsx');
         }
 
         // ------------------------------------------------------------------
