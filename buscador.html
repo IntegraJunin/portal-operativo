@@ -115,11 +115,13 @@
         </div>
 
         <!-- Filtros por plan -->
-        <div id="fila-filtros" class="flex flex-wrap gap-2 mb-3"></div>
+        <div id="fila-filtros" class="flex flex-wrap gap-2 mb-2"></div>
+        <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-4 px-1">Filtro por tipo de socio</p>
 
-        <!-- Selector fijo de convenios -->
-        <div id="fila-convenios" class="flex flex-wrap items-center gap-2 mb-6 bg-[#fbeee6] border border-[#f0dcd0] rounded-2xl px-4 py-3">
-            <span class="text-[11px] font-extrabold uppercase tracking-widest text-[#b3543b] mr-1">Convenios:</span>
+        <!-- Selector fijo de convenios: recuadro bien diferenciado de los filtros de arriba -->
+        <div class="border-2 border-dashed border-[#e3a98a] rounded-2xl px-4 py-3 mb-6 bg-[#fbeee6]">
+            <p class="text-[10px] font-extrabold uppercase tracking-widest text-[#b3543b] mb-2 px-1">🤝 Filtro por convenio (independiente del de arriba)</p>
+            <div id="fila-convenios" class="flex flex-wrap items-center gap-2"></div>
         </div>
 
         <!-- Estado -->
@@ -301,6 +303,20 @@
                     continue;
                 }
 
+                // Sub-encabezados que separan un rubro en sub-secciones sin
+                // redefinir los planes (ej. separar "Cuotas Sepelio" de
+                // "Cuotas Socios" dentro del mismo bloque de columnas).
+                // Se reconocen por nombre exacto para no confundirlos con
+                // filas de práctica vacías (que deben seguir ignorándose).
+                // Agregar acá el nombre en mayúsculas si sumás otro sub-rubro así.
+                const SUBENCABEZADOS_SIN_PLANES = ['CUOTAS SEPELIO', 'CUOTAS SOCIOS'];
+                const esSubEncabezado = fila.slice(1).every(c => normalizar(c) === '')
+                    && SUBENCABEZADOS_SIN_PLANES.includes(claveComparable(fila[0]));
+                if (esSubEncabezado) {
+                    categoriaActual = normalizar(fila[0]);
+                    continue;
+                }
+
                 const nombreItem = normalizar(fila[0]);
                 if (!nombreItem) continue;
 
@@ -389,22 +405,40 @@
 
         function aplicarBusquedaYFiltro(){
             const termino = document.getElementById('input-busqueda').value.trim();
-            let resultados = termino
-                ? buscarEstricto(termino)
-                : baseDeDatos.slice(0, 10);
+
+            let resultados;
+            if (termino) {
+                resultados = buscarEstricto(termino);
+            } else if (filtroActivo || convenioActivo) {
+                // Con un filtro de plan o de convenio activo pero sin texto
+                // buscado, mostramos el listado COMPLETO que corresponda al
+                // filtro, no solo las 10 sugerencias por defecto.
+                resultados = baseDeDatos.slice();
+            } else {
+                resultados = baseDeDatos.slice(0, 10);
+            }
 
             if (filtroActivo) {
                 resultados = resultados.filter(r => Object.prototype.hasOwnProperty.call(r.precios, filtroActivo));
             }
 
             if (convenioActivo) {
-                resultados = resultados.filter(r => convenioActivo.coincide(r.categoria));
+                // El filtro de convenio solo debe sacar ítems que SÍ son de
+                // algún convenio y no coinciden con el elegido. Un ítem que
+                // no pertenece a ningún convenio (salones, cuotas, etc.) no
+                // se toca, para no "filtrar de más" en búsquedas ajenas a
+                // convenios.
+                resultados = resultados.filter(r =>
+                    !categoriaEsDeAlgunConvenio(r.categoria) || convenioActivo.coincide(r.categoria)
+                );
             }
 
             renderizarTabla(resultados, filtroActivo);
 
             if (!termino) {
-                document.getElementById('texto-resultados').textContent = 'Mostrando sugerencias...';
+                document.getElementById('texto-resultados').textContent = (filtroActivo || convenioActivo)
+                    ? `Mostrando ${resultados.length} práctica(s) / servicio(s)`
+                    : 'Mostrando sugerencias...';
             } else {
                 document.getElementById('texto-resultados').textContent = `Se encontraron ${resultados.length} práctica(s) / servicio(s)`;
             }
@@ -418,16 +452,24 @@
             { nombre: 'COMED',          claves: ['COMED'] },
             { nombre: 'CMD (FAMYL)',    claves: ['CMD', 'FAMYL'] },
             { nombre: 'Dr. Costanzi',   claves: ['COSTANZI'] },
+            { nombre: 'Nexo Terapia',   claves: ['NEXO TERAPIA', 'NEXO'] },
         ].map(c => ({ ...c, coincide: (categoria) => {
             const cat = normalizarCategoria(categoria);
             return c.claves.some(k => cat.includes(k));
         }}));
 
+        // Una categoría "pertenece a un convenio" si matchea a alguno de los
+        // de la lista de arriba. Sirve para que el filtro de convenio no
+        // interfiera con rubros que no son convenios (salones, cuotas, etc).
+        function categoriaEsDeAlgunConvenio(categoria){
+            return CONVENIOS_FIJOS.some(c => c.coincide(categoria));
+        }
+
         let convenioActivo = null;
 
         function renderizarFiltroConvenios(){
             const cont = document.getElementById('fila-convenios');
-            cont.innerHTML = `<span class="text-[11px] font-extrabold uppercase tracking-widest text-[#b3543b] mr-1">Convenios:</span>` +
+            cont.innerHTML =
                 `<button class="chip-filtro activo px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-convenio="">
                     Todos
                 </button>` +
