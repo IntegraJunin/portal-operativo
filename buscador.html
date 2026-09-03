@@ -103,16 +103,24 @@
         // pedido explícito (quedan bloqueadas incluso si reaparecen).
         const PLANES_SIEMPRE_BLOQUEADOS = ['AD', 'COS', 'MM', 'MM/COM', 'MON/OP NO COS'];
 
+        // Las columnas K y L (índices 10 y 11, las 2 últimas del excel) se
+        // usan internamente para cálculos de la planilla, no son un tipo de
+        // socio real. Se ignoran siempre, sea cual sea el texto que tengan.
+        const COLUMNAS_IGNORADAS = [10, 11];
+
         function normalizar(v){ return String(v ?? '').trim(); }
         function claveComparable(v){ return normalizar(v).replace(/\s+/g, ' ').toUpperCase(); }
 
         // Un título de plan es cualquier celda no vacía que tenga al menos
-        // una letra (para no confundir con un precio como "35000" o "$0").
+        // una letra (para no confundir con un precio como "35000" o "$0"),
+        // salvo que esté en una columna ignorada.
         const TIENE_LETRAS = /[a-zA-ZÀ-ÿ]/;
 
         // Devuelve el texto EXACTO de la celda (tal cual está en el excel)
-        // si parece un título de plan, o null si está vacía / es un número.
-        function detectarPlan(valorCelda){
+        // si parece un título de plan, o null si está vacía / es un número
+        // / está en una columna ignorada.
+        function detectarPlan(valorCelda, indiceColumna){
+            if (COLUMNAS_IGNORADAS.includes(indiceColumna)) return null;
             const texto = normalizar(valorCelda);
             if (!texto) return null;
             return TIENE_LETRAS.test(texto) ? texto : null;
@@ -123,7 +131,7 @@
         function esFilaEncabezado(fila){
             let matches = 0;
             for (let c = 1; c < fila.length; c++) {
-                if (detectarPlan(fila[c])) matches++;
+                if (detectarPlan(fila[c], c)) matches++;
             }
             return matches >= 2;
         }
@@ -215,7 +223,7 @@
 
                     mapaColumnas = {};
                     for (let c = 1; c < fila.length; c++) {
-                        const etiqueta = detectarPlan(fila[c]);
+                        const etiqueta = detectarPlan(fila[c], c);
                         if (!etiqueta) continue;
                         const clave = claveComparable(etiqueta);
                         mapaColumnas[c] = clave;
@@ -392,17 +400,19 @@
             const planesAMostrar = planFiltrado ? [planFiltrado] : ORDEN_PLANES;
 
             contenedor.innerHTML = datos.map(registro => {
-                const planesHTML = planesAMostrar
-                    .filter(clave => Object.prototype.hasOwnProperty.call(registro.precios, clave))
-                    .map(clave => {
-                        const valor = registro.precios[clave];
-                        const etiqueta = etiquetaPorClave[clave] || clave;
-                        return `
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
-                            <span class="text-xs font-bold text-red-800 bg-red-50 px-2 py-1 rounded shadow-sm">${etiqueta.toUpperCase()}</span>
-                            <span class="font-outfit font-bold text-gray-800 text-lg">${formatearValor(valor)}</span>
+                const clavesDelItem = planesAMostrar.filter(clave =>
+                    Object.prototype.hasOwnProperty.call(registro.precios, clave)
+                );
+
+                const columnasHTML = clavesDelItem.map(clave => {
+                    const valor = registro.precios[clave];
+                    const etiqueta = etiquetaPorClave[clave] || clave;
+                    return `
+                        <div class="flex flex-col items-center text-center gap-1.5 px-2 py-3 border-r border-gray-100 last:border-r-0">
+                            <span class="text-[10px] font-bold text-red-800 bg-red-50 px-2 py-1 rounded shadow-sm leading-tight">${etiqueta.toUpperCase()}</span>
+                            <span class="font-outfit font-bold text-gray-800 text-base leading-tight">${formatearValor(valor)}</span>
                         </div>`;
-                    }).join('');
+                }).join('');
 
                 return `
                     <div class="bg-card rounded-[2rem] p-6 md:p-8 shadow-sm border-2 border-transparent hover:border-[#efeadd] transition duration-300 flex flex-col h-full">
@@ -415,11 +425,11 @@
                             ${registro.item}
                         </h3>
 
-                        <div class="bg-inner-card rounded-2xl p-5 border border-gray-100 shadow-inner mt-auto">
-                            <p class="text-[10px] font-bold text-gray-400 mb-4 uppercase tracking-widest">Valores por tipo de plan / socio</p>
-                            <div class="flex flex-col gap-1">
-                                ${planesHTML || '<p class="text-sm text-gray-400">Sin valores asignados</p>'}
-                            </div>
+                        <div class="bg-inner-card rounded-2xl p-3 border border-gray-100 shadow-inner mt-auto overflow-x-auto">
+                            <p class="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest px-2">Valores por tipo de plan / socio</p>
+                            ${clavesDelItem.length > 0
+                                ? `<div class="grid" style="grid-template-columns: repeat(${clavesDelItem.length}, minmax(72px, 1fr));">${columnasHTML}</div>`
+                                : '<p class="text-sm text-gray-400 px-2 pb-2">Sin valores asignados</p>'}
                         </div>
                     </div>
                 `;
