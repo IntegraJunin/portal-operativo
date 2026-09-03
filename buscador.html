@@ -161,8 +161,6 @@
         // ------------------------------------------------------------------
         // RESTRICCIONES DE VISUALIZACIÓN
         // ------------------------------------------------------------------
-        // Estas columnas NUNCA se muestran, en ningún rubro.
-        const PLANES_SIEMPRE_BLOQUEADOS = ['AD', 'COS', 'MM', 'MM/COM', 'MON/OP NO COS'];
 
         // Saca acentos para comparar sin importar tildes.
         function quitarAcentos(s){ return String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
