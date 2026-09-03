@@ -208,7 +208,6 @@
         <div class="tabs">
             <button class="tab-btn active" id="tab-manuales" onclick="mostrarSeccion('manuales')">📄 Manuales de Procedimiento</button>
             <button class="tab-btn" id="tab-solicitudes" onclick="mostrarSeccion('solicitudes')">🗂️ Solicitudes</button>
-            <button class="tab-btn" id="tab-convenios" onclick="mostrarSeccion('convenios')">🤝 Convenios</button>
             <button class="tab-btn" id="tab-precios" onclick="mostrarSeccion('precios')">🔍 Buscador de Precios</button>
         </div>
     </div>
@@ -259,30 +258,7 @@
         </div>
     </div>
 
-    <!-- SECCIÓN 3: CONVENIOS -->
-    <div id="sec-convenios" class="hidden">
-        <div class="manuales-grid">
-            <div class="lista-manuales" id="lista-convenios">
-                <h2>Convenios disponibles</h2>
-                <!-- los botones se generan desde CONVENIOS -->
-            </div>
-
-            <div class="visor-panel">
-                <div class="visor-header hidden" id="visor-header-convenios">
-                    <h3 id="visor-titulo-convenios"></h3>
-                    <a id="visor-descarga-convenios" href="#" target="_blank" rel="noopener">Abrir en pestaña nueva ↗</a>
-                </div>
-                <div class="visor-body" id="visor-body-convenios">
-                    <div class="estado-vacio">
-                        <div class="ico">🤝</div>
-                        <p>Elegí un convenio de la izquierda para verlo acá.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SECCIÓN 4: BUSCADOR DE PRECIOS -->
+    <!-- SECCIÓN 3: BUSCADOR DE PRECIOS -->
     <div id="sec-precios" class="hidden">
         <div class="buscador-frame-wrap">
             <iframe src="buscador.html" title="Buscador de precios"></iframe>
@@ -320,20 +296,6 @@
     ];
     const CARPETA_SOLICITUDES = 'solicitudes/';
     const cacheRutasSolicitudes = {};
-
-    // Convenios: por ahora armé esta lista con las 3 marcas de convenio que
-    // aparecen en el excel de precios (COMED, CMD/FAMYL, PETRAGLIA). Si son
-    // otros los contratos que querés cargar acá, decime los nombres y los
-    // cambio. Se buscan dentro de la carpeta "convenios/".
-    const CONVENIOS = [
-        { icono: '🤝', nombre: 'Convenio COMED',        archivo: 'CONVENIO COMED' },
-        { icono: '🤝', nombre: 'Convenio CMD/FAMYL',    archivo: 'CONVENIO CMD FAMYL' },
-        { icono: '🤝', nombre: 'Convenio Petraglia',    archivo: 'CONVENIO PETRAGLIA' },
-        { icono: '🤝', nombre: 'Convenio Dra. Capponi', archivo: 'CONVENIO DRA CAPPONI' },
-        { icono: '🤝', nombre: 'Convenio Dr. Costanzi', archivo: 'CONVENIO DR COSTANZI' },
-    ];
-    const CARPETA_CONVENIOS = 'convenios/';
-    const cacheRutasConvenios = {};
 
     function quitarAcentos(str){
         return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -466,29 +428,15 @@
         bodyId: 'visor-body-solicitudes',
     });
 
-    const visorConvenios = crearVisorDocumentos({
-        documentos: CONVENIOS,
-        carpeta: CARPETA_CONVENIOS,
-        cache: cacheRutasConvenios,
-        prefijo: 'btn-convenio',
-        listaId: 'lista-convenios',
-        headerId: 'visor-header-convenios',
-        tituloId: 'visor-titulo-convenios',
-        descargaId: 'visor-descarga-convenios',
-        bodyId: 'visor-body-convenios',
-    });
-
     function mostrarSeccion(seccion){
         const secciones = {
             manuales: document.getElementById('sec-manuales'),
             solicitudes: document.getElementById('sec-solicitudes'),
-            convenios: document.getElementById('sec-convenios'),
             precios: document.getElementById('sec-precios'),
         };
         const tabs = {
             manuales: document.getElementById('tab-manuales'),
             solicitudes: document.getElementById('tab-solicitudes'),
-            convenios: document.getElementById('tab-convenios'),
             precios: document.getElementById('tab-precios'),
         };
 
