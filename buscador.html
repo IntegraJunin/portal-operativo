@@ -117,8 +117,10 @@
         <!-- Filtros por plan -->
         <div id="fila-filtros" class="flex flex-wrap gap-2 mb-3"></div>
 
-        <!-- Selector de convenio/rubro (solo aparece si la búsqueda trae más de uno) -->
-        <div id="fila-convenios" class="flex flex-wrap gap-2 mb-6 hidden"></div>
+        <!-- Selector fijo de convenios -->
+        <div id="fila-convenios" class="flex flex-wrap items-center gap-2 mb-6 bg-[#fbeee6] border border-[#f0dcd0] rounded-2xl px-4 py-3">
+            <span class="text-[11px] font-extrabold uppercase tracking-widest text-[#b3543b] mr-1">Convenios:</span>
+        </div>
 
         <!-- Estado -->
         <div class="flex flex-col md:flex-row justify-between items-center mb-6 bg-[#efeadd] px-6 py-3 rounded-full text-sm shadow-sm gap-3">
@@ -192,12 +194,24 @@
         }
 
         // Orden en el que se muestran los planes dentro de cada tarjeta.
-        // Se arma solo, en el orden en que las columnas aparecen en el excel.
+        // Se arma solo, en el orden en que las columnas aparecen en el excel,
+        // pero luego se reordena según PRIORIDAD_ORDEN (In 90 siempre primero).
         let ORDEN_PLANES = [];
+
+        const PRIORIDAD_ORDEN = ['IN 90', 'IN 90 (OSECAC)', 'IN 180', 'IN 360', 'AFILIADO SEC', 'ASISTENCIAL'];
+        function ordenarPlanes(claves){
+            return [...claves].sort((a, b) => {
+                const ia = PRIORIDAD_ORDEN.indexOf(a);
+                const ib = PRIORIDAD_ORDEN.indexOf(b);
+                if (ia === -1 && ib === -1) return 0;
+                if (ia === -1) return 1;
+                if (ib === -1) return -1;
+                return ia - ib;
+            });
+        }
 
         let baseDeDatos = [];
         let filtroActivo = null;
-        let categoriaActiva = null;
 
         async function descargarExcel() {
             const variantesXlsx = ['precios.xlsx', 'Precios.xlsx', 'PRECIOS.xlsx', './precios.xlsx'];
@@ -319,6 +333,7 @@
 
                 registros.push({ item: nombreItem, categoria: categoriaFinal, precios });
             }
+            ORDEN_PLANES = ordenarPlanes(ORDEN_PLANES);
             return registros;
         }
 
@@ -346,6 +361,7 @@
                     input.focus();
 
                     renderizarFiltros();
+                    renderizarFiltroConvenios();
                     aplicarBusquedaYFiltro();
                 })
                 .catch(err => {
@@ -381,47 +397,50 @@
                 resultados = resultados.filter(r => Object.prototype.hasOwnProperty.call(r.precios, filtroActivo));
             }
 
-            // Categorías/convenios presentes en esta búsqueda (antes de aplicar
-            // el filtro de categoría, para poder ofrecer todas las opciones).
-            const categoriasDisponibles = [...new Set(resultados.map(r => r.categoria))];
-            if (categoriaActiva && !categoriasDisponibles.includes(categoriaActiva)) {
-                categoriaActiva = null; // la categoría elegida no aplica a esta búsqueda
+            if (convenioActivo) {
+                resultados = resultados.filter(r => convenioActivo.coincide(r.categoria));
             }
-            renderizarSelectorCategorias(categoriasDisponibles);
 
-            const resultadosFinales = categoriaActiva
-                ? resultados.filter(r => r.categoria === categoriaActiva)
-                : resultados;
-
-            renderizarTabla(resultadosFinales, filtroActivo);
+            renderizarTabla(resultados, filtroActivo);
 
             if (!termino) {
                 document.getElementById('texto-resultados').textContent = 'Mostrando sugerencias...';
             } else {
-                document.getElementById('texto-resultados').textContent = `Se encontraron ${resultadosFinales.length} práctica(s) / servicio(s)`;
+                document.getElementById('texto-resultados').textContent = `Se encontraron ${resultados.length} práctica(s) / servicio(s)`;
             }
         }
 
-        function renderizarSelectorCategorias(categorias){
+        // Filtro fijo de convenios: siempre visible, sea cual sea la búsqueda.
+        // "coincide" matchea contra la categoría del ítem, sin acentos ni
+        // mayúsculas, por palabra clave (para tolerar variantes de nombre).
+        const CONVENIOS_FIJOS = [
+            { nombre: 'Dra. Capponi',   claves: ['CAPPONI'] },
+            { nombre: 'COMED',          claves: ['COMED'] },
+            { nombre: 'CMD (FAMYL)',    claves: ['CMD', 'FAMYL'] },
+            { nombre: 'Dr. Costanzi',   claves: ['COSTANZI'] },
+        ].map(c => ({ ...c, coincide: (categoria) => {
+            const cat = normalizarCategoria(categoria);
+            return c.claves.some(k => cat.includes(k));
+        }}));
+
+        let convenioActivo = null;
+
+        function renderizarFiltroConvenios(){
             const cont = document.getElementById('fila-convenios');
-            if (categorias.length <= 1) {
-                cont.innerHTML = '';
-                cont.classList.add('hidden');
-                return;
-            }
-            cont.classList.remove('hidden');
-            cont.innerHTML = `
-                <button class="chip-filtro ${!categoriaActiva ? 'activo' : ''} px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-cat="">
-                    Todos (${categorias.length})
+            cont.innerHTML = `<span class="text-[11px] font-extrabold uppercase tracking-widest text-[#b3543b] mr-1">Convenios:</span>` +
+                `<button class="chip-filtro activo px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-convenio="">
+                    Todos
                 </button>` +
-                categorias.map(cat => `
-                    <button class="chip-filtro ${categoriaActiva === cat ? 'activo' : ''} px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-cat="${cat}">
-                        ${cat}
+                CONVENIOS_FIJOS.map((c, i) => `
+                    <button class="chip-filtro px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-convenio="${i}">
+                        ${c.nombre}
                     </button>`).join('');
 
             cont.querySelectorAll('.chip-filtro').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    categoriaActiva = btn.dataset.cat || null;
+                    convenioActivo = btn.dataset.convenio !== '' ? CONVENIOS_FIJOS[Number(btn.dataset.convenio)] : null;
+                    cont.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
+                    btn.classList.add('activo');
                     aplicarBusquedaYFiltro();
                 });
             });
@@ -518,17 +537,21 @@
                     <tbody>${tbodyHTML}</tbody>
                 </table>`;
 
-            // Resaltado potente de fila + columna al hacer clic en una celda de datos.
+            // Resaltado potente pero acotado: solo la celda tocada, el
+            // encabezado de su columna y el título de su fila. Nada más.
             contenedor.querySelectorAll('td[data-col]').forEach(celda => {
                 celda.addEventListener('click', () => {
                     const yaActiva = celda.classList.contains('resaltada');
                     contenedor.querySelectorAll('.resaltada').forEach(c => c.classList.remove('resaltada'));
                     if (yaActiva) return; // click de nuevo sobre la misma celda: apaga el resaltado
 
-                    const fila = celda.dataset.fila;
-                    const col = celda.dataset.col;
-                    contenedor.querySelectorAll(`[data-fila="${fila}"]`).forEach(c => c.classList.add('resaltada'));
-                    contenedor.querySelectorAll(`[data-col="${col}"]`).forEach(c => c.classList.add('resaltada'));
+                    celda.classList.add('resaltada');
+
+                    const encabezado = contenedor.querySelector(`thead th[data-col="${celda.dataset.col}"]`);
+                    if (encabezado) encabezado.classList.add('resaltada');
+
+                    const tituloFila = contenedor.querySelector(`tbody td.celda-item[data-fila="${celda.dataset.fila}"]`);
+                    if (tituloFila) tituloFila.classList.add('resaltada');
                 });
             });
         }
