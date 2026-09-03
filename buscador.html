@@ -76,7 +76,8 @@
         #tabla-wrap tbody td { border-bottom: 1px solid #f2efe8; font-family: 'Outfit', sans-serif; font-weight: 700; color: #3a332c; cursor: pointer; }
         #tabla-wrap .celda-item { font-weight: 700; color: #5c4b3f; cursor: default; }
         #tabla-wrap .celda-categoria {
-            display: inline-block;
+            display: block;
+            width: fit-content;
             font-size: 11px;
             font-weight: 800;
             text-transform: uppercase;
@@ -419,32 +420,34 @@
 
         function aplicarBusquedaYFiltro(){
             const termino = document.getElementById('input-busqueda').value.trim();
-
             let resultados;
+
             if (termino) {
+                // Con texto buscado: el convenio NO debe ocultar resultados
+                // ajenos a los convenios (ej. buscar "salones" con un
+                // convenio marcado igual debe traer los salones).
                 resultados = buscarEstricto(termino);
-            } else if (filtroActivo || convenioActivo) {
-                // Con un filtro de plan o de convenio activo pero sin texto
-                // buscado, mostramos el listado COMPLETO que corresponda al
-                // filtro, no solo las 10 sugerencias por defecto.
-                resultados = baseDeDatos.slice();
+                if (filtroActivo) {
+                    resultados = resultados.filter(r => Object.prototype.hasOwnProperty.call(r.precios, filtroActivo));
+                }
+                if (convenioActivo) {
+                    resultados = resultados.filter(r =>
+                        !categoriaEsDeAlgunConvenio(r.categoria) || convenioActivo.coincide(r.categoria)
+                    );
+                }
+            } else if (convenioActivo) {
+                // Sin texto buscado y con un convenio elegido: mostrar el
+                // listado COMPLETO de ESE convenio (no todo lo demás).
+                resultados = baseDeDatos.filter(r => convenioActivo.coincide(r.categoria));
+                if (filtroActivo) {
+                    resultados = resultados.filter(r => Object.prototype.hasOwnProperty.call(r.precios, filtroActivo));
+                }
+            } else if (filtroActivo) {
+                // Sin texto y sin convenio, pero con un plan elegido:
+                // mostrar el listado completo de ese plan.
+                resultados = baseDeDatos.filter(r => Object.prototype.hasOwnProperty.call(r.precios, filtroActivo));
             } else {
                 resultados = baseDeDatos.slice(0, 10);
-            }
-
-            if (filtroActivo) {
-                resultados = resultados.filter(r => Object.prototype.hasOwnProperty.call(r.precios, filtroActivo));
-            }
-
-            if (convenioActivo) {
-                // El filtro de convenio solo debe sacar ítems que SÍ son de
-                // algún convenio y no coinciden con el elegido. Un ítem que
-                // no pertenece a ningún convenio (salones, cuotas, etc.) no
-                // se toca, para no "filtrar de más" en búsquedas ajenas a
-                // convenios.
-                resultados = resultados.filter(r =>
-                    !categoriaEsDeAlgunConvenio(r.categoria) || convenioActivo.coincide(r.categoria)
-                );
             }
 
             renderizarTabla(resultados, filtroActivo);
