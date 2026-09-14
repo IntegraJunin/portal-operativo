@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>integra | Buscador de Precios y Servicios</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="auth.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f7f5f0;
+            font-family: 'Comfortaa', cursive;
+        }
+        h1, h2, h3, .font-outfit {
+            font-family: 'Outfit', sans-serif;
+        }
+        .bg-card { background-color: #ffffff; }
+        .bg-inner-card { background-color: #fcfbfa; }
+        .text-brand { color: #5c4b3f; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d1cdb8; border-radius: 10px; }
+
+        .chip-filtro {
+            transition: all .15s ease;
+        }
+        .chip-filtro.activo {
+            background-color: #5c4b3f !important;
+            color: #fff !important;
+        }
+
+        #tabla-wrap table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            min-width: 600px;
+        }
+        #tabla-wrap th, #tabla-wrap td {
+            padding: 12px 16px;
+            text-align: left;
+            white-space: nowrap;
+            transition: background-color .1s ease;
+        }
+        #tabla-wrap thead th {
+            font-family: 'Outfit', sans-serif;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: #9a8d7d;
+            background: #fcfbfa;
+            position: sticky;
+            top: 0;
+            border-bottom: 2px solid #efeadd;
+        }
+        #tabla-wrap tbody td:first-child, #tabla-wrap thead th:first-child {
+            position: sticky;
+            left: 0;
+            background: #ffffff;
+            z-index: 1;
+            white-space: normal;
+            min-width: 220px;
+            max-width: 320px;
+        }
+        #tabla-wrap thead th:first-child { background: #fcfbfa; z-index: 2; }
+        #tabla-wrap tbody tr:nth-child(even) td { background-color: #fcfbfa; }
+        #tabla-wrap tbody tr:nth-child(even) td:first-child { background-color: #fcfbfa; }
+        #tabla-wrap tbody tr:hover td { background-color: #efeadd; }
+        #tabla-wrap tbody td { border-bottom: 1px solid #f2efe8; font-family: 'Outfit', sans-serif; font-weight: 700; color: #3a332c; cursor: pointer; }
+        #tabla-wrap .celda-item { font-weight: 700; color: #5c4b3f; cursor: default; }
+        #tabla-wrap .celda-categoria {
+            display: block;
+            width: fit-content;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: #ffffff;
+            background: #b3543b;
+            padding: 2px 8px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+        }
+        #tabla-wrap .celda-vacia { color: #c9c2b4; font-weight: 600; cursor: default; }
+
+        /* Resaltado potente de fila + columna al seleccionar una celda */
+        #tabla-wrap td.resaltada, #tabla-wrap th.resaltada {
+            background-color: #fde047 !important;
+            box-shadow: inset 0 0 0 2px #f59e0b;
+            color: #3a332c !important;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto">
+
+        <!-- Encabezado -->
+        <div class="bg-card rounded-[2rem] p-8 md:p-10 shadow-sm mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-5xl font-extrabold text-brand flex items-center gap-2">
+                    integra <span class="text-4xl" style="color: #8c7a6b;">✳</span>
+                </h1>
+                <p class="text-gray-500 font-semibold mt-2 text-sm md:text-base">
+                    Tres niveles de cobertura para acompañarte en cada etapa
+                </p>
+            </div>
+        </div>
+
+        <!-- Buscador -->
+        <div class="relative mb-4">
+            <span class="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl">🔍</span>
+            <input
+                type="text"
+                id="input-busqueda"
+                placeholder="Buscar por práctica, código o especialidad..."
+                class="w-full pl-14 pr-6 py-5 rounded-full border-none shadow-sm focus:ring-4 focus:ring-orange-100 text-lg bg-card outline-none font-outfit font-semibold text-gray-700 transition disabled:opacity-50"
+                disabled
+            >
+        </div>
+
+        <!-- Filtros por plan -->
+        <div id="fila-filtros" class="flex flex-wrap gap-2 mb-2"></div>
+        <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-4 px-1">Filtro por tipo de socio</p>
+
+        <!-- Selector fijo de convenios -->
+        <div class="border-4 border-[#b3543b] rounded-2xl px-4 py-4 mb-4 bg-[#fbeee6] shadow-md">
+            <p class="text-xs font-extrabold uppercase tracking-widest text-[#b3543b] mb-2 px-1">🤝 Filtro por convenio</p>
+            <div id="fila-convenios" class="flex flex-wrap items-center gap-2"></div>
+        </div>
+
+        <!-- Selector fijo de servicios y prácticas -->
+        <div class="border-4 border-[#5c4b3f] rounded-2xl px-4 py-4 mb-6 bg-[#f5f2eb] shadow-md">
+            <p class="text-xs font-extrabold uppercase tracking-widest text-[#5c4b3f] mb-3 px-1">📋 Filtro por servicio</p>
+            <div id="fila-servicios"></div>
+        </div>
+
+        <!-- Estado -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 bg-[#efeadd] px-6 py-3 rounded-full text-sm shadow-sm gap-3">
+            <div class="flex items-center gap-3 font-bold text-gray-700">
+                <span id="indicador-color" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                <span id="texto-resultados">Cargando base de datos...</span>
+            </div>
+            <div id="badge-estado" class="bg-white px-4 py-1.5 rounded-full font-bold text-gray-500 text-xs shadow-sm uppercase tracking-wider">
+                Conectando...
+            </div>
+        </div>
+
+        <!-- Resultados: tabla de práctica x tipo de socio -->
+        <div id="tabla-wrap" class="bg-card rounded-[2rem] shadow-sm overflow-x-auto p-2"></div>
+
+    </div>
+
+    <script>
+        // ------------------------------------------------------------------
+        // CONFIGURACIÓN DE PLANES VISIBLES
+        // ------------------------------------------------------------------
+
+        const PLANES_SIEMPRE_BLOQUEADOS = ['AD', 'COS', 'MM', 'MM/COM', 'MON/OP NO COS'];
+        const COLUMNAS_IGNORADAS = [10, 11];
+
+        function normalizar(v){ return String(v ?? '').trim(); }
+        function claveComparable(v){ return normalizar(v).replace(/\s+/g, ' ').toUpperCase(); }
+
+        const TIENE_LETRAS = /[a-zA-ZÀ-ÿ]/;
+
+        function detectarPlan(valorCelda, indiceColumna){
+            if (COLUMNAS_IGNORADAS.includes(indiceColumna)) return null;
+            const texto = normalizar(valorCelda);
+            if (!texto) return null;
+            return TIENE_LETRAS.test(texto) ? texto : null;
+        }
+
+        function esFilaEncabezado(fila){
+            let matches = 0;
+            for (let c = 1; c < fila.length; c++) {
+                if (detectarPlan(fila[c], c)) matches++;
+            }
+            return matches >= 2;
+        }
+
+        function filaVacia(fila){
+            return !fila || fila.every(cell => normalizar(cell) === '');
+        }
+
+        let ORDEN_PLANES = [];
+
+        const PRIORIDAD_ORDEN = ['IN 90', 'IN 90 (OSECAC)', 'IN 180', 'IN 360', 'AFILIADO SEC', 'ASISTENCIAL'];
+        function ordenarPlanes(claves){
+            return [...claves].sort((a, b) => {
+                const ia = PRIORIDAD_ORDEN.indexOf(a);
+                const ib = PRIORIDAD_ORDEN.indexOf(b);
+                if (ia === -1 && ib === -1) return 0;
+                if (ia === -1) return 1;
+                if (ib === -1) return -1;
+                return ia - ib;
+            });
+        }
+
+        let baseDeDatos = [];
+        let filtroActivo = null;
+
+        async function descargarExcel() {
+            const variantesCsv = ['precios.csv', 'Precios.csv', 'PRECIOS.csv', './precios.csv'];
+            for (const url of variantesCsv) {
+                try {
+                    const res = await fetch(url);
+                    if (res.ok) return { tipo: 'string', data: await res.text() };
+                } catch (e) {}
+            }
+            const variantesXlsx = ['precios.xlsx', 'Precios.xlsx', 'PRECIOS.xlsx', './precios.xlsx'];
+            for (const url of variantesXlsx) {
+                try {
+                    const res = await fetch(url);
+                    if (res.ok) return { tipo: 'array', data: await res.arrayBuffer() };
+                } catch (e) {}
+            }
+            throw new Error('No se pudo encontrar precios.csv ni precios.xlsx');
+        }
+
+        function quitarAcentos(s){ return String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+        function normalizarCategoria(s){ return quitarAcentos(normalizar(s)).replace(/\s+/g, ' ').toUpperCase(); }
+
+        const PALABRAS_CLAVE_IN90_PERMITIDO = [
+            'TURISMO', 'QUINCHO', 'SALON CHICO', 'SALON GRANDE', 'SALON VIP',
+            'PILETA', 'COLONIA', 'MUSICA', 'FUTBOL',
+        ];
+
+        function in90PermitidoEnCategoria(categoria){
+            const cat = normalizarCategoria(categoria);
+            return PALABRAS_CLAVE_IN90_PERMITIDO.some(kw => cat.includes(kw));
+        }
+
+        const PALABRAS_CLAVE_EXCLUIDAS_IN180 = ['COMED', 'FAMYL', 'PETRAGLIA', 'PSIQUIATRIA'];
+
+        function in180PermitidoEn(categoria, item){
+            const cat = normalizarCategoria(categoria);
+            const it = normalizarCategoria(item);
+            if (PALABRAS_CLAVE_EXCLUIDAS_IN180.some(kw => cat.includes(kw))) return false;
+            if (it.includes('CONVENIO')) return false;
+            if (it.startsWith('CONSULTA MEDICA')) return false;
+            return true;
+        }
+
+        let etiquetaPorClave = {};
+
+        function parsearFilas(filas){
+            const registros = [];
+            let categoriaActual = '';
+            let mapaColumnas = {};
+            etiquetaPorClave = {};
+            ORDEN_PLANES = [];
+
+            for (let i = 0; i < filas.length; i++) {
+                const fila = filas[i];
+                if (filaVacia(fila)) continue;
+
+                if (esFilaEncabezado(fila)) {
+                    const nuevaCategoria = normalizar(fila[0]);
+                    if (nuevaCategoria) categoriaActual = nuevaCategoria;
+
+                    mapaColumnas = {};
+                    for (let c = 1; c < fila.length; c++) {
+                        const etiqueta = detectarPlan(fila[c], c);
+                        if (!etiqueta) continue;
+                        const clave = claveComparable(etiqueta);
+                        mapaColumnas[c] = clave;
+                        if (!(clave in etiquetaPorClave)) {
+                            etiquetaPorClave[clave] = etiqueta;
+                            ORDEN_PLANES.push(clave);
+                        }
+                    }
+                    continue;
+                }
+
+                const SUBENCABEZADOS_SIN_PLANES = ['CUOTAS SEPELIO', 'CUOTAS SOCIOS'];
+                const esSubEncabezado = fila.slice(1).every(c => normalizar(c) === '')
+                    && SUBENCABEZADOS_SIN_PLANES.includes(claveComparable(fila[0]));
+                if (esSubEncabezado) {
+                    categoriaActual = normalizar(fila[0]);
+                    continue;
+                }
+
+                const nombreItem = normalizar(fila[0]);
+                if (!nombreItem) continue;
+
+                const precios = {};
+                Object.entries(mapaColumnas).forEach(([colIndex, clave]) => {
+                    const valor = fila[Number(colIndex)];
+                    if (valor !== undefined && valor !== '') {
+                        precios[clave] = valor;
+                    }
+                });
+
+                if (Object.keys(precios).length === 0) continue;
+
+                const categoriaFinal = categoriaActual || 'GENERAL';
+
+                PLANES_SIEMPRE_BLOQUEADOS.forEach(clave => { delete precios[clave]; });
+
+                if ('IN 90' in precios && !in90PermitidoEnCategoria(categoriaFinal)) {
+                    delete precios['IN 90'];
+                }
+
+                if ('IN 180' in precios && !in180PermitidoEn(categoriaFinal, nombreItem)) {
+                    delete precios['IN 180'];
+                }
+
+                if (Object.keys(precios).length === 0) continue;
+
+                registros.push({ item: nombreItem, categoria: categoriaFinal, precios });
+            }
+            ORDEN_PLANES = ordenarPlanes(ORDEN_PLANES);
+            return registros;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            descargarExcel()
+                .then(({ tipo, data }) => {
+                    const workbook = tipo === 'array'
+                        ? XLSX.read(data, { type: 'array' })
+                        : XLSX.read(data, { type: 'string' });
+                    const primeraHoja = workbook.Sheets[workbook.SheetNames[0]];
+                    const filas = XLSX.utils.sheet_to_json(primeraHoja, { header: 1, defval: '' });
+
+                    if (filas.length === 0) throw new Error('El Excel está vacío');
+
+                    baseDeDatos = parsearFilas(filas);
+                    if (baseDeDatos.length === 0) throw new Error('No se detectaron registros con precios');
+
+                    document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
+                    document.getElementById('texto-resultados').textContent = `Base lista (${baseDeDatos.length} registros cargados). Esperando búsqueda...`;
+                    document.getElementById('badge-estado').textContent = 'Base Cargada';
+                    document.getElementById('badge-estado').classList.add('text-emerald-600');
+
+                    const input = document.getElementById('input-busqueda');
+                    input.disabled = false;
+                    input.focus();
+
+                    renderizarFiltros();
+                    renderizarFiltroConvenios();
+                    renderizarFiltroServicios();
+                    aplicarBusquedaYFiltro();
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-red-500';
+                    document.getElementById('texto-resultados').textContent = 'Error al cargar el archivo de precios';
+                    document.getElementById('badge-estado').textContent = 'Error Excel';
+                    document.getElementById('badge-estado').classList.add('text-red-600');
+                    document.getElementById('tabla-wrap').innerHTML = `
+                        <div class="text-center py-10">
+                            <p class="text-red-500 font-bold text-lg">No se pudo procesar el archivo de precios.</p>
+                            <p class="text-gray-400 text-sm mt-2">Verifica que 'precios.xlsx' (o 'precios.csv') esté en el repositorio y tenga la estructura esperada.</p>
+                        </div>`;
+                });
+        });
+
+        function buscarEstricto(termino){
+            const t = quitarAcentos(termino).toLowerCase().trim();
+            if (!t) return [];
+            return baseDeDatos.filter(r =>
+                quitarAcentos(r.item).toLowerCase().includes(t) ||
+                quitarAcentos(r.categoria).toLowerCase().includes(t)
+            );
+        }
+
+        function aplicarBusquedaYFiltro(){
+            const termino = document.getElementById('input-busqueda').value.trim();
+
+            let resultados;
+            if (!termino && !filtroActivo && !convenioActivo && !servicioActivo) {
+                resultados = baseDeDatos.slice(0, 10);
+            } else {
+                resultados = termino ? buscarEstricto(termino) : baseDeDatos.slice();
+            }
+
+            if (filtroActivo) {
+                resultados = resultados.filter(r => Object.prototype.hasOwnProperty.call(r.precios, filtroActivo));
+            }
+            if (convenioActivo) {
+                resultados = resultados.filter(r => convenioActivo.coincide(r.categoria));
+            }
+            if (servicioActivo) {
+                resultados = resultados.filter(r => servicioActivo.coincide(r.item, r.categoria));
+            }
+
+            renderizarTabla(resultados, filtroActivo);
+
+            if (!termino) {
+                document.getElementById('texto-resultados').textContent = (filtroActivo || convenioActivo || servicioActivo)
+                    ? `Mostrando ${resultados.length} práctica(s) / servicio(s)`
+                    : 'Mostrando sugerencias...';
+            } else {
+                document.getElementById('texto-resultados').textContent = `Se encontraron ${resultados.length} práctica(s) / servicio(s)`;
+            }
+        }
+
+        // Filtro fijo de convenios
+        const CONVENIOS_FIJOS = [
+            { nombre: 'Dra. Capponi',   claves: ['CAPPONI'] },
+            { nombre: 'COMED',          claves: ['COMED'] },
+            { nombre: 'CMD (FAMYL)',    claves: ['CMD', 'FAMYL'] },
+            { nombre: 'Dr. Costanzi',   claves: ['COSTANZI'] },
+            { nombre: 'Nexo Terapia',   claves: ['NEXO TERAPIA', 'NEXO'] },
+        ].map(c => ({ ...c, coincide: (categoria) => {
+            const cat = normalizarCategoria(categoria);
+            return c.claves.some(k => cat.includes(k));
+        }}));
+
+        let convenioActivo = null;
+
+        function renderizarFiltroConvenios(){
+            const cont = document.getElementById('fila-convenios');
+            cont.innerHTML =
+                `<button class="chip-filtro activo px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-convenio="">
+                    Todos
+                </button>` +
+                CONVENIOS_FIJOS.map((c, i) => `
+                    <button class="chip-filtro px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-convenio="${i}">
+                        ${c.nombre}
+                    </button>`).join('');
+
+            cont.querySelectorAll('.chip-filtro').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    convenioActivo = btn.dataset.convenio !== '' ? CONVENIOS_FIJOS[Number(btn.dataset.convenio)] : null;
+                    cont.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
+                    btn.classList.add('activo');
+                    aplicarBusquedaYFiltro();
+                });
+            });
+        }
+
+        // ------------------------------------------------------------------
+        // FILTRO DE SERVICIOS Y PRÁCTICAS
+        // ------------------------------------------------------------------
+
+        const SERVICIOS_FIJOS = [
+            {
+                titulo: 'CONSULTA MEDICA:',
+                items: [
+                    { id: 'cons_a', nombre: 'CONSULTA "A"', coincide: (it, cat) => {
+                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
+                        return txt.includes('CONSULTA') && (txt.includes(' A') || txt.includes('"A"') || txt.includes('MEDICA A') || txt.includes('CAT A') || txt.includes('CLASE A'));
+                    }},
+                    { id: 'cons_b', nombre: 'CONSULTA "B"', coincide: (it, cat) => {
+                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
+                        return txt.includes('CONSULTA') && (txt.includes(' B') || txt.includes('"B"') || txt.includes('MEDICA B') || txt.includes('CAT B') || txt.includes('CLASE B'));
+                    }},
+                    { id: 'cons_c', nombre: 'CONSULTA "C"', coincide: (it, cat) => {
+                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
+                        return txt.includes('CONSULTA') && (txt.includes(' C') || txt.includes('"C"') || txt.includes('MEDICA C') || txt.includes('CAT C') || txt.includes('CLASE C'));
+                    }},
+                    { id: 'nutricion', nombre: 'NUTRICION', coincide: (it, cat) => {
+                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
+                        return txt.includes('NUTRICI');
+                    }}
+                ]
+            },
+            {
+                titulo: null,
+                items: [
+                    { id: 'cons_odonto', nombre: 'CONSULTA ODONTO', coincide: (it, cat) => {
+                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
+                        return txt.includes('ODONTO');
+                    }},
+                    { id: 'kinesio', nombre: 'KINESIOLOGIA', coincide: (it, cat) => {
+                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
+                        return txt.includes('KINESIO');
+                    }},
+                    { id: 'cuidado', nombre: 'CUIDADO PERSONAL', coincide: (it, cat) => {
+                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
+                        return txt.includes('CUIDADO') || txt.includes('PERSONAL');
+                    }},
+                    { id: 'enfermeria', nombre: 'ENFERMERIA', coincide: (it, cat) => {
+                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
+                        return txt.includes('ENFERMER');
+                    }}
+                ]
+            },
+            {
+                titulo: 'CUOTAS:',
+                items: [
+                    { id: 'cuota_socio', nombre: 'SOCIO', coincide: (it, cat) => {
+                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
+                        return txt.includes('SOCIO') && !txt.includes('SEPELIO');
+                    }},
+                    { id: 'cuota_sepelio', nombre: 'SEPELIO', coincide: (it, cat) => {
+                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
+                        return txt.includes('SEPELIO');
+                    }}
+                ]
+            },
+            {
+                titulo: 'SALONES:',
+                items: [
+                    { id: 'quincho', nombre: 'QUINCHOS', coincide: (it, cat) => {
+                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
+                        return txt.includes('QUINCHO');
+                    }},
+                    { id: 'salon1', nombre: 'SALON 1', coincide: (it, cat) => {
+                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
+                        return txt.includes('SALON 1') || txt.includes('SALON CHICO') || (txt.includes('SALON') && txt.includes('CHICO'));
+                    }},
+                    { id: 'salon2', nombre: 'SALON 2', coincide: (it, cat) => {
+                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
+                        return txt.includes('SALON 2') || txt.includes('SALON GRANDE') || (txt.includes('SALON') && txt.includes('GRANDE'));
+                    }},
+                    { id: 'salon3', nombre: 'SALON 3', coincide: (it, cat) => {
+                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
+                        return txt.includes('SALON 3') || txt.includes('SALON VIP') || (txt.includes('SALON') && txt.includes('VIP'));
+                    }}
+                ]
+            },
+            {
+                titulo: null,
+                items: [
+                    { id: 'pileta', nombre: 'PILETA', coincide: (it, cat) => {
+                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
+                        return txt.includes('PILETA');
+                    }},
+                    { id: 'colonia', nombre: 'COLONIA', coincide: (it, cat) => {
+                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
+                        return txt.includes('COLONIA');
+                    }},
+                    { id: 'turismo', nombre: 'TURISMO', coincide: (it, cat) => {
+                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
+                        return txt.includes('TURISMO');
+                    }}
+                ]
+            }
+        ];
+
+        let servicioActivo = null;
+
+        function renderizarFiltroServicios(){
+            const cont = document.getElementById('fila-servicios');
+            let html = `
+                <div class="mb-3">
+                    <button class="chip-filtro activo px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-servicio="">
+                        Todos los servicios
+                    </button>
+                </div>
+            `;
+
+            SERVICIOS_FIJOS.forEach(grupo => {
+                html += `<div class="mb-3">`;
+                if (grupo.titulo) {
+                    html += `<p class="text-[11px] font-extrabold uppercase tracking-wider text-[#5c4b3f] mb-1.5 px-1">filtrar por ${grupo.titulo}</p>`;
+                }
+                html += `<div class="flex flex-wrap items-center gap-2">`;
+                grupo.items.forEach(item => {
+                    html += `
+                        <button class="chip-filtro px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-servicio="${item.id}">
+                            ${item.nombre}
+                        </button>
+                    `;
+                });
+                html += `</div></div>`;
+            });
+
+            cont.innerHTML = html;
+
+            const todosItems = SERVICIOS_FIJOS.flatMap(g => g.items);
+
+            cont.querySelectorAll('.chip-filtro').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.dataset.servicio;
+                    servicioActivo = id ? todosItems.find(it => it.id === id) : null;
+
+                    cont.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
+                    btn.classList.add('activo');
+                    aplicarBusquedaYFiltro();
+                });
+            });
+        }
+
+        document.getElementById('input-busqueda').addEventListener('input', aplicarBusquedaYFiltro);
+
+        function renderizarFiltros(){
+            const planesPresentes = new Set();
+            baseDeDatos.forEach(r => Object.keys(r.precios).forEach(p => planesPresentes.add(p)));
+
+            const cont = document.getElementById('fila-filtros');
+            const planesOrdenados = ORDEN_PLANES.filter(p => planesPresentes.has(p));
+
+            cont.innerHTML = `
+                <button class="chip-filtro activo px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-plan="">
+                    Todos los planes
+                </button>` +
+                planesOrdenados.map(clave => `
+                    <button class="chip-filtro px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-plan="${clave}">
+                        ${etiquetaPorClave[clave] || clave}
+                    </button>`).join('');
+
+            cont.querySelectorAll('.chip-filtro').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filtroActivo = btn.dataset.plan || null;
+                    cont.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
+                    btn.classList.add('activo');
+                    aplicarBusquedaYFiltro();
+                });
+            });
+        }
+
+        function formatearValor(valor){
+            if (typeof valor === 'number') {
+                return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(valor);
+            }
+            const texto = normalizar(valor);
+            if (/^-?\d+([.,]\d+)?$/.test(texto)) {
+                const numero = parseFloat(texto.replace(',', '.'));
+                if (!isNaN(numero)) {
+                    return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(numero);
+                }
+            }
+            return texto;
+        }
+
+        function renderizarTabla(datos, planFiltrado) {
+            const contenedor = document.getElementById('tabla-wrap');
+
+            if (datos.length === 0) {
+                contenedor.innerHTML = `
+                    <div class="text-center py-10">
+                        <p class="text-gray-400 font-bold text-lg">No se encontraron resultados.</p>
+                    </div>`;
+                return;
+            }
+
+            const columnas = planFiltrado
+                ? [planFiltrado]
+                : ORDEN_PLANES.filter(clave => datos.some(r => Object.prototype.hasOwnProperty.call(r.precios, clave)));
+
+            const theadHTML = `
+                <tr>
+                    <th>Práctica / Servicio</th>
+                    ${columnas.map((clave, i) => `<th data-col="${i}">${(etiquetaPorClave[clave] || clave).toUpperCase()}</th>`).join('')}
+                </tr>`;
+
+            const tbodyHTML = datos.map((registro, fila) => {
+                const celdas = columnas.map((clave, col) => {
+                    const tieneValor = Object.prototype.hasOwnProperty.call(registro.precios, clave);
+                    const contenido = tieneValor ? formatearValor(registro.precios[clave]) : '—';
+                    const claseVacia = tieneValor ? '' : 'celda-vacia';
+                    return `<td data-fila="${fila}" data-col="${col}" class="${claseVacia}">${contenido}</td>`;
+                }).join('');
+
+                return `
+                    <tr>
+                        <td data-fila="${fila}" class="celda-item">
+                            <span class="celda-categoria">${registro.categoria}</span>
+                            ${registro.item}
+                        </td>
+                        ${celdas}
+                    </tr>`;
+            }).join('');
+
+            contenedor.innerHTML = `
+                <table>
+                    <thead>${theadHTML}</thead>
+                    <tbody>${tbodyHTML}</tbody>
+                </table>`;
+
+            contenedor.querySelectorAll('td[data-col]').forEach(celda => {
+                celda.addEventListener('click', () => {
+                    const yaActiva = celda.classList.contains('resaltada');
+                    contenedor.querySelectorAll('.resaltada').forEach(c => c.classList.remove('resaltada'));
+                    if (yaActiva) return;
+
+                    celda.classList.add('resaltada');
+
+                    const encabezado = contenedor.querySelector(`thead th[data-col="${celda.dataset.col}"]`);
+                    if (encabezado) encabezado.classList.add('resaltada');
+
+                    const tituloFila = contenedor.querySelector(`tbody td.celda-item[data-fila="${celda.dataset.fila}"]`);
+                    if (tituloFila) tituloFila.classList.add('resaltada');
+                });
+            });
+        }
+    </script>
+</body>
+</html>
