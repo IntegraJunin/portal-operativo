@@ -22,7 +22,7 @@
             --text-brand: #4a3525;
             --chip-bg: #e8dad0;
             --chip-text: #4a3525;
-            --chip-active-bg: #3b291a;
+            --chip-active-bg: #4a382a;
             --chip-active-text: #ffffff;
             --accent-orange: #b85a3c;
         }
@@ -37,9 +37,11 @@
             font-family: 'Outfit', sans-serif;
         }
 
+        /* Personalización de Scrollbars para ambas columnas */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #d0beb0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #b8a698; }
 
         .chip-filtro {
             background-color: var(--chip-bg);
@@ -105,6 +107,7 @@
             position: sticky;
             top: 0;
             border-bottom: 2px solid #ede3da;
+            z-index: 10;
         }
 
         #tabla-wrap tbody td:first-child, #tabla-wrap thead th:first-child {
@@ -116,7 +119,7 @@
             min-width: 220px;
         }
 
-        #tabla-wrap thead th:first-child { background: #faf6f0; z-index: 2; }
+        #tabla-wrap thead th:first-child { background: #faf6f0; z-index: 20; }
         #tabla-wrap tbody tr:nth-child(even) td { background-color: #fdfaf7; }
         #tabla-wrap tbody tr:nth-child(even) td:first-child { background-color: #fdfaf7; }
         #tabla-wrap tbody tr:hover td { background-color: #f3e9e0; }
@@ -153,93 +156,90 @@
         }
     </style>
 </head>
-<body class="p-3 md:p-6 min-h-screen">
+<body class="p-3 md:p-4 h-screen flex flex-col overflow-hidden">
 
-    <div class="max-w-[1400px] mx-auto space-y-4">
+    <!-- ENCABEZADO ÚNICO Y FIJO SUPERIOR -->
+    <header class="mb-3 flex-shrink-0 bg-white rounded-2xl md:rounded-full px-5 py-2.5 shadow-sm border border-white/80 flex flex-col md:flex-row justify-between items-center gap-3">
+        <div class="flex items-center gap-2">
+            <h1 class="text-xl md:text-2xl font-extrabold tracking-tight text-[#3b291a]">
+                Portal Operativo INTEGRA <span class="text-[#b85a3c]">✳</span>
+            </h1>
+        </div>
+        <nav class="flex items-center gap-2 flex-wrap text-xs font-bold">
+            <button class="px-3.5 py-1.5 rounded-full bg-[#ede5db] text-[#4a3525] hover:bg-[#e0d5c6] transition flex items-center gap-1.5">
+                📄 Manuales de Procedimiento
+            </button>
+            <button class="px-3.5 py-1.5 rounded-full bg-[#ede5db] text-[#4a3525] hover:bg-[#e0d5c6] transition flex items-center gap-1.5">
+                📂 Solicitudes
+            </button>
+            <button class="px-3.5 py-1.5 rounded-full bg-[#ede5db] text-[#4a3525] hover:bg-[#e0d5c6] transition flex items-center gap-1.5">
+                🤝 Convenios
+            </button>
+            <button class="px-4 py-1.5 rounded-full bg-[#4a382a] text-white shadow-sm flex items-center gap-1.5">
+                🔍 Buscador de Precios
+            </button>
+        </nav>
+    </header>
 
-        <!-- Top Header Navbar -->
-        <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-            <div class="flex items-center gap-2">
-                <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-[#3b291a]">
-                    Portal Operativo INTEGRA <span class="text-[#b85a3c] text-xl">✳</span>
-                </h1>
+    <!-- LAYOUT PRINCIPAL: 2 COLUMNAS CON SCROLL INDEPENDIENTE -->
+    <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 overflow-hidden min-h-0">
+
+        <!-- COLUMNA IZQUIERDA: FILTROS (SCROLL INDEPENDIENTE) -->
+        <aside class="lg:col-span-4 xl:col-span-4 h-full overflow-y-auto pr-1.5 space-y-3">
+            <h2 class="text-lg font-extrabold text-[#3b291a] sticky top-0 bg-[#f4e7dc] py-1 z-10">Filtros</h2>
+
+            <!-- Tipo de Socio -->
+            <div class="filtro-card">
+                <div class="filtro-titulo">
+                    <span>👤</span> FILTRO POR TIPO DE SOCIO
+                </div>
+                <div id="fila-filtros" class="flex flex-wrap gap-1.5"></div>
             </div>
 
-            <nav class="flex items-center gap-2 flex-wrap">
-                <button class="px-4 py-1.5 rounded-full text-xs font-bold bg-[#ebdcd0] text-[#4a3525] hover:bg-[#e0cfc2] transition">
-                    Manuales de Procedimiento
-                </button>
-                <button class="px-4 py-1.5 rounded-full text-xs font-bold bg-[#f5e5b8] text-[#5c4718] hover:bg-[#ebd9a5] transition">
-                    Convenios
-                </button>
-                <button class="px-4 py-1.5 rounded-full text-xs font-bold bg-[#3b291a] text-white flex items-center gap-1.5 shadow-sm">
-                    <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-                    Buscador de Precios
-                </button>
-            </nav>
-        </header>
+            <!-- Convenios -->
+            <div class="filtro-card">
+                <div class="filtro-titulo">
+                    <span>🟠</span> FILTRO POR CONVENIO
+                </div>
+                <div id="fila-convenios" class="flex flex-wrap gap-1.5"></div>
+            </div>
 
-        <!-- Main Layout: 2 Columns Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+            <!-- Servicios Dinámicos -->
+            <div id="contenedor-servicios" class="space-y-3"></div>
+        </aside>
 
-            <!-- LEFT COLUMN: Filtros -->
-            <aside class="lg:col-span-4 xl:col-span-4 space-y-3">
-                <h2 class="text-xl font-bold text-[#3b291a] px-1">Filtros</h2>
+        <!-- COLUMNA DERECHA: RESULTADOS (SCROLL INDEPENDIENTE) -->
+        <main class="lg:col-span-8 xl:col-span-8 h-full overflow-y-auto pr-1.5 space-y-3 flex flex-col">
+            <h2 class="text-lg font-extrabold text-[#3b291a] sticky top-0 bg-[#f4e7dc] py-1 z-10">Resultados</h2>
 
-                <!-- Filtro Tipo de Socio -->
-                <div class="filtro-card">
-                    <div class="filtro-titulo">
-                        <span>👤</span> FILTRO POR TIPO DE SOCIO
+            <!-- Buscador Input -->
+            <div class="relative flex-shrink-0">
+                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-base">🔍</span>
+                <input
+                    type="text"
+                    id="input-busqueda"
+                    placeholder="Buscar por práctica, código o especialidad..."
+                    class="w-full pl-11 pr-4 py-2.5 rounded-2xl border border-[#e5d3c5] shadow-sm focus:ring-2 focus:ring-[#b85a3c] text-sm bg-white outline-none font-semibold text-gray-700 transition disabled:opacity-50"
+                    disabled
+                >
+            </div>
+
+            <!-- Tabla y Estado -->
+            <div class="bg-white rounded-2xl border border-[#e5d3c5] shadow-sm overflow-hidden flex-1 flex flex-col min-h-0">
+                <div id="tabla-wrap" class="overflow-auto flex-1 p-1"></div>
+
+                <!-- Footer Barra Estado -->
+                <div class="flex flex-col sm:flex-row justify-between items-center bg-[#faf6f0] px-4 py-2 border-t border-[#ede3da] text-xs gap-2 flex-shrink-0">
+                    <div class="flex items-center gap-2 font-bold text-[#5c4b3f]">
+                        <span id="indicador-color" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                        <span id="texto-resultados">Cargando base de datos...</span>
                     </div>
-                    <div id="fila-filtros" class="flex flex-wrap gap-1.5"></div>
-                </div>
-
-                <!-- Filtro Convenios -->
-                <div class="filtro-card">
-                    <div class="filtro-titulo">
-                        <span>🟠</span> FILTRO POR CONVENIO
-                    </div>
-                    <div id="fila-convenios" class="flex flex-wrap gap-1.5"></div>
-                </div>
-
-                <!-- Filtros de Servicios Dinámicos -->
-                <div id="contenedor-servicios" class="space-y-3"></div>
-            </aside>
-
-            <!-- RIGHT COLUMN: Resultados & Tabla -->
-            <main class="lg:col-span-8 xl:col-span-8 space-y-3">
-                <h2 class="text-xl font-bold text-[#3b291a] px-1">Resultados</h2>
-
-                <!-- Buscador Input -->
-                <div class="relative">
-                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg">🔍</span>
-                    <input
-                        type="text"
-                        id="input-busqueda"
-                        placeholder="Buscar por práctica, código o especialidad..."
-                        class="w-full pl-11 pr-4 py-3 rounded-2xl border border-[#e5d3c5] shadow-sm focus:ring-2 focus:ring-[#b85a3c] text-sm bg-white outline-none font-semibold text-gray-700 transition disabled:opacity-50"
-                        disabled
-                    >
-                </div>
-
-                <!-- Contenedor Tabla -->
-                <div class="bg-white rounded-2xl border border-[#e5d3c5] shadow-sm overflow-hidden">
-                    <div id="tabla-wrap" class="overflow-x-auto p-1"></div>
-
-                    <!-- Footer de Estado / Paginación -->
-                    <div class="flex flex-col sm:flex-row justify-between items-center bg-[#faf6f0] px-4 py-2.5 border-t border-[#ede3da] text-xs gap-2">
-                        <div class="flex items-center gap-2 font-bold text-[#5c4b3f]">
-                            <span id="indicador-color" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-                            <span id="texto-resultados">Cargando base de datos...</span>
-                        </div>
-                        <div id="badge-estado" class="bg-white border border-[#e5d3c5] px-3 py-1 rounded-full font-bold text-[#7a6657] text-[10px] uppercase tracking-wider">
-                            Conectando...
-                        </div>
+                    <div id="badge-estado" class="bg-white border border-[#e5d3c5] px-3 py-0.5 rounded-full font-bold text-[#7a6657] text-[10px] uppercase tracking-wider">
+                        Conectando...
                     </div>
                 </div>
-            </main>
-
-        </div>
+            </div>
+        </main>
 
     </div>
 
@@ -514,26 +514,17 @@
             });
         }
 
-        /*
-           FUNCIÓN DE EVALUACIÓN ESTRICTA DE CONSULTA MÉDICA (A, B, C)
-           Empareja únicamente como token de palabra exacta e independiente ('A', 'B', 'C')
-           para evitar falsas coincidencias con palabras como Capponi, Círculo, etc.
-        */
         function esConsultaDeLetra(item, categoria, letraExacta) {
             if (!item) return false;
-            // Normalizar texto y quitar comillas
             const txt = quitarAcentos(item).toUpperCase().replace(/["'«»]/g, ' ');
             const palabras = txt.split(/\s+/).filter(Boolean);
 
-            // Debe contener la palabra CONSULTA
             if (!palabras.includes('CONSULTA')) return false;
 
-            // Descartar otras ramas explícitas
             if (palabras.some(p => p.includes('ODONTO') || p.includes('KINESIO') || p.includes('NUTRI') || p.includes('ENFERM'))) {
                 return false;
             }
 
-            // Verificar que la letra requerida exista como palabra aislada y no existan las otras
             const tieneLetra = palabras.includes(letraExacta);
             const tieneOtrasLetras = ['A', 'B', 'C'].filter(l => l !== letraExacta).some(l => palabras.includes(l));
 
