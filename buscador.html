@@ -429,16 +429,16 @@
                 titulo: '🩺 CONSULTA MÉDICA',
                 items: [
                     { id: 'cons_a', nombre: 'CONSULTA "A"', coincide: (it, cat) => {
-                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
-                        return txt.includes('CONSULTA') && (txt.includes(' A') || txt.includes('"A"') || txt.includes('MEDICA A') || txt.includes('CAT A') || txt.includes('CLASE A'));
+                        const txt = quitarAcentos(it).toUpperCase();
+                        return /\bCONSULTA(\s+MEDICA)?\s+["']?A["']?\b/.test(txt);
                     }},
                     { id: 'cons_b', nombre: 'CONSULTA "B"', coincide: (it, cat) => {
-                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
-                        return txt.includes('CONSULTA') && (txt.includes(' B') || txt.includes('"B"') || txt.includes('MEDICA B') || txt.includes('CAT B') || txt.includes('CLASE B'));
+                        const txt = quitarAcentos(it).toUpperCase();
+                        return /\bCONSULTA(\s+MEDICA)?\s+["']?B["']?\b/.test(txt);
                     }},
                     { id: 'cons_c', nombre: 'CONSULTA "C"', coincide: (it, cat) => {
-                        const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
-                        return txt.includes('CONSULTA') && (txt.includes(' C') || txt.includes('"C"') || txt.includes('MEDICA C') || txt.includes('CAT C') || txt.includes('CLASE C'));
+                        const txt = quitarAcentos(it).toUpperCase();
+                        return /\bCONSULTA(\s+MEDICA)?\s+["']?C["']?\b/.test(txt);
                     }},
                     { id: 'nutricion', nombre: 'NUTRICION', coincide: (it, cat) => {
                         const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
