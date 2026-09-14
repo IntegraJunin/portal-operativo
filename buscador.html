@@ -44,7 +44,7 @@
             min-width: 600px;
         }
         #tabla-wrap th, #tabla-wrap td {
-            padding: 12px 16px;
+            padding: 10px 14px;
             text-align: left;
             white-space: nowrap;
             transition: background-color .1s ease;
@@ -78,15 +78,15 @@
         #tabla-wrap .celda-categoria {
             display: block;
             width: fit-content;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: .04em;
             color: #ffffff;
-            background: #b3543b;
-            padding: 2px 8px;
-            border-radius: 6px;
-            margin-bottom: 4px;
+            background: #b85a3c;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-bottom: 3px;
         }
         #tabla-wrap .celda-vacia { color: #c9c2b4; font-weight: 600; cursor: default; }
 
@@ -98,53 +98,59 @@
         }
     </style>
 </head>
-<body class="text-slate-800 min-h-screen p-4 md:p-8">
+<body class="text-slate-800 min-h-screen p-3 md:p-6">
 
-    <div class="max-w-5xl mx-auto">
+    <div class="max-w-5xl mx-auto space-y-3">
 
         <!-- Buscador -->
-        <div class="relative mb-4">
-            <span class="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl">🔍</span>
+        <div class="relative">
+            <span class="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg">🔍</span>
             <input
                 type="text"
                 id="input-busqueda"
                 placeholder="Buscar por práctica, código o especialidad..."
-                class="w-full pl-14 pr-6 py-5 rounded-full border-none shadow-sm focus:ring-4 focus:ring-orange-100 text-lg bg-card outline-none font-outfit font-semibold text-gray-700 transition disabled:opacity-50"
+                class="w-full pl-12 pr-5 py-3.5 rounded-full border-none shadow-sm focus:ring-4 focus:ring-amber-100 text-base bg-card outline-none font-outfit font-semibold text-gray-700 transition disabled:opacity-50"
                 disabled
             >
         </div>
 
-        <!-- Selector fijo de tipo de socio -->
-        <div class="border-4 border-[#2b6cb0] rounded-2xl px-4 py-4 mb-4 bg-[#edf4f9] shadow-md">
-            <p class="text-xs font-extrabold uppercase tracking-widest text-[#2b6cb0] mb-2 px-1">👤 Filtro por tipo de socio</p>
+        <!-- 1. Filtro por tipo de socio -->
+        <div class="border-2 border-[#b85a3c] rounded-2xl px-4 py-3 bg-[#fdf5f0] shadow-sm">
+            <p class="text-[11px] font-extrabold uppercase tracking-wider text-[#b85a3c] mb-2 px-1 flex items-center gap-1.5">
+                <span>👤</span> FILTRO POR TIPO DE SOCIO
+            </p>
             <div id="fila-filtros" class="flex flex-wrap items-center gap-2"></div>
         </div>
 
-        <!-- Selector fijo de convenios -->
-        <div class="border-4 border-[#b3543b] rounded-2xl px-4 py-4 mb-4 bg-[#fbeee6] shadow-md">
-            <p class="text-xs font-extrabold uppercase tracking-widest text-[#b3543b] mb-2 px-1">🤝 Filtro por convenio</p>
+        <!-- 2. Filtro por convenio -->
+        <div class="border-2 border-[#b85a3c] rounded-2xl px-4 py-3 bg-[#fdf5f0] shadow-sm">
+            <p class="text-[11px] font-extrabold uppercase tracking-wider text-[#b85a3c] mb-2 px-1 flex items-center gap-1.5">
+                <span>🤝</span> FILTRO POR CONVENIO
+            </p>
             <div id="fila-convenios" class="flex flex-wrap items-center gap-2"></div>
         </div>
 
-        <!-- Selector fijo de servicios y prácticas -->
-        <div class="border-4 border-[#5c4b3f] rounded-2xl px-4 py-4 mb-6 bg-[#f5f2eb] shadow-md">
-            <p class="text-xs font-extrabold uppercase tracking-widest text-[#5c4b3f] mb-3 px-1">📋 Filtro por servicio</p>
+        <!-- 3. Filtro por servicio -->
+        <div class="border-2 border-[#b85a3c] rounded-2xl px-4 py-3 bg-[#fdf5f0] shadow-sm">
+            <p class="text-[11px] font-extrabold uppercase tracking-wider text-[#b85a3c] mb-2 px-1 flex items-center gap-1.5">
+                <span>📋</span> FILTRO POR SERVICIO
+            </p>
             <div id="fila-servicios"></div>
         </div>
 
         <!-- Estado -->
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6 bg-[#efeadd] px-6 py-3 rounded-full text-sm shadow-sm gap-3">
-            <div class="flex items-center gap-3 font-bold text-gray-700">
+        <div class="flex flex-col md:flex-row justify-between items-center bg-[#efeadd] px-5 py-2.5 rounded-full text-xs shadow-sm gap-2">
+            <div class="flex items-center gap-2.5 font-bold text-gray-700">
                 <span id="indicador-color" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
                 <span id="texto-resultados">Cargando base de datos...</span>
             </div>
-            <div id="badge-estado" class="bg-white px-4 py-1.5 rounded-full font-bold text-gray-500 text-xs shadow-sm uppercase tracking-wider">
+            <div id="badge-estado" class="bg-white px-3 py-1 rounded-full font-bold text-gray-500 text-[11px] shadow-sm uppercase tracking-wider">
                 Conectando...
             </div>
         </div>
 
         <!-- Resultados: tabla de práctica x tipo de socio -->
-        <div id="tabla-wrap" class="bg-card rounded-[2rem] shadow-sm overflow-x-auto p-2"></div>
+        <div id="tabla-wrap" class="bg-card rounded-[1.5rem] shadow-sm overflow-x-auto p-2"></div>
 
     </div>
 
@@ -410,11 +416,11 @@
         function renderizarFiltroConvenios(){
             const cont = document.getElementById('fila-convenios');
             cont.innerHTML =
-                `<button class="chip-filtro activo px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-convenio="">
+                `<button class="chip-filtro activo px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-600" data-convenio="">
                     Todos
                 </button>` +
                 CONVENIOS_FIJOS.map((c, i) => `
-                    <button class="chip-filtro px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-convenio="${i}">
+                    <button class="chip-filtro px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-600" data-convenio="${i}">
                         ${c.nombre}
                     </button>`).join('');
 
@@ -434,7 +440,7 @@
 
         const SERVICIOS_FIJOS = [
             {
-                titulo: 'CONSULTA MEDICA:',
+                titulo: 'CONSULTA MÉDICA',
                 items: [
                     { id: 'cons_a', nombre: 'CONSULTA "A"', coincide: (it, cat) => {
                         const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
@@ -476,7 +482,7 @@
                 ]
             },
             {
-                titulo: 'CUOTAS:',
+                titulo: 'CUOTAS',
                 items: [
                     { id: 'cuota_socio', nombre: 'SOCIO', coincide: (it, cat) => {
                         const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
@@ -489,7 +495,7 @@
                 ]
             },
             {
-                titulo: 'SALONES:',
+                titulo: 'SALONES Y COMPLEJO',
                 items: [
                     { id: 'quincho', nombre: 'QUINCHOS', coincide: (it, cat) => {
                         const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
@@ -506,12 +512,7 @@
                     { id: 'salon3', nombre: 'SALON 3', coincide: (it, cat) => {
                         const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
                         return txt.includes('SALON 3') || txt.includes('SALON VIP') || (txt.includes('SALON') && txt.includes('VIP'));
-                    }}
-                ]
-            },
-            {
-                titulo: null,
-                items: [
+                    }},
                     { id: 'pileta', nombre: 'PILETA', coincide: (it, cat) => {
                         const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
                         return txt.includes('PILETA');
@@ -533,22 +534,22 @@
         function renderizarFiltroServicios(){
             const cont = document.getElementById('fila-servicios');
             let html = `
-                <div class="mb-3">
-                    <button class="chip-filtro activo px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-servicio="">
+                <div class="flex flex-wrap items-center gap-2 mb-2">
+                    <button class="chip-filtro activo px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-600" data-servicio="">
                         Todos los servicios
                     </button>
                 </div>
             `;
 
             SERVICIOS_FIJOS.forEach(grupo => {
-                html += `<div class="mb-3">`;
+                html += `<div class="mt-2 pt-2 border-t border-[#f4e4d7]">`;
                 if (grupo.titulo) {
-                    html += `<p class="text-[11px] font-extrabold uppercase tracking-wider text-[#5c4b3f] mb-1.5 px-1">filtrar por ${grupo.titulo}</p>`;
+                    html += `<p class="text-[10px] font-extrabold uppercase tracking-wider text-[#b85a3c]/80 mb-1 px-1">${grupo.titulo}</p>`;
                 }
                 html += `<div class="flex flex-wrap items-center gap-2">`;
                 grupo.items.forEach(item => {
                     html += `
-                        <button class="chip-filtro px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-servicio="${item.id}">
+                        <button class="chip-filtro px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-600" data-servicio="${item.id}">
                             ${item.nombre}
                         </button>
                     `;
@@ -582,11 +583,11 @@
             const planesOrdenados = ORDEN_PLANES.filter(p => planesPresentes.has(p));
 
             cont.innerHTML = `
-                <button class="chip-filtro activo px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-plan="">
-                    Todos los planes
+                <button class="chip-filtro activo px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-600" data-plan="">
+                    Todos
                 </button>` +
                 planesOrdenados.map(clave => `
-                    <button class="chip-filtro px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-500" data-plan="${clave}">
+                    <button class="chip-filtro px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-600" data-plan="${clave}">
                         ${etiquetaPorClave[clave] || clave}
                     </button>`).join('');
 
