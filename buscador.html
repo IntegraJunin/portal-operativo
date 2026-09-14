@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscador de Precios y Servicios</title>
+    <title>Portal Operativo INTEGRA - Buscador de Precios</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -11,86 +11,141 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        body {
-            background-color: #f7f5f0;
-            font-family: 'Comfortaa', cursive;
+        :root {
+            --bg-main: #f4e7dc;
+            --bg-card: #ffffff;
+            --bg-box: #fbf5ef;
+            --border-box: #e5d3c5;
+            --text-brand: #4a3525;
+            --chip-bg: #e8dad0;
+            --chip-text: #4a3525;
+            --chip-active-bg: #3b291a;
+            --chip-active-text: #ffffff;
+            --accent-orange: #b85a3c;
         }
-        h1, h2, h3, .font-outfit {
+
+        body {
+            background-color: var(--bg-main);
+            font-family: 'Comfortaa', cursive;
+            color: var(--text-brand);
+        }
+
+        h1, h2, h3, button, input, table, .font-outfit {
             font-family: 'Outfit', sans-serif;
         }
-        .bg-card { background-color: #ffffff; }
-        .bg-inner-card { background-color: #fcfbfa; }
-        .text-brand { color: #5c4b3f; }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #d1cdb8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #d0beb0; border-radius: 10px; }
 
         .chip-filtro {
-            transition: all .15s ease;
+            background-color: var(--chip-bg);
+            color: var(--chip-text);
+            font-weight: 700;
+            font-size: 11px;
+            padding: 5px 12px;
+            border-radius: 9999px;
+            transition: all 0.15s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            border: 1px solid transparent;
         }
+
+        .chip-filtro:hover {
+            background-color: #ded0c5;
+        }
+
         .chip-filtro.activo {
-            background-color: #5c4b3f !important;
-            color: #fff !important;
+            background-color: var(--chip-active-bg) !important;
+            color: var(--chip-active-text) !important;
+            border-color: var(--chip-active-bg);
+        }
+
+        .filtro-card {
+            background-color: var(--bg-box);
+            border: 1.5px solid var(--border-box);
+            border-radius: 14px;
+            padding: 10px 12px;
+        }
+
+        .filtro-titulo {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-brand);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         #tabla-wrap table {
             border-collapse: separate;
             border-spacing: 0;
             width: 100%;
-            min-width: 600px;
+            min-width: 550px;
         }
+
         #tabla-wrap th, #tabla-wrap td {
-            padding: 8px 12px;
+            padding: 10px 14px;
             text-align: left;
             white-space: nowrap;
-            transition: background-color .1s ease;
         }
+
         #tabla-wrap thead th {
             font-family: 'Outfit', sans-serif;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: .08em;
-            color: #9a8d7d;
-            background: #fcfbfa;
+            font-size: 12px;
+            font-weight: 700;
+            color: #7a6657;
+            background: #faf6f0;
             position: sticky;
             top: 0;
-            border-bottom: 2px solid #efeadd;
+            border-bottom: 2px solid #ede3da;
         }
+
         #tabla-wrap tbody td:first-child, #tabla-wrap thead th:first-child {
             position: sticky;
             left: 0;
             background: #ffffff;
             z-index: 1;
             white-space: normal;
-            min-width: 200px;
-            max-width: 300px;
+            min-width: 220px;
         }
-        #tabla-wrap thead th:first-child { background: #fcfbfa; z-index: 2; }
-        #tabla-wrap tbody tr:nth-child(even) td { background-color: #fcfbfa; }
-        #tabla-wrap tbody tr:nth-child(even) td:first-child { background-color: #fcfbfa; }
-        #tabla-wrap tbody tr:hover td { background-color: #efeadd; }
-        #tabla-wrap tbody td { border-bottom: 1px solid #f2efe8; font-family: 'Outfit', sans-serif; font-weight: 700; color: #3a332c; cursor: pointer; }
-        #tabla-wrap .celda-item { font-weight: 700; color: #5c4b3f; cursor: default; }
+
+        #tabla-wrap thead th:first-child { background: #faf6f0; z-index: 2; }
+        #tabla-wrap tbody tr:nth-child(even) td { background-color: #fdfaf7; }
+        #tabla-wrap tbody tr:nth-child(even) td:first-child { background-color: #fdfaf7; }
+        #tabla-wrap tbody tr:hover td { background-color: #f3e9e0; }
+
+        #tabla-wrap tbody td {
+            border-bottom: 1px solid #f2e9e1;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            color: #3d2e24;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        #tabla-wrap .celda-item { font-weight: 700; color: #3b291a; cursor: default; }
         #tabla-wrap .celda-categoria {
-            display: block;
-            width: fit-content;
+            display: inline-block;
             font-size: 9px;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: .04em;
+            letter-spacing: 0.04em;
             color: #ffffff;
-            background: #b85a3c;
-            padding: 1px 5px;
+            background: var(--accent-orange);
+            padding: 2px 6px;
             border-radius: 4px;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
         }
-        #tabla-wrap .celda-vacia { color: #c9c2b4; font-weight: 600; cursor: default; }
 
-        /* Resaltado de celda activa */
+        #tabla-wrap .celda-vacia { color: #c0b2a6; font-weight: 600; cursor: default; }
+
         #tabla-wrap td.resaltada, #tabla-wrap th.resaltada {
             background-color: #fde047 !important;
             box-shadow: inset 0 0 0 2px #f59e0b;
@@ -98,54 +153,93 @@
         }
     </style>
 </head>
-<body class="text-slate-800 min-h-screen p-2 md:p-4">
+<body class="p-3 md:p-6 min-h-screen">
 
-    <div class="max-w-5xl mx-auto space-y-2">
+    <div class="max-w-[1400px] mx-auto space-y-4">
 
-        <!-- Buscador -->
-        <div class="relative">
-            <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-base">🔍</span>
-            <input
-                type="text"
-                id="input-busqueda"
-                placeholder="Buscar por práctica, código o especialidad..."
-                class="w-full pl-11 pr-4 py-2.5 rounded-full border-none shadow-sm focus:ring-2 focus:ring-amber-200 text-sm bg-card outline-none font-outfit font-semibold text-gray-700 transition disabled:opacity-50"
-                disabled
-            >
-        </div>
-
-        <!-- Recuadro: Tipo de socio -->
-        <div class="border-2 border-[#b85a3c] rounded-xl px-3 py-2 bg-[#fdf5f0] shadow-sm">
-            <p class="text-[11px] font-extrabold uppercase tracking-wider text-[#b85a3c] mb-1.5 px-1 flex items-center gap-1.5">
-                <span>👤</span> FILTRO POR TIPO DE SOCIO
-            </p>
-            <div id="fila-filtros" class="flex flex-wrap items-center gap-1.5"></div>
-        </div>
-
-        <!-- Recuadro: Convenios -->
-        <div class="border-2 border-[#b85a3c] rounded-xl px-3 py-2 bg-[#fdf5f0] shadow-sm">
-            <p class="text-[11px] font-extrabold uppercase tracking-wider text-[#b85a3c] mb-1.5 px-1 flex items-center gap-1.5">
-                <span>🤝</span> FILTRO POR CONVENIO
-            </p>
-            <div id="fila-convenios" class="flex flex-wrap items-center gap-1.5"></div>
-        </div>
-
-        <!-- Recuadros individuales de Servicios -->
-        <div id="contenedor-servicios" class="space-y-2"></div>
-
-        <!-- Barra de Estado -->
-        <div class="flex flex-col md:flex-row justify-between items-center bg-[#efeadd] px-4 py-2 rounded-full text-xs shadow-sm gap-1.5">
-            <div class="flex items-center gap-2 font-bold text-gray-700">
-                <span id="indicador-color" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-                <span id="texto-resultados">Cargando base de datos...</span>
+        <!-- Top Header Navbar -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+            <div class="flex items-center gap-2">
+                <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-[#3b291a]">
+                    Portal Operativo INTEGRA <span class="text-[#b85a3c] text-xl">✳</span>
+                </h1>
             </div>
-            <div id="badge-estado" class="bg-white px-2.5 py-0.5 rounded-full font-bold text-gray-500 text-[10px] shadow-sm uppercase tracking-wider">
-                Conectando...
-            </div>
-        </div>
 
-        <!-- Tabla de resultados -->
-        <div id="tabla-wrap" class="bg-card rounded-2xl shadow-sm overflow-x-auto p-1.5"></div>
+            <nav class="flex items-center gap-2 flex-wrap">
+                <button class="px-4 py-1.5 rounded-full text-xs font-bold bg-[#ebdcd0] text-[#4a3525] hover:bg-[#e0cfc2] transition">
+                    Manuales de Procedimiento
+                </button>
+                <button class="px-4 py-1.5 rounded-full text-xs font-bold bg-[#f5e5b8] text-[#5c4718] hover:bg-[#ebd9a5] transition">
+                    Convenios
+                </button>
+                <button class="px-4 py-1.5 rounded-full text-xs font-bold bg-[#3b291a] text-white flex items-center gap-1.5 shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                    Buscador de Precios
+                </button>
+            </nav>
+        </header>
+
+        <!-- Main Layout: 2 Columns Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+            <!-- LEFT COLUMN: Filtros -->
+            <aside class="lg:col-span-4 xl:col-span-4 space-y-3">
+                <h2 class="text-xl font-bold text-[#3b291a] px-1">Filtros</h2>
+
+                <!-- Filtro Tipo de Socio -->
+                <div class="filtro-card">
+                    <div class="filtro-titulo">
+                        <span>👤</span> FILTRO POR TIPO DE SOCIO
+                    </div>
+                    <div id="fila-filtros" class="flex flex-wrap gap-1.5"></div>
+                </div>
+
+                <!-- Filtro Convenios -->
+                <div class="filtro-card">
+                    <div class="filtro-titulo">
+                        <span>🟠</span> FILTRO POR CONVENIO
+                    </div>
+                    <div id="fila-convenios" class="flex flex-wrap gap-1.5"></div>
+                </div>
+
+                <!-- Filtros de Servicios Dinámicos -->
+                <div id="contenedor-servicios" class="space-y-3"></div>
+            </aside>
+
+            <!-- RIGHT COLUMN: Resultados & Tabla -->
+            <main class="lg:col-span-8 xl:col-span-8 space-y-3">
+                <h2 class="text-xl font-bold text-[#3b291a] px-1">Resultados</h2>
+
+                <!-- Buscador Input -->
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg">🔍</span>
+                    <input
+                        type="text"
+                        id="input-busqueda"
+                        placeholder="Buscar por práctica, código o especialidad..."
+                        class="w-full pl-11 pr-4 py-3 rounded-2xl border border-[#e5d3c5] shadow-sm focus:ring-2 focus:ring-[#b85a3c] text-sm bg-white outline-none font-semibold text-gray-700 transition disabled:opacity-50"
+                        disabled
+                    >
+                </div>
+
+                <!-- Contenedor Tabla -->
+                <div class="bg-white rounded-2xl border border-[#e5d3c5] shadow-sm overflow-hidden">
+                    <div id="tabla-wrap" class="overflow-x-auto p-1"></div>
+
+                    <!-- Footer de Estado / Paginación -->
+                    <div class="flex flex-col sm:flex-row justify-between items-center bg-[#faf6f0] px-4 py-2.5 border-t border-[#ede3da] text-xs gap-2">
+                        <div class="flex items-center gap-2 font-bold text-[#5c4b3f]">
+                            <span id="indicador-color" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                            <span id="texto-resultados">Cargando base de datos...</span>
+                        </div>
+                        <div id="badge-estado" class="bg-white border border-[#e5d3c5] px-3 py-1 rounded-full font-bold text-[#7a6657] text-[10px] uppercase tracking-wider">
+                            Conectando...
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+        </div>
 
     </div>
 
@@ -155,6 +249,8 @@
 
         function normalizar(v){ return String(v ?? '').trim(); }
         function claveComparable(v){ return normalizar(v).replace(/\s+/g, ' ').toUpperCase(); }
+        function quitarAcentos(s){ return String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+        function normalizarCategoria(s){ return quitarAcentos(normalizar(s)).replace(/\s+/g, ' ').toUpperCase(); }
 
         const TIENE_LETRAS = /[a-zA-ZÀ-ÿ]/;
 
@@ -178,8 +274,8 @@
         }
 
         let ORDEN_PLANES = [];
-
         const PRIORIDAD_ORDEN = ['IN 90', 'IN 90 (OSECAC)', 'IN 180', 'IN 360', 'AFILIADO SEC', 'ASISTENCIAL'];
+
         function ordenarPlanes(claves){
             return [...claves].sort((a, b) => {
                 const ia = PRIORIDAD_ORDEN.indexOf(a);
@@ -211,9 +307,6 @@
             }
             throw new Error('No se pudo encontrar precios.csv ni precios.xlsx');
         }
-
-        function quitarAcentos(s){ return String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
-        function normalizarCategoria(s){ return quitarAcentos(normalizar(s)).replace(/\s+/g, ' ').toUpperCase(); }
 
         const PALABRAS_CLAVE_IN90_PERMITIDO = [
             'TURISMO', 'QUINCHO', 'SALON CHICO', 'SALON GRANDE', 'SALON VIP',
@@ -323,13 +416,12 @@
                     if (baseDeDatos.length === 0) throw new Error('No se detectaron registros con precios');
 
                     document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
-                    document.getElementById('texto-resultados').textContent = `Base lista (${baseDeDatos.length} registros cargados). Esperando búsqueda...`;
+                    document.getElementById('texto-resultados').textContent = `Base lista (${baseDeDatos.length} registros cargados).`;
                     document.getElementById('badge-estado').textContent = 'Base Cargada';
                     document.getElementById('badge-estado').classList.add('text-emerald-600');
 
                     const input = document.getElementById('input-busqueda');
                     input.disabled = false;
-                    input.focus();
 
                     renderizarFiltros();
                     renderizarFiltroConvenios();
@@ -345,7 +437,7 @@
                     document.getElementById('tabla-wrap').innerHTML = `
                         <div class="text-center py-8">
                             <p class="text-red-500 font-bold text-base">No se pudo procesar el archivo de precios.</p>
-                            <p class="text-gray-400 text-xs mt-1">Verifica que 'precios.xlsx' (o 'precios.csv') esté en el directorio.</p>
+                            <p class="text-gray-400 text-xs mt-1">Verifica que 'precios.xlsx' (o 'precios.csv') esté disponible.</p>
                         </div>`;
                 });
         });
@@ -364,7 +456,7 @@
 
             let resultados;
             if (!termino && !filtroActivo && !convenioActivo && !servicioActivo) {
-                resultados = baseDeDatos.slice(0, 10);
+                resultados = baseDeDatos.slice(0, 15);
             } else {
                 resultados = termino ? buscarEstricto(termino) : baseDeDatos.slice();
             }
@@ -383,19 +475,19 @@
 
             if (!termino) {
                 document.getElementById('texto-resultados').textContent = (filtroActivo || convenioActivo || servicioActivo)
-                    ? `Mostrando ${resultados.length} práctica(s) / servicio(s)`
-                    : 'Mostrando sugerencias...';
+                    ? `Mostrando ${resultados.length} registro(s)`
+                    : `Mostrando primeras ${resultados.length} sugerencias...`;
             } else {
-                document.getElementById('texto-resultados').textContent = `Se encontraron ${resultados.length} práctica(s) / servicio(s)`;
+                document.getElementById('texto-resultados').textContent = `Se encontraron ${resultados.length} registro(s)`;
             }
         }
 
         const CONVENIOS_FIJOS = [
-            { nombre: 'Dra. Capponi',   claves: ['CAPPONI'] },
+            { nombre: 'DRA. CAPPONI',   claves: ['CAPPONI'] },
             { nombre: 'COMED',          claves: ['COMED'] },
-            { nombre: 'CMD (FAMYL)',    claves: ['CMD', 'FAMYL'] },
-            { nombre: 'Dr. Costanzi',   claves: ['COSTANZI'] },
-            { nombre: 'Nexo Terapia',   claves: ['NEXO TERAPIA', 'NEXO'] },
+            { nombre: 'CMD (FAMY)',     claves: ['CMD', 'FAMYL'] },
+            { nombre: 'DR. COSTANZI',   claves: ['COSTANZI'] },
+            { nombre: 'NEXO TERAPIA',   claves: ['NEXO TERAPIA', 'NEXO'] },
         ].map(c => ({ ...c, coincide: (categoria) => {
             const cat = normalizarCategoria(categoria);
             return c.claves.some(k => cat.includes(k));
@@ -406,11 +498,9 @@
         function renderizarFiltroConvenios(){
             const cont = document.getElementById('fila-convenios');
             cont.innerHTML =
-                `<button class="chip-filtro activo px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-600" data-convenio="">
-                    Todos
-                </button>` +
+                `<button class="chip-filtro activo" data-convenio="">TODOS</button>` +
                 CONVENIOS_FIJOS.map((c, i) => `
-                    <button class="chip-filtro px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-600" data-convenio="${i}">
+                    <button class="chip-filtro" data-convenio="${i}">
                         ${c.nombre}
                     </button>`).join('');
 
@@ -424,22 +514,39 @@
             });
         }
 
+        /*
+           FUNCIÓN DE EVALUACIÓN ESTRICTA DE CONSULTA MÉDICA (A, B, C)
+           Empareja únicamente como token de palabra exacta e independiente ('A', 'B', 'C')
+           para evitar falsas coincidencias con palabras como Capponi, Círculo, etc.
+        */
+        function esConsultaDeLetra(item, categoria, letraExacta) {
+            if (!item) return false;
+            // Normalizar texto y quitar comillas
+            const txt = quitarAcentos(item).toUpperCase().replace(/["'«»]/g, ' ');
+            const palabras = txt.split(/\s+/).filter(Boolean);
+
+            // Debe contener la palabra CONSULTA
+            if (!palabras.includes('CONSULTA')) return false;
+
+            // Descartar otras ramas explícitas
+            if (palabras.some(p => p.includes('ODONTO') || p.includes('KINESIO') || p.includes('NUTRI') || p.includes('ENFERM'))) {
+                return false;
+            }
+
+            // Verificar que la letra requerida exista como palabra aislada y no existan las otras
+            const tieneLetra = palabras.includes(letraExacta);
+            const tieneOtrasLetras = ['A', 'B', 'C'].filter(l => l !== letraExacta).some(l => palabras.includes(l));
+
+            return tieneLetra && !tieneOtrasLetras;
+        }
+
         const SERVICIOS_GRUPOS = [
             {
                 titulo: '🩺 CONSULTA MÉDICA',
                 items: [
-                    { id: 'cons_a', nombre: 'CONSULTA "A"', coincide: (it, cat) => {
-                        const txt = quitarAcentos(it).toUpperCase();
-                        return /\bCONSULTA(\s+MEDICA)?\s+["']?A["']?\b/.test(txt);
-                    }},
-                    { id: 'cons_b', nombre: 'CONSULTA "B"', coincide: (it, cat) => {
-                        const txt = quitarAcentos(it).toUpperCase();
-                        return /\bCONSULTA(\s+MEDICA)?\s+["']?B["']?\b/.test(txt);
-                    }},
-                    { id: 'cons_c', nombre: 'CONSULTA "C"', coincide: (it, cat) => {
-                        const txt = quitarAcentos(it).toUpperCase();
-                        return /\bCONSULTA(\s+MEDICA)?\s+["']?C["']?\b/.test(txt);
-                    }},
+                    { id: 'cons_a', nombre: 'CONSULTA "A"', coincide: (it, cat) => esConsultaDeLetra(it, cat, 'A') },
+                    { id: 'cons_b', nombre: 'CONSULTA "B"', coincide: (it, cat) => esConsultaDeLetra(it, cat, 'B') },
+                    { id: 'cons_c', nombre: 'CONSULTA "C"', coincide: (it, cat) => esConsultaDeLetra(it, cat, 'C') },
                     { id: 'nutricion', nombre: 'NUTRICION', coincide: (it, cat) => {
                         const txt = quitarAcentos(it + ' ' + cat).toUpperCase();
                         return txt.includes('NUTRICI');
@@ -528,19 +635,17 @@
 
             SERVICIOS_GRUPOS.forEach((grupo, gIdx) => {
                 html += `
-                    <div class="border-2 border-[#b85a3c] rounded-xl px-3 py-2 bg-[#fdf5f0] shadow-sm">
-                        <p class="text-[11px] font-extrabold uppercase tracking-wider text-[#b85a3c] mb-1.5 px-1 flex items-center gap-1.5">
+                    <div class="filtro-card">
+                        <div class="filtro-titulo">
                             ${grupo.titulo}
-                        </p>
-                        <div class="flex flex-wrap items-center gap-1.5">
-                            <button class="chip-filtro activo px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-600" data-grupo="${gIdx}" data-servicio="">
-                                Todos
-                            </button>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5">
+                            <button class="chip-filtro activo" data-grupo="${gIdx}" data-servicio="">TODOS</button>
                 `;
 
                 grupo.items.forEach(item => {
                     html += `
-                        <button class="chip-filtro px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-600" data-grupo="${gIdx}" data-servicio="${item.id}">
+                        <button class="chip-filtro" data-grupo="${gIdx}" data-servicio="${item.id}">
                             ${item.nombre}
                         </button>
                     `;
@@ -594,11 +699,9 @@
             const planesOrdenados = ORDEN_PLANES.filter(p => planesPresentes.has(p));
 
             cont.innerHTML = `
-                <button class="chip-filtro activo px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-600" data-plan="">
-                    Todos
-                </button>` +
+                <button class="chip-filtro activo" data-plan="">TODOS</button>` +
                 planesOrdenados.map(clave => `
-                    <button class="chip-filtro px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white shadow-sm text-gray-600" data-plan="${clave}">
+                    <button class="chip-filtro" data-plan="${clave}">
                         ${etiquetaPorClave[clave] || clave}
                     </button>`).join('');
 
@@ -631,7 +734,7 @@
 
             if (datos.length === 0) {
                 contenedor.innerHTML = `
-                    <div class="text-center py-8">
+                    <div class="text-center py-12">
                         <p class="text-gray-400 font-bold text-base">No se encontraron resultados.</p>
                     </div>`;
                 return;
@@ -658,7 +761,7 @@
                 return `
                     <tr>
                         <td data-fila="${fila}" class="celda-item">
-                            <span class="celda-categoria">${registro.categoria}</span>
+                            <span class="celda-categoria">${registro.categoria}</span><br>
                             ${registro.item}
                         </td>
                         ${celdas}
