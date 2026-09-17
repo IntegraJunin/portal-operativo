@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Convenios</title>
+  <title>Convenios Consultá vigencia de los convenios.</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Raleway:wght@600;700;800&display=swap" rel="stylesheet">
@@ -121,80 +121,89 @@
 
     .section-anchor { scroll-margin-top: 1rem; }
 
-    /* --- AJUSTE IMPRESIÓN A4 FULL HEIGHT --- */
-    @media print {
-      @page {
-        size: A4 portrait;
-        margin: 6mm 8mm;
-	zoom: 50%; /* Aplica el escalado del 50% automáticamente al imprimir */
-      }
+/* --- AJUSTE IMPRESIÓN A4 EXACTO (CALIBRADO) --- */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 4mm; /* Margen de seguridad para evitar recortes físicos */
+  }
 
-      * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    box-sizing: border-box !important;
+  }
 
-      html, body {
-        background: #183b75 !important;
-        width: 100% !important;
-        height: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-      }
+  /* Ocultar elementos de interfaz */
+  .no-print, button, nav, .btn-imprimir {
+    display: none !important;
+  }
 
-      .no-print, button, nav {
-        display: none !important;
-      }
+  /* Área imprimible exacta (210x297 menos márgenes) */
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #183b75 !important;
+    width: 202mm !important;
+    height: 289mm !important;
+    overflow: hidden !important; 
+  }
 
-      .main-container {
-        padding: 0 !important;
-        max-width: 100% !important;
-        height: 100vh !important;
-        display: flex !between;
-        flex-direction: column !important;
-        justify-content: space-between !important;
-      }
+  /* Escalado equilibrado para no desbordar */
+  .main-container {
+    width: 331mm !important;   /* 202mm / 0.61 */
+    height: 473mm !important;  /* 289mm / 0.61 */
+    transform: scale(0.61) !important;
+    transform-origin: top left !important;
+    margin: 0 !important;
+    padding: 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
 
-      .cards-grid {
-        display: grid !important;
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 0.85rem !important;
-        flex-grow: 1 !important;
-      }
+  .cards-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+    flex-grow: 1 !important;
+  }
 
-      .milani-card {
-        grid-column: span 2 / span 2 !important;
-      }
+  .milani-card {
+    grid-column: span 2 / span 2 !important;
+  }
 
-      .partner-card, .glass-panel {
-        break-inside: avoid;
-        page-break-inside: avoid;
-        box-shadow: none !important;
-      }
+  .partner-card {
+    height: 100% !important;
+    padding: 0.85rem 1.1rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
 
-      .intro-panel {
-        padding: 0.8rem 1.25rem !important;
-      }
+  .intro-panel {
+    padding: 0.6rem 1rem !important;
+    margin-bottom: 0.4rem !important;
+  }
 
-      .banner-panel {
-        padding: 0.65rem 1.25rem !important;
-        margin-bottom: 0.8rem !important;
-      }
+  .banner-panel {
+    padding: 0.5rem 1rem !important;
+    margin-bottom: 0.5rem !important;
+  }
 
-      .partner-card {
-        padding: 1.1rem 1.35rem !important;
-      }
+  .service-item {
+    padding: 0.4rem 0 !important;
+    font-size: 1.05rem !important;
+  }
 
-      .service-item {
-        padding: 0.55rem 0 !important;
-        font-size: 1.18rem !important;
-      }
-
-      footer {
-        margin-top: 0.5rem !important;
-        padding-top: 0.5rem !important;
-      }
-    }
+  footer {
+    margin-top: 0.4rem !important;
+    padding-top: 0.2rem !important;
+    break-inside: avoid !important;
+  }
+}
   </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -206,11 +215,8 @@
       
       <!-- ENCABEZADO -->
       <header id="inicio" class="w-full">
-        <div class="rounded-xl px-6 py-3 flex items-center justify-between gap-3 shadow-md" style="background: rgb(16, 55, 102);">
-          <div class="flex items-center gap-3">
-            <span class="inline-flex w-3.5 h-3.5 rounded-full bg-lime-300"></span>
-            <p class="m-0 text-lg font-semibold tracking-wide text-white">Información de servicios</p>
-          </div>
+       
+          
           <button onclick="window.print()" class="no-print nav-chip inline-flex items-center gap-2 rounded-full px-5 py-2 text-base font-semibold cursor-pointer border-0 text-white" style="background: rgba(255, 255, 255, 0.2);">
             <i data-lucide="printer" width="18" height="18"></i>
             <span>Imprimir</span>
@@ -222,7 +228,7 @@
   <div class="flex items-center justify-between gap-4">
     <div>
       <h1 class="font-bold text-4xl sm:text-5xl leading-none" style="color: rgb(16, 55, 102);">Convenios</h1>
-      <p class="text-xl font-medium mt-1.5 mb-0" style="color: rgb(71, 107, 130);">Servicios de diagnóstico por imágenes y laboratorio</p>
+      
     </div>
 
     <!-- LOGO DE INTEGRA -->
@@ -231,8 +237,6 @@
     </div>
   </div>
 
-  <nav aria-label="Navegación de convenios" class="mt-3.5 no-print">
-  
             <p class="font-semibold mb-2 text-base" style="color: rgb(16, 55, 102);">Explorá los convenios disponibles</p>
             <div class="flex flex-wrap gap-2.5">
               <a class="nav-chip inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-semibold" href="#cmd" style="background: rgb(239, 251, 221); color: rgb(55, 106, 6);">
@@ -258,7 +262,7 @@
       <!-- BARRA SUBTÍTULO -->
       <main class="w-full py-3 flex-1 flex flex-col justify-between">
         <div class="glass-panel banner-panel rounded-xl px-6 py-3 mb-3 flex flex-col md:flex-row md:items-center md:justify-between gap-1">
-          <h2 class="font-bold text-2xl sm:text-3xl" style="color: rgb(16, 55, 102);">Convenios para tu cuidado</h2>
+       
           <p class="text-lg md:text-right m-0 font-semibold" style="color: rgb(71, 107, 130);">Consultá vigencia de los convenios.</p>
         </div>
 
