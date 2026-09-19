@@ -20,9 +20,6 @@
         --pill:#efeadd;
         --line:#e7e2d6;
         --accent:#c1653f;
-        --green-btn:#3f7a5c;
-        --green-bg:#eaf3ed;
-        --status-mod:#e2a04a;
     }
     *{ box-sizing:border-box; }
     body{
@@ -86,7 +83,6 @@
 
     .hidden{ display:none !important; }
 
-    /* Estilos Secciones */
     .manuales-grid{
         display:grid;
         grid-template-columns:340px 1fr;
@@ -210,26 +206,23 @@
         </div>
     </div>
 
-    <!-- SECCIÓN 4: BUSCADOR DE PRECIOS PUBLICO -->
+    <!-- SECCIÓN 4: BUSCADOR DE PRECIOS -->
     <div id="sec-precios" class="hidden">
         <div class="buscador-frame-wrap">
             <iframe src="buscador.html" title="Buscador de precios"></iframe>
         </div>
     </div>
 
-    <!-- SECCIÓN 5: EDITOR EXCLUSIVO (CARGA EL ARCHIVO SEPARADO editor.html) -->
+    <!-- SECCIÓN 5: EDITOR EXCLUSIVO (Carga EDITOR.html o editor.html) -->
     <div id="sec-editor" class="hidden">
         <div class="buscador-frame-wrap">
-            <iframe src="editor.html" title="Editor Exclusivo"></iframe>
+            <iframe id="iframe-editor" src="EDITOR.html" title="Editor Exclusivo"></iframe>
         </div>
     </div>
 
 </div>
 
 <script>
-    // ------------------------------------------------------------------
-    // SISTEMA DE MANUALES Y SOLICITUDES PREEXISTENTE
-    // ------------------------------------------------------------------
     const MANUALES = [
         { icono: '📄', nombre: 'Consultas Médicas',              archivo: 'CONSULTAS MEDICAS' },
         { icono: '📄', nombre: 'Convenio Laboratorio',            archivo: 'CONVENIO LABORATORIO' },
