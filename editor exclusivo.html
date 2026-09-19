@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editor Exclusivo de Precios - INTEGRA</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="auth.js"></script>
+<!-- SheetJS para lectura y escritura de archivos Excel (.xlsx / .csv) -->
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+<style>
+    :root{
+        --bg:#f7f5f0;
+        --card:#ffffff;
+        --inner:#fcfbfa;
+        --brand:#5c4b3f;
+        --brand-soft:#8c7a6b;
+        --pill:#efeadd;
+        --line:#e7e2d6;
+        --accent:#c1653f;
+        --green-btn:#3f7a5c;
+        --green-bg:#eaf3ed;
+        --status-mod:#e2a04a;
+    }
+    *{ box-sizing:border-box; }
+    body{
+        margin:0;
+        background:var(--bg);
+        font-family:'Comfortaa', cursive;
+        color:#3a332c;
+        min-height:100vh;
+    }
+    h1,h2,h3,h4,.font-outfit{ font-family:'Outfit', sans-serif; }
+
+    ::-webkit-scrollbar{ width:8px; }
+    ::-webkit-scrollbar-track{ background:transparent; }
+    ::-webkit-scrollbar-thumb{ background:#d1cdb8; border-radius:10px; }
+
+    .wrap{ max-width:1450px; margin:0 auto; padding:1.25rem clamp(1rem, 3vw, 2rem) 2rem; }
+
+    /* Encabezado */
+    .topbar{
+        background:var(--card);
+        border-radius:2rem;
+        padding:1.25rem 2rem;
+        box-shadow:0 2px 10px rgba(0,0,0,0.04);
+        display:flex;
+        flex-wrap:wrap;
+        gap:1rem;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:1.25rem;
+    }
+    .brand{
+        font-family:'Outfit', sans-serif;
+        font-weight:800;
+        font-size:1.8rem;
+        color:var(--brand);
+        display:flex;
+        align-items:center;
+        gap:.5rem;
+        margin:0;
+    }
+    .brand span{ color:var(--brand-soft); font-size:1.5rem; }
+
+    .hidden{ display:none !important; }
+
+    /* ========================================================= */
+    /* ESTILOS DEL MÓDULO EDITOR EXCLUSIVO DE PRECIOS            */
+    /* ========================================================= */
+    .editor-login-card{
+        max-width:460px;
+        margin:3rem auto;
+        background:var(--card);
+        border-radius:2rem;
+        padding:2.5rem;
+        box-shadow:0 10px 30px rgba(92,75,63,.08);
+        border:1px solid var(--line);
+        text-align:center;
+    }
+    .editor-login-card h2{ color:var(--brand); margin-top:0; font-size:1.6rem; }
+    .editor-login-card p{ color:var(--brand-soft); font-size:.9rem; margin-bottom:1.5rem; }
+    
+    .form-group{ margin-bottom:1.2rem; text-align:left; }
+    .form-group label{ display:block; font-family:'Outfit', sans-serif; font-weight:700; font-size:.85rem; color:var(--brand); margin-bottom:.4rem; }
+    .input-field{
+        width:100%;
+        padding:.8rem 1rem;
+        border-radius:12px;
+        border:1px solid var(--line);
+        background:var(--inner);
+        font-family:'Comfortaa', cursive;
+        font-size:.95rem;
+        color:#3a332c;
+        outline:none;
+        transition:all .2s ease;
+    }
+    .input-field:focus{ border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px rgba(193,101,63,.15); }
+    
+    .btn-primary{
+        width:100%;
+        padding:.9rem 1.5rem;
+        border:none;
+        border-radius:999px;
+        background:var(--brand);
+        color:#fff;
+        font-family:'Outfit', sans-serif;
+        font-weight:700;
+        font-size:1rem;
+        cursor:pointer;
+        transition:all .2s ease;
+    }
+    .btn-primary:hover{ background:var(--accent); transform:translateY(-1px); }
+
+    /* Layout del Editor en 3 Columnas */
+    .editor-layout{
+        display:grid;
+        grid-template-columns:300px 1fr 320px;
+        gap:1.25rem;
+        align-items:start;
+    }
+    @media (max-width: 1100px){ .editor-layout{ grid-template-columns:1fr; } }
+
+    .panel-box{
+        background:var(--card);
+        border-radius:1.5rem;
+        padding:1.25rem;
+        box-shadow:0 2px 10px rgba(0,0,0,0.04);
+        border:1px solid var(--line);
+    }
+    .panel-title{
+        font-size:.85rem;
+        text-transform:uppercase;
+        letter-spacing:.08em;
+        color:var(--brand-soft);
+        font-weight:800;
+        margin:0 0 1rem 0;
+        display:flex; align-items:center; gap:.5rem;
+    }
+
+    /* Columna 1: Filtros y Búsqueda */
+    .checkbox-group{ display:flex; flex-direction:column; gap:.5rem; margin-top:.8rem; }
+    .checkbox-item{ display:flex; align-items:center; gap:.5rem; font-size:.85rem; color:var(--brand); cursor:pointer; }
+    .checkbox-item input{ accent-color:var(--accent); }
+
+    /* Columna 2: Tarjetas Agrupadas */
+    .category-group{ margin-bottom:1.5rem; }
+    .category-header{
+        background:var(--pill);
+        padding:.6rem 1.2rem;
+        border-radius:12px;
+        font-family:'Outfit', sans-serif;
+        font-weight:800;
+        color:var(--brand);
+        font-size:.95rem;
+        margin-bottom:.8rem;
+        display:flex; justify-content:space-between; align-items:center;
+    }
+    .cards-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:1rem; }
+    
+    .item-card{
+        background:var(--inner);
+        border:1px solid var(--line);
+        border-radius:1.2rem;
+        padding:1rem;
+        position:relative;
+        transition:all .2s ease;
+    }
+    .item-card.modified{ border-color:var(--status-mod); background:#fffdf9; box-shadow:0 3px 12px rgba(226,160,74,.15); }
+    .badge-cat{
+        display:inline-block;
+        background:var(--accent);
+        color:#fff;
+        font-size:.7rem;
+        font-family:'Outfit', sans-serif;
+        font-weight:700;
+        padding:.25rem .6rem;
+        border-radius:999px;
+        text-transform:uppercase;
+        margin-bottom:.4rem;
+    }
+    .item-title{ font-family:'Outfit', sans-serif; font-weight:800; font-size:1rem; color:var(--brand); margin:0 0 .25rem 0; }
+    .item-code{ font-size:.75rem; color:var(--brand-soft); margin-bottom:.8rem; }
+    
+    .price-row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:.4rem; font-size:.85rem; }
+    .price-row.new-val{ margin-top:.6rem; }
+    .price-input{
+        width:110px;
+        padding:.4rem .6rem;
+        border-radius:8px;
+        border:1px solid var(--line);
+        background:#fff;
+        font-family:'Outfit', sans-serif;
+        font-weight:700;
+        font-size:.95rem;
+        color:var(--brand);
+        text-align:right;
+    }
+    .btn-revert{
+        border:none;
+        background:var(--pill);
+        color:var(--brand);
+        font-family:'Outfit', sans-serif;
+        font-weight:700;
+        font-size:.75rem;
+        padding:.35rem .75rem;
+        border-radius:999px;
+        cursor:pointer;
+        margin-top:.6rem;
+        width:100%;
+    }
+    .btn-revert:hover{ background:#e2d6c1; }
+
+    /* Columna 3: Sincronización GitHub */
+    .github-sync-panel{ background:var(--card); border-radius:1.5rem; padding:1.25rem; border:1px solid var(--line); }
+    .status-badge{ display:inline-flex; align-items:center; gap:.4rem; font-size:.8rem; font-weight:700; color:#2e7d32; background:var(--green-bg); padding:.3rem .8rem; border-radius:999px; margin-bottom:1rem; }
+    .status-dot{ width:8px; height:8px; border-radius:50%; background:#2e7d32; }
+    .btn-github{
+        width:100%;
+        padding:.85rem;
+        border:none;
+        border-radius:999px;
+        background:var(--green-btn);
+        color:#fff;
+        font-family:'Outfit', sans-serif;
+        font-weight:800;
+        font-size:.95rem;
+        cursor:pointer;
+        transition:all .2s ease;
+        margin-top:.8rem;
+    }
+    .btn-github:hover{ background:#2d5c44; box-shadow:0 4px 12px rgba(63,122,92,.3); }
+    .btn-revert-all{
+        width:100%;
+        padding:.65rem;
+        border:none;
+        border-radius:999px;
+        background:var(--pill);
+        color:var(--brand);
+        font-family:'Outfit', sans-serif;
+        font-weight:700;
+        font-size:.85rem;
+        cursor:pointer;
+        margin-top:.5rem;
+    }
+
+    .top-actions{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+    .user-badge{ font-size:.8rem; color:var(--brand-soft); font-weight:700; }
+    .btn-logout{ border:none; background:none; color:var(--accent); font-family:'Outfit', sans-serif; font-weight:700; font-size:.8rem; cursor:pointer; text-decoration:underline; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+    <div class="topbar">
+        <h1 class="brand">Portal Operativo INTEGRA <span>✳</span> - Editor Exclusivo</h1>
+    </div>
+
+    <!-- MÓDULO EDITOR SECRETOS Y EXCLUSIVO DE PRECIOS -->
+    <div id="sec-editor">
+        
+        <!-- PANTALLA DE ACCESO RESTRINGIDO -->
+        <div id="editor-login-screen">
+            <div class="editor-login-card">
+                <div style="font-size: 2.5rem; margin-bottom: .5rem;">🔒</div>
+                <h2>Acceso Exclusivo</h2>
+                <p>Ingresá tus credenciales privadas para acceder al editor y modificador directo de precios.</p>
+                <form onsubmit="autenticarEditor(event)">
+                    <div class="form-group">
+                        <label>Usuario Secreto</label>
+                        <input type="text" id="editor-user" class="input-field" placeholder="Tu usuario" required autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña Exclusiva</label>
+                        <input type="password" id="editor-pass" class="input-field" placeholder="••••••••" required autocomplete="current-password">
+                    </div>
+                    <div id="editor-error" style="color:var(--accent); font-size:.8rem; font-weight:700; margin-bottom:1rem; display:none;">
+                        Credenciales incorrectas. Verificá usuario y contraseña.
+                    </div>
+                    <button type="submit" class="btn-primary">Ingresar al Editor</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- INTERFAZ DEL EDITOR (SE MUESTRA TRAS AUTENTICAR) -->
+        <div id="editor-app-screen" class="hidden">
+            <div class="top-actions">
+                <div class="user-badge">Sesión Activa: <strong id="lbl-usuario">Administrador</strong></div>
+                <button class="btn-logout" onclick="cerrarSesionEditor()">🔒 Cerrar Sesión Exclusiva</button>
+            </div>
+
+            <div class="editor-layout">
+                <!-- COLUMNA 1: BUSCADOR INTEGRADO EXCEL -->
+                <div class="panel-box">
+                    <div class="panel-title">🔍 Buscador de Excel Integrado</div>
+                    <div class="form-group">
+                        <input type="text" id="search-input" class="input-field" placeholder="Ingresa código, servicio, socio..." oninput="filtrarProductos()">
+                    </div>
+                    <div class="panel-title" style="margin-top:1.2rem;">Columnas a buscar</div>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item"><input type="checkbox" id="chk-servicio" checked onchange="filtrarProductos()"> Servicio / Práctica</label>
+                        <label class="checkbox-item"><input type="checkbox" id="chk-socio" checked onchange="filtrarProductos()"> Tipo de Socio</label>
+                        <label class="checkbox-item"><input type="checkbox" id="chk-codigo" checked onchange="filtrarProductos()"> Código</label>
+                        <label class="checkbox-item"><input type="checkbox" id="chk-precio" onchange="filtrarProductos()"> Precio</label>
+                    </div>
+
+                    <div class="panel-title" style="margin-top:1.2rem;">Coincidencia</div>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item"><input type="radio" name="match-type" value="parcial" checked onchange="filtrarProductos()"> Parcial</label>
+                        <label class="checkbox-item"><input type="radio" name="match-type" value="exacta" onchange="filtrarProductos()"> Exacta</label>
+                    </div>
+                </div>
+
+                <!-- COLUMNA 2: TARJETAS DE RESULTADOS Y EDICIÓN -->
+                <div id="editor-results-container">
+                    <!-- Se genera dinámicamente con las categorías y tarjetas -->
+                </div>
+
+                <!-- COLUMNA 3: PANEL DE SINCRONIZACIÓN CON GITHUB -->
+                <div class="github-sync-panel">
+                    <div class="panel-title">🐙 Sincronización de GitHub</div>
+                    <div class="status-badge"><span class="status-dot"></span> Estado: Conectado</div>
+                    
+                    <div class="form-group" style="margin-top:1rem;">
+                        <label>Token de Acceso de GitHub (PAT)</label>
+                        <input type="password" id="gh-token" class="input-field" placeholder="ghp_xxxxxxxxxxxx" onchange="guardarGithubToken()">
+                    </div>
+
+                    <div style="background:var(--inner); padding:1rem; border-radius:12px; border:1px solid var(--line); margin-bottom:1rem;">
+                        <div style="font-family:'Outfit', sans-serif; font-weight:800; font-size:.9rem; color:var(--brand); margin-bottom:.3rem;">Cambios no confirmados</div>
+                        <div style="font-size:.8rem; color:var(--brand-soft);" id="uncommitted-summary">0 ítems modificados</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mensaje de confirmación (Commit)</label>
+                        <textarea id="commit-msg" class="input-field" style="height:70px; resize:none;" placeholder="ej., Actualización de precios Q3"></textarea>
+                    </div>
+
+                    <button class="btn-github" onclick="guardarEnGitHub()">Guardar en GitHub (Commit)</button>
+                    <button class="btn-revert-all" onclick="revertirTodosLosCambios()">Revertir Todos los Cambios</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    // Configuración de credenciales de la pestaña exclusiva (se puede personalizar)
+    const SECRET_USER = "admin";
+    const SECRET_PASS = "integra2026"; // Cambiar por tu contraseña deseada
+
+    // Configuración de GitHub (repositorio donde está el Excel)
+    const GH_OWNER = "integrajunin";
+    const GH_REPO = "portal-operativo";
+    const GH_FILE_PATH = "precios.xlsx"; // Ruta dentro del repo
+
+    // Datos simulados de ejemplo del Excel subido si no hay conexión directa a GitHub
+    let excelData = [
+        { id: 1, categoria: "Cuotas y Sepelios", servicio: "SEPELIO", codigo: "CUOTAS SEPELIO", in180: 5550, in360: "incluida", afiliado_sec: 4550, asistencial: 5550 },
+        { id: 2, categoria: "Cuotas y Sepelios", servicio: "Cuota TITULAR", codigo: "CUOTAS SOCIOS", in180: 15000, in360: 30000, afiliado_sec: "-", asistencial: 20000 },
+        { id: 3, categoria: "Cuotas y Sepelios", servicio: "SEPELIO FAMILIAR", codigo: "CUOTAS FAMILIAR", in180: 5550, in360: "-", afiliado_sec: "-", asistencial: 11100 },
+        { id: 4, categoria: "Cuotas y Sepelios", servicio: "Cuota FLIAR POR INTEGRANTES", codigo: "CUOTAS SOCIOS", in180: "incluida", in360: 15000, afiliado_sec: "-", asistencial: "-" },
+        { id: 5, categoria: "Bonos y Otros", servicio: "BONO SOLIDARIO", codigo: "BONO SOLIDARIO", in180: 4800, in360: "incluida", afiliado_sec: "-", asistencial: "-" }
+    ];
+
+    let cambiosPendientes = {};
+
+    // Inicializar comprobación de sesión al cargar la página
+    window.onload = function() {
+        verificarSesionPrevias();
+    };
+
+    // ------------------------------------------------------------------
+    // AUTENTICACIÓN DEL MÓDULO EXCLUSIVO
+    // ------------------------------------------------------------------
+    function autenticarEditor(e) {
+        if(e) e.preventDefault();
+        const user = document.getElementById('editor-user').value;
+        const pass = document.getElementById('editor-pass').value;
+
+        if (user === SECRET_USER && pass === SECRET_PASS) {
+            sessionStorage.setItem('editor_auth', 'true');
+            document.getElementById('editor-login-screen').classList.add('hidden');
+            document.getElementById('editor-app-screen').classList.remove('hidden');
+            document.getElementById('lbl-usuario').textContent = user;
+            
+            // Cargar Token si ya estaba guardado localmente
+            const savedToken = localStorage.getItem('gh_token');
+            if (savedToken) document.getElementById('gh-token').value = savedToken;
+
+            renderizarEditor();
+        } else {
+            document.getElementById('editor-error').style.display = 'block';
+        }
+    }
+
+    function cerrarSesionEditor() {
+        sessionStorage.removeItem('editor_auth');
+        document.getElementById('editor-login-screen').classList.remove('hidden');
+        document.getElementById('editor-app-screen').classList.add('hidden');
+    }
+
+    function verificarSesionPrevias() {
+        if (sessionStorage.getItem('editor_auth') === 'true') {
+            document.getElementById('editor-login-screen').classList.add('hidden');
+            document.getElementById('editor-app-screen').classList.remove('hidden');
+            renderizarEditor();
+        }
+    }
+
+    function guardarGithubToken() {
+        const token = document.getElementById('gh-token').value;
+        localStorage.setItem('gh_token', token);
+    }
+
+    // ------------------------------------------------------------------
+    // RENDERIZADO Y BÚSQUEDA DEL EDITOR
+    // ------------------------------------------------------------------
+    function renderizarEditor() {
+        filtrarProductos();
+    }
+
+    function filtrarProductos() {
+        const query = document.getElementById('search-input').value.toLowerCase().trim();
+        const chkServicio = document.getElementById('chk-servicio').checked;
+        const chkSocio = document.getElementById('chk-socio').checked;
+        const chkCodigo = document.getElementById('chk-codigo').checked;
+        const isExact = document.querySelector('input[name="match-type"]:checked').value === 'exacta';
+
+        const filtrados = excelData.filter(item => {
+            if (!query) return true;
+            const campos = [];
+            if (chkServicio) campos.push(String(item.servicio).toLowerCase());
+            if (chkSocio) campos.push(String(item.categoria).toLowerCase());
+            if (chkCodigo) campos.push(String(item.codigo).toLowerCase());
+
+            if (isExact) {
+                return campos.some(c => c === query);
+            } else {
+                return campos.some(c => c.includes(query));
+            }
+        });
+
+        // Agrupar por categoría
+        const grupos = {};
+        filtrados.forEach(item => {
+            if (!grupos[item.categoria]) grupos[item.categoria] = [];
+            grupos[item.categoria].push(item);
+        });
+
+        const container = document.getElementById('editor-results-container');
+        container.innerHTML = '';
+
+        if (Object.keys(grupos).length === 0) {
+            container.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--brand-soft);">No se encontraron coincidencias en el Excel.</div>`;
+            return;
+        }
+
+        for (const cat in grupos) {
+            const catGroup = document.createElement('div');
+            catGroup.className = 'category-group';
+            catGroup.innerHTML = `<div class="category-header">📂 Categoría: ${cat} <span>${grupos[cat].length} ítems</span></div>`;
+
+            const cardsGrid = document.createElement('div');
+            cardsGrid.className = 'cards-grid';
+
+            grupos[cat].forEach(item => {
+                const modificado = cambiosPendientes[item.id] !== undefined;
+                const valActual = modificado ? cambiosPendientes[item.id] : item.in180;
+
+                const card = document.createElement('div');
+                card.className = `item-card ${modificado ? 'modified' : ''}`;
+                card.innerHTML = `
+                    <span class="badge-cat">${item.codigo}</span>
+                    <h3 class="item-title">${item.servicio}</h3>
+                    <div class="item-code">ID: #${item.id}</div>
+                    
+                    <div class="price-row">
+                        <span>Precio Orig. (IN 180):</span>
+                        <strong>$ ${typeof item.in180 === 'number' ? item.in180.toLocaleString() : item.in180}</strong>
+                    </div>
+
+                    <div class="price-row new-val">
+                        <span>Nuevo Precio:</span>
+                        <input type="text" class="price-input" value="${valActual}" onchange="registrarCambio(${item.id}, this.value)">
+                    </div>
+
+                    ${modificado ? `<button class="btn-revert" onclick="revertirItem(${item.id})">↩ Revertir Valor</button>` : ''}
+                `;
+                cardsGrid.appendChild(card);
+            });
+
+            catGroup.appendChild(cardsGrid);
+            container.appendChild(catGroup);
+        }
+
+        actualizarResumenCambios();
+    }
+
+    function registrarCambio(id, nuevoValor) {
+        cambiosPendientes[id] = nuevoValor;
+        filtrarProductos();
+    }
+
+    function revertirItem(id) {
+        delete cambiosPendientes[id];
+        filtrarProductos();
+    }
+
+    function revertirTodosLosCambios() {
+        cambiosPendientes = {};
+        filtrarProductos();
+    }
+
+    function actualizarResumenCambios() {
+        const cant = Object.keys(cambiosPendientes).length;
+        document.getElementById('uncommitted-summary').textContent = `${cant} ítems modificados`;
+    }
+
+    // ------------------------------------------------------------------
+    // GUARDA EN GITHUB MEDIANTE API REST
+    // ------------------------------------------------------------------
+    async function guardarEnGitHub() {
+        const token = document.getElementById('gh-token').value;
+        const commitMsg = document.getElementById('commit-msg').value || "Actualización de precios desde Portal INTEGRA";
+
+        if (!token) {
+            alert("Por favor ingresa tu Personal Access Token (PAT) de GitHub para confirmar los cambios.");
+            return;
+        }
+
+        if (Object.keys(cambiosPendientes).length === 0) {
+            alert("No hay cambios pendientes para guardar.");
+            return;
+        }
+
+        try {
+            // Aplicar cambios al objeto local
+            excelData.forEach(item => {
+                if (cambiosPendientes[item.id] !== undefined) {
+                    const numVal = parseFloat(cambiosPendientes[item.id]);
+                    item.in180 = isNaN(numVal) ? cambiosPendientes[item.id] : numVal;
+                }
+            });
+
+            // Convertir datos a archivo Excel (.xlsx) con SheetJS
+            const ws = XLSX.utils.json_to_sheet(excelData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Precios");
+            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
+
+            // Obtener el SHA actual del archivo en GitHub
+            const urlGet = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE_PATH}`;
+            const resGet = await fetch(urlGet, {
+                headers: { 'Authorization': `token ${token}` }
+            });
+
+            let sha = "";
+            if (resGet.ok) {
+                const dataGet = await resGet.json();
+                sha = dataGet.sha;
+            }
+
+            // Realizar el Commit vía API de GitHub
+            const resPut = await fetch(urlGet, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: commitMsg,
+                    content: wbout,
+                    sha: sha
+                })
+            });
+
+            if (resPut.ok) {
+                alert("¡Cambios guardados con éxito en GitHub!");
+                cambiosPendientes = {};
+                document.getElementById('commit-msg').value = '';
+                filtrarProductos();
+            } else {
+                const errData = await resPut.json();
+                alert("Error al guardar en GitHub: " + (errData.message || 'Verifica los permisos del token.'));
+            }
+        } catch (err) {
+            alert("Ocurrió un error al procesar el archivo o la conexión: " + err.message);
+        }
+    }
+</script>
+</body>
+</html>

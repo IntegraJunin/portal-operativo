@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Operativo INTEGRA - Buscador de Precios</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-main: #f4e7dc;
+            --bg-card: #ffffff;
+            --bg-box: #fbf5ef;
+            --border-box: #e5d3c5;
+            --text-brand: #4a3525;
+            --chip-bg: #e8dad0;
+            --chip-text: #4a3525;
+            --chip-active-bg: #4a382a;
+            --chip-active-text: #ffffff;
+            --accent-orange: #b85a3c;
+        }
+
+        html, body {
+            height: 100vh !important;
+            max-height: 100vh !important;
+            margin: 0;
+            padding: 0;
+            overflow: hidden !important;
+            background-color: var(--bg-main);
+            font-family: 'Comfortaa', cursive;
+            color: var(--text-brand);
+        }
+
+        h1, h2, h3, button, input, table, .font-outfit {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d0beb0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #b8a698; }
+
+        .chip-filtro {
+            background-color: var(--chip-bg);
+            color: var(--chip-text);
+            font-weight: 700;
+            font-size: 11px;
+            padding: 5px 12px;
+            border-radius: 9999px;
+            transition: all 0.15s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            border: 1px solid transparent;
+        }
+
+        .chip-filtro:hover { background-color: #ded0c5; }
+        .chip-filtro.activo {
+            background-color: var(--chip-active-bg) !important;
+            color: var(--chip-active-text) !important;
+            border-color: var(--chip-active-bg);
+        }
+
+        .filtro-card {
+            background-color: var(--bg-box);
+            border: 1.5px solid var(--border-box);
+            border-radius: 14px;
+            padding: 10px 12px;
+        }
+
+        .filtro-titulo {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-brand);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        #tabla-wrap table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            min-width: 550px;
+        }
+
+        #tabla-wrap th, #tabla-wrap td {
+            padding: 10px 14px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        #tabla-wrap thead th {
+            font-family: 'Outfit', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            color: #7a6657;
+            background: #faf6f0;
+            position: sticky;
+            top: 0;
+            border-bottom: 2px solid #ede3da;
+            z-index: 10;
+        }
+
+        #tabla-wrap tbody td:first-child, #tabla-wrap thead th:first-child {
+            position: sticky;
+            left: 0;
+            background: #ffffff;
+            z-index: 1;
+            white-space: normal;
+            min-width: 220px;
+        }
+
+        #tabla-wrap thead th:first-child { background: #faf6f0; z-index: 20; }
+        #tabla-wrap tbody tr:nth-child(even) td { background-color: #fdfaf7; }
+        #tabla-wrap tbody tr:nth-child(even) td:first-child { background-color: #fdfaf7; }
+        #tabla-wrap tbody tr:hover td { background-color: #f3e9e0; }
+
+        #tabla-wrap tbody td {
+            border-bottom: 1px solid #f2e9e1;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            color: #3d2e24;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        #tabla-wrap .celda-item { font-weight: 700; color: #3b291a; cursor: default; }
+        #tabla-wrap .celda-categoria {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #ffffff;
+            background: var(--accent-orange);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-bottom: 3px;
+        }
+
+        #tabla-wrap .celda-vacia { color: #c0b2a6; font-weight: 600; cursor: default; }
+        #tabla-wrap td.resaltada, #tabla-wrap th.resaltada {
+            background-color: #fde047 !important;
+            box-shadow: inset 0 0 0 2px #f59e0b;
+            color: #3a332c !important;
+        }
+    </style>
+</head>
+<body class="p-3 md:p-4 flex flex-col h-screen overflow-hidden">
+
+    <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-0 overflow-hidden">
+        <!-- COLUMNA IZQUIERDA: FILTROS -->
+        <aside class="lg:col-span-4 xl:col-span-4 h-full overflow-y-auto pr-2 space-y-3">
+            <h2 class="text-lg font-extrabold text-[#3b291a] sticky top-0 bg-[#f4e7dc] py-1 z-10">Filtros</h2>
+
+            <div class="filtro-card">
+                <div class="filtro-titulo"><span>👤</span> FILTRO POR TIPO DE SOCIO</div>
+                <div id="fila-filtros" class="flex flex-wrap gap-1.5"></div>
+            </div>
+
+            <div class="filtro-card">
+                <div class="filtro-titulo"><span>🟠</span> FILTRO POR CONVENIO</div>
+                <div id="fila-convenios" class="flex flex-wrap gap-1.5"></div>
+            </div>
+
+            <div id="contenedor-servicios" class="space-y-3"></div>
+        </aside>
+
+        <!-- COLUMNA DERECHA: RESULTADOS Y TABLA -->
+        <main class="lg:col-span-8 xl:col-span-8 h-full overflow-y-auto pr-2 flex flex-col gap-3">
+            <h2 class="text-lg font-extrabold text-[#3b291a] sticky top-0 bg-[#f4e7dc] py-1 z-10">Resultados</h2>
+
+            <div class="relative flex-shrink-0">
+                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-base">🔍</span>
+                <input
+                    type="text"
+                    id="input-busqueda"
+                    placeholder="Buscar por práctica, código o especialidad..."
+                    class="w-full pl-11 pr-4 py-2.5 rounded-2xl border border-[#e5d3c5] shadow-sm focus:ring-2 focus:ring-[#b85a3c] text-sm bg-white outline-none font-semibold text-gray-700 transition disabled:opacity-50"
+                    disabled
+                >
+            </div>
+
+            <div class="bg-white rounded-2xl border border-[#e5d3c5] shadow-sm overflow-hidden flex-1 flex flex-col min-h-0 mb-2">
+                <div id="tabla-wrap" class="overflow-auto flex-1 p-1"></div>
+
+                <div class="flex flex-col sm:flex-row justify-between items-center bg-[#faf6f0] px-4 py-2 border-t border-[#ede3da] text-xs gap-2 flex-shrink-0">
+                    <div class="flex items-center gap-2 font-bold text-[#5c4b3f]">
+                        <span id="indicador-color" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                        <span id="texto-resultados">Cargando base de datos...</span>
+                    </div>
+                    <div id="badge-estado" class="bg-white border border-[#e5d3c5] px-3 py-0.5 rounded-full font-bold text-[#7a6657] text-[10px] uppercase tracking-wider">
+                        Conectando...
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const PLANES_SIEMPRE_BLOQUEADOS = ['AD', 'COS', 'MM', 'MM/COM', 'MON/OP NO COS'];
+
+        function normalizar(v){ return String(v ?? '').trim(); }
+        function claveComparable(v){ return normalizar(v).replace(/\s+/g, ' ').toUpperCase(); }
+        function quitarAcentos(s){ return String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+        function normalizarCategoria(s){ return quitarAcentos(normalizar(s)).replace(/\s+/g, ' ').toUpperCase(); }
+
+        let ORDEN_PLANES = [];
+        const PRIORIDAD_ORDEN = ['IN 90', 'IN 90 (OSECAC)', 'IN 180', 'IN 360', 'AFILIADO SEC', 'ASISTENCIAL'];
+
+        function ordenarPlanes(claves){
+            return [...claves].sort((a, b) => {
+                const ia = PRIORIDAD_ORDEN.indexOf(a);
+                const ib = PRIORIDAD_ORDEN.indexOf(b);
+                if (ia === -1 && ib === -1) return 0;
+                if (ia === -1) return 1;
+                if (ib === -1) return -1;
+                return ia - ib;
+            });
+        }
+
+        let baseDeDatos = [];
+        let filtroActivo = null;
+
+        async function descargarExcel() {
+            const variantes = ['precios(modificado).xlsx', 'precios.xlsx', 'PRECIOS.xlsx'];
+            for (const url of variantes) {
+                try {
+                    const res = await fetch(url);
+                    if (res.ok) return { tipo: 'array', data: await res.arrayBuffer() };
+                } catch (e) {}
+            }
+            throw new Error('No se pudo encontrar el archivo excel');
+        }
+
+        // REGLAS DE NEGOCIO
+        const PALABRAS_CLAVE_IN90_PERMITIDO = ['TURISMO', 'QUINCHO', 'SALON', 'PILETA', 'COLONIA', 'MUSICA', 'FUTBOL'];
+        function in90PermitidoEnCategoria(categoria){
+            const cat = normalizarCategoria(categoria);
+            return PALABRAS_CLAVE_IN90_PERMITIDO.some(kw => cat.includes(kw));
+        }
+
+        const PALABRAS_CLAVE_EXCLUIDAS_IN180 = ['COMED', 'FAMYL', 'PETRAGLIA', 'PSIQUIATRIA'];
+        function in180PermitidoEn(categoria, item){
+            const cat = normalizarCategoria(categoria);
+            const it = normalizarCategoria(item);
+            if (PALABRAS_CLAVE_EXCLUIDAS_IN180.some(kw => cat.includes(kw))) return false;
+            if (it.includes('CONVENIO')) return false;
+            if (it.startsWith('CONSULTA MEDICA')) return false;
+            return true;
+        }
+
+        let etiquetaPorClave = {};
+
+        // NUEVO MOTOR DE LECTURA ADAPTADO AL FORMATO XLSX ESTRUCTURADO
+        function parsearFilas(filas){
+            const registros = [];
+            let mapaColumnas = {};
+            etiquetaPorClave = {};
+            ORDEN_PLANES = [];
+
+            // Buscar la fila de los encabezados (donde empiezan las columnas de planes a partir de la col 3)
+            let filaHeaderIndex = 0;
+            for(let i=0; i < filas.length; i++) {
+                if(filas[i][3]) { 
+                    filaHeaderIndex = i;
+                    break;
+                }
+            }
+
+            const headerRow = filas[filaHeaderIndex];
+            
+            // Mapear los planes (In 90, In 180, etc.)
+            for (let c = 3; c < headerRow.length; c++) {
+                const nombrePlan = normalizar(headerRow[c]);
+                if (nombrePlan) {
+                    const clave = claveComparable(nombrePlan);
+                    mapaColumnas[c] = clave;
+                    if (!(clave in etiquetaPorClave)) {
+                        etiquetaPorClave[clave] = nombrePlan;
+                        ORDEN_PLANES.push(clave);
+                    }
+                }
+            }
+
+            let categoriaActual = 'GENERAL';
+
+            // Iterar los datos de las filas
+            for (let i = filaHeaderIndex + 1; i < filas.length; i++) {
+                const fila = filas[i];
+                if (!fila || fila.length === 0) continue;
+
+                const colCategoria = normalizar(fila[0]);
+                const colItem = normalizar(fila[1]);
+                const colDetalle = normalizar(fila[2]); // Ej: "Valor por turno", "DEPOSITO"
+
+                // Si hay una categoría explícita, actualizarla. Si no, mantiene la anterior (comportamiento en cascada)
+                if (colCategoria) categoriaActual = colCategoria;
+
+                if (!colItem) continue; // Si no hay ítem, es fila vacía de contenido
+
+                // Unir ítem y detalle si existe
+                const nombreItemFinal = colDetalle ? `${colItem} (${colDetalle})` : colItem;
+                const precios = {};
+
+                // Leer los precios basados en el mapa de columnas
+                Object.entries(mapaColumnas).forEach(([colIndex, clave]) => {
+                    const valor = fila[Number(colIndex)];
+                    // Ignorar vacíos o textos no numéricos si no aplica
+                    if (valor !== undefined && valor !== '' && valor !== null && valor !== 'NaN') {
+                        precios[clave] = valor;
+                    }
+                });
+
+                if (Object.keys(precios).length === 0) continue;
+
+                // Reglas de negocio
+                PLANES_SIEMPRE_BLOQUEADOS.forEach(clave => { delete precios[clave]; });
+                if ('IN 90' in precios && !in90PermitidoEnCategoria(categoriaActual)) {
+                    delete precios['IN 90'];
+                }
+                if ('IN 180' in precios && !in180PermitidoEn(categoriaActual, nombreItemFinal)) {
+                    delete precios['IN 180'];
+                }
+
+                if (Object.keys(precios).length === 0) continue;
+
+                registros.push({ item: nombreItemFinal, categoria: categoriaActual, precios });
+            }
+            ORDEN_PLANES = ordenarPlanes(ORDEN_PLANES);
+            return registros;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            descargarExcel()
+                .then(({ data }) => {
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const primeraHoja = workbook.Sheets[workbook.SheetNames[0]];
+                    // 'defval: null' asegura que celdas vacías vengan vacías sin corromper el índice del array
+                    const filas = XLSX.utils.sheet_to_json(primeraHoja, { header: 1, defval: null });
+
+                    if (filas.length === 0) throw new Error('El Excel está vacío');
+
+                    baseDeDatos = parsearFilas(filas);
+                    
+                    document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
+                    document.getElementById('texto-resultados').textContent = `Base lista (${baseDeDatos.length} registros).`;
+                    document.getElementById('badge-estado').textContent = 'Base Cargada';
+                    document.getElementById('badge-estado').classList.add('text-emerald-600');
+                    document.getElementById('input-busqueda').disabled = false;
+
+                    renderizarFiltros();
+                    renderizarFiltroConvenios();
+                    renderizarFiltroServicios();
+                    aplicarBusquedaYFiltro();
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-red-500';
+                    document.getElementById('texto-resultados').textContent = 'Error al cargar precios.xlsx';
+                });
+        });
+
+        // ------------------ (FILTROS Y RENDERIZADO IDÉNTICOS AL ORIGINAL) ------------------
+        function buscarEstricto(termino){
+            const t = quitarAcentos(termino).toLowerCase().trim();
+            if (!t) return [];
+            return baseDeDatos.filter(r =>
+                quitarAcentos(r.item).toLowerCase().includes(t) ||
+                quitarAcentos(r.categoria).toLowerCase().includes(t)
+            );
+        }
+
+        function aplicarBusquedaYFiltro(){
+            const termino = document.getElementById('input-busqueda').value.trim();
+            let resultados = (!termino && !filtroActivo && !convenioActivo && !servicioActivo) 
+                ? baseDeDatos.slice(0, 15) 
+                : (termino ? buscarEstricto(termino) : baseDeDatos.slice());
+
+            if (filtroActivo) resultados = resultados.filter(r => Object.prototype.hasOwnProperty.call(r.precios, filtroActivo));
+            if (convenioActivo) resultados = resultados.filter(r => convenioActivo.coincide(r.categoria));
+            if (servicioActivo) resultados = resultados.filter(r => servicioActivo.coincide(r.item, r.categoria));
+
+            renderizarTabla(resultados, filtroActivo);
+        }
+
+        const CONVENIOS_FIJOS = [
+            { nombre: 'DRA. CAPPONI', claves: ['CAPPONI'] },
+            { nombre: 'COMED', claves: ['COMED'] },
+            { nombre: 'CMD (FAMY)', claves: ['CMD', 'FAMYL'] },
+            { nombre: 'DR. COSTANZI', claves: ['COSTANZI'] },
+            { nombre: 'NEXO TERAPIA', claves: ['NEXO TERAPIA', 'NEXO'] },
+        ].map(c => ({ ...c, coincide: (cat) => c.claves.some(k => normalizarCategoria(cat).includes(k))}));
+
+        let convenioActivo = null;
+        function renderizarFiltroConvenios(){
+            const cont = document.getElementById('fila-convenios');
+            cont.innerHTML = `<button class="chip-filtro activo" data-convenio="">TODOS</button>` +
+                CONVENIOS_FIJOS.map((c, i) => `<button class="chip-filtro" data-convenio="${i}">${c.nombre}</button>`).join('');
+
+            cont.querySelectorAll('.chip-filtro').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    convenioActivo = btn.dataset.convenio !== '' ? CONVENIOS_FIJOS[Number(btn.dataset.convenio)] : null;
+                    cont.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
+                    btn.classList.add('activo');
+                    aplicarBusquedaYFiltro();
+                });
+            });
+        }
+
+        function esConsultaDeLetra(it, cat, letra){
+            const txt = quitarAcentos(it).toUpperCase();
+            const p = txt.split(/\s+/).filter(Boolean);
+            if(!p.includes('CONSULTA')) return false;
+            if(['ODONTO','KINESIO','NUTRI','ENFERM'].some(kw => p.some(pal=>pal.includes(kw)))) return false;
+            return p.includes(letra) && !['A','B','C'].filter(l => l!==letra).some(l=>p.includes(l));
+        }
+
+        const SERVICIOS_GRUPOS = [
+            { titulo: '🩺 CONSULTA MÉDICA', items: [
+                { id: 'ca', nombre: 'CONSULTA "A"', coincide: (i,c) => esConsultaDeLetra(i,c,'A') },
+                { id: 'cb', nombre: 'CONSULTA "B"', coincide: (i,c) => esConsultaDeLetra(i,c,'B') },
+                { id: 'cc', nombre: 'CONSULTA "C"', coincide: (i,c) => esConsultaDeLetra(i,c,'C') },
+                { id: 'nu', nombre: 'NUTRICION', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('NUTRICI') }
+            ]},
+            { titulo: '🩺 OTRAS CONSULTAS', items: [
+                { id: 'co', nombre: 'ODONTO', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('ODONTO') },
+                { id: 'ki', nombre: 'KINESIOLOGIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('KINESIO') }
+            ]},
+            { titulo: '🏛️ SALONES Y RECREACIÓN', items: [
+                { id: 'qu', nombre: 'QUINCHOS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('QUINCHO') },
+                { id: 's1', nombre: 'SALONES', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('SALON') },
+                { id: 'pi', nombre: 'PILETA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PILETA') }
+            ]}
+        ];
+
+        let servicioActivo = null;
+        function renderizarFiltroServicios(){
+            const cont = document.getElementById('contenedor-servicios');
+            cont.innerHTML = SERVICIOS_GRUPOS.map((g, gIdx) => `
+                <div class="filtro-card">
+                    <div class="filtro-titulo">${g.titulo}</div>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button class="chip-filtro activo" data-grupo="${gIdx}" data-servicio="">TODOS</button>
+                        ${g.items.map(it => `<button class="chip-filtro" data-grupo="${gIdx}" data-servicio="${it.id}">${it.nombre}</button>`).join('')}
+                    </div>
+                </div>`).join('');
+
+            const todosItems = SERVICIOS_GRUPOS.flatMap(g => g.items);
+            cont.querySelectorAll('.chip-filtro').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.dataset.servicio;
+                    servicioActivo = id ? todosItems.find(it => it.id === id) : null;
+                    cont.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
+
+                    if (servicioActivo) {
+                        btn.classList.add('activo');
+                        SERVICIOS_GRUPOS.forEach((g, idx) => {
+                            if (String(idx) !== btn.dataset.grupo) {
+                                cont.querySelector(`.chip-filtro[data-grupo="${idx}"][data-servicio=""]`)?.classList.add('activo');
+                            }
+                        });
+                    } else {
+                        SERVICIOS_GRUPOS.forEach((g, idx) => {
+                            cont.querySelector(`.chip-filtro[data-grupo="${idx}"][data-servicio=""]`)?.classList.add('activo');
+                        });
+                    }
+                    aplicarBusquedaYFiltro();
+                });
+            });
+        }
+
+        document.getElementById('input-busqueda').addEventListener('input', aplicarBusquedaYFiltro);
+
+        function renderizarFiltros(){
+            const planesPresentes = new Set();
+            baseDeDatos.forEach(r => Object.keys(r.precios).forEach(p => planesPresentes.add(p)));
+
+            const cont = document.getElementById('fila-filtros');
+            cont.innerHTML = `<button class="chip-filtro activo" data-plan="">TODOS</button>` +
+                ORDEN_PLANES.filter(p => planesPresentes.has(p)).map(clave => 
+                    `<button class="chip-filtro" data-plan="${clave}">${etiquetaPorClave[clave] || clave}</button>`
+                ).join('');
+
+            cont.querySelectorAll('.chip-filtro').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filtroActivo = btn.dataset.plan || null;
+                    cont.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
+                    btn.classList.add('activo');
+                    aplicarBusquedaYFiltro();
+                });
+            });
+        }
+
+        function formatearValor(valor){
+            if (typeof valor === 'number') return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(valor);
+            const numero = parseFloat(normalizar(valor).replace(',', '.'));
+            return !isNaN(numero) ? new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(numero) : valor;
+        }
+
+        function renderizarTabla(datos, planFiltrado) {
+            const contenedor = document.getElementById('tabla-wrap');
+            if (datos.length === 0) {
+                contenedor.innerHTML = `<div class="text-center py-12"><p class="text-gray-400 font-bold text-base">No se encontraron resultados.</p></div>`;
+                return;
+            }
+
+            const columnas = planFiltrado ? [planFiltrado] : ORDEN_PLANES.filter(clave => datos.some(r => r.precios[clave]));
+            const theadHTML = `<tr><th>Práctica / Servicio</th>${columnas.map((clave, i) => `<th data-col="${i}">${(etiquetaPorClave[clave] || clave).toUpperCase()}</th>`).join('')}</tr>`;
+            
+            const tbodyHTML = datos.map((r, fila) => `
+                <tr>
+                    <td data-fila="${fila}" class="celda-item"><span class="celda-categoria">${r.categoria}</span><br>${r.item}</td>
+                    ${columnas.map((clave, col) => {
+                        const tiene = r.precios[clave] !== undefined;
+                        return `<td data-fila="${fila}" data-col="${col}" class="${!tiene ? 'celda-vacia' : ''}">${tiene ? formatearValor(r.precios[clave]) : '—'}</td>`;
+                    }).join('')}
+                </tr>`).join('');
+
+            contenedor.innerHTML = `<table><thead>${theadHTML}</thead><tbody>${tbodyHTML}</tbody></table>`;
+        }
+    </script>
+</body>
+</html>
