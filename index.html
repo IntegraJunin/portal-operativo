@@ -1,357 +1,439 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portal Operativo INTEGRA</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Datos - Index, Buscador y Editor</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --danger: #dc2626;
+            --danger-hover: #b91c1c;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+        }
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
-<script src="auth.js"></script>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
 
-<style>
-    :root{
-        --bg:#f7f5f0;
-        --card:#ffffff;
-        --inner:#fcfbfa;
-        --brand:#5c4b3f;
-        --brand-soft:#8c7a6b;
-        --pill:#efeadd;
-        --line:#e7e2d6;
-        --accent:#c1653f;
-    }
-    *{ box-sizing:border-box; }
-    body{
-        margin:0;
-        background:var(--bg);
-        font-family:'Comfortaa', cursive;
-        color:#3a332c;
-        min-height:100vh;
-    }
-    h1,h2,h3,h4,.font-outfit{ font-family:'Outfit', sans-serif; }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 2rem;
+        }
 
-    ::-webkit-scrollbar{ width:8px; }
-    ::-webkit-scrollbar-track{ background:transparent; }
-    ::-webkit-scrollbar-thumb{ background:#d1cdb8; border-radius:10px; }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
 
-    .wrap{ max-width:1450px; margin:0 auto; padding:1.25rem clamp(1rem, 3vw, 2rem) 2rem; }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
 
-    .topbar{
-        background:var(--card);
-        border-radius:2rem;
-        padding:1.25rem 2rem;
-        box-shadow:0 2px 10px rgba(0,0,0,0.04);
-        display:flex;
-        flex-wrap:wrap;
-        gap:1rem;
-        justify-content:space-between;
-        align-items:center;
-        margin-bottom:1.25rem;
-    }
-    .brand{
-        font-family:'Outfit', sans-serif;
-        font-weight:800;
-        font-size:1.8rem;
-        color:var(--brand);
-        display:flex;
-        align-items:center;
-        gap:.5rem;
-        margin:0;
-    }
-    .brand span{ color:var(--brand-soft); font-size:1.5rem; }
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
 
-    .tabs{ display:flex; gap:.5rem; flex-wrap:wrap; }
-    .tab-btn{
-        border:none;
-        cursor:pointer;
-        font-family:'Outfit', sans-serif;
-        font-weight:700;
-        font-size:.88rem;
-        padding:.75rem 1.25rem;
-        border-radius:999px;
-        background:var(--pill);
-        color:var(--brand);
-        transition:all .2s ease;
-        display:flex; align-items:center; gap:.5rem;
-    }
-    .tab-btn:hover{ background:#e4dcc8; }
-    .tab-btn.active{ background:var(--brand); color:#fff; box-shadow:0 4px 12px rgba(92,75,63,.25); }
-    .tab-btn.secret{ background:#d9c5b2; color:#4a3525; border:1px solid #b89c82; }
-    .tab-btn.secret.active{ background:var(--accent); color:#fff; }
+        .controls {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            width: 100%;
+        }
 
-    .hidden{ display:none !important; }
+        /* Buscador */
+        .search-box {
+            flex-grow: 1;
+            position: relative;
+        }
 
-    .manuales-grid{
-        display:grid;
-        grid-template-columns:340px 1fr;
-        gap:1.25rem;
-        align-items:start;
-    }
-    @media (max-width: 860px){ .manuales-grid{ grid-template-columns:1fr; } }
+        .search-box input {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
 
-    .lista-manuales{
-        background:var(--card);
-        border-radius:2rem;
-        padding:1.25rem;
-        box-shadow:0 2px 10px rgba(0,0,0,0.04);
-        display:flex; flex-direction:column; gap:.6rem;
-    }
-    .btn-manual{
-        background:var(--inner);
-        border:1px solid var(--line);
-        border-left:4px solid var(--brand-soft);
-        border-radius:14px;
-        padding:14px 16px;
-        text-align:left;
-        font-family:'Outfit', sans-serif;
-        font-weight:700;
-        font-size:.95rem;
-        color:#3a332c;
-        cursor:pointer;
-        transition:all .2s ease;
-        display:flex; align-items:center; gap:.6rem;
-    }
-    .btn-manual:hover{ background:#fff; border-left-color:var(--accent); transform:translateX(4px); }
-    .btn-manual.active{ background:var(--brand); color:#fff; border-left-color:var(--accent); }
+        .search-box input:focus {
+            border-color: var(--primary);
+        }
 
-    .visor-panel{
-        background:var(--card);
-        border-radius:2rem;
-        box-shadow:0 2px 10px rgba(0,0,0,0.04);
-        min-height:calc(100vh - 220px);
-        overflow:hidden;
-        display:flex; flex-direction:column;
-    }
-    .visor-header{
-        padding:1rem 1.5rem;
-        border-bottom:1px solid var(--line);
-        display:flex; justify-content:space-between; align-items:center;
-    }
-    .visor-body{ flex:1; position:relative; }
-    .visor-body iframe{ width:100%; height:100%; border:none; min-height:70vh; }
+        /* Botones */
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
 
-    .frame-container{
-        background:var(--card);
-        border-radius:2rem;
-        box-shadow:0 2px 10px rgba(0,0,0,0.04);
-        overflow:hidden;
-        min-height:calc(100vh - 190px);
-    }
-    .frame-container iframe{ width:100%; height:calc(100vh - 190px); min-height:600px; border:none; display:block; }
-</style>
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #059669;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: var(--danger-hover);
+        }
+
+        .btn-action {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.8rem;
+            margin-right: 0.25rem;
+        }
+
+        /* Tabla Index */
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        /* Editor (Modal) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.35rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+    </style>
 </head>
 <body>
 
-<div class="wrap">
-
-    <div class="topbar">
-        <h1 class="brand">Portal Operativo INTEGRA <span>✳</span></h1>
-        <div class="tabs">
-            <button class="tab-btn active" id="tab-manuales" onclick="mostrarSeccion('manuales')">📄 Manuales de Procedimiento</button>
-            <button class="tab-btn" id="tab-solicitudes" onclick="mostrarSeccion('solicitudes')">🗂️ Solicitudes</button>
-            <button class="tab-btn" id="tab-convenios" onclick="mostrarSeccion('convenios')">🤝 Convenios</button>
-            <button class="tab-btn" id="tab-precios" onclick="mostrarSeccion('precios')">🔍 Buscador de Precios</button>
-            <button class="tab-btn secret" id="tab-editor" onclick="mostrarSeccion('editor')">🔒 Editor Exclusivo</button>
-        </div>
-    </div>
-
-    <!-- SECCIÓN 1: MANUALES -->
-    <div id="sec-manuales">
-        <div class="manuales-grid">
-            <div class="lista-manuales" id="lista-manuales">
-                <h2>Manuales disponibles</h2>
+<div class="container">
+    <header>
+        <h1>Gestión de Registros</h1>
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Buscar por nombre, categoría o estado...">
             </div>
-            <div class="visor-panel">
-                <div class="visor-header hidden" id="visor-header">
-                    <h3 id="visor-titulo"></h3>
-                    <a id="visor-descarga" href="#" target="_blank" rel="noopener">Abrir en pestaña nueva ↗</a>
-                </div>
-                <div class="visor-body" id="visor-body">
-                    <div class="estado-vacio">
-                        <div class="ico">📄</div>
-                        <p>Elegí un manual de la izquierda para verlo acá.</p>
-                    </div>
-                </div>
+            <button class="btn btn-primary" onclick="openEditor()">+ Nuevo</button>
+            <button class="btn btn-secondary" onclick="exportToCSV()">Exportar CSV</button>
+        </div>
+    </header>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Categoría</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Los registros se cargan dinámicamente -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Editor -->
+<div class="modal-overlay" id="editorModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="modalTitle">Editor de Registro</h3>
+        </div>
+        <form id="editorForm" onsubmit="saveRecord(event)">
+            <input type="hidden" id="recordId">
+            <div class="form-group">
+                <label for="inputNombre">Nombre / Título</label>
+                <input type="text" id="inputNombre" required>
             </div>
-        </div>
-    </div>
-
-    <!-- SECCIÓN 2: SOLICITUDES -->
-    <div id="sec-solicitudes" class="hidden">
-        <div class="manuales-grid">
-            <div class="lista-manuales" id="lista-solicitudes">
-                <h2>Solicitudes disponibles</h2>
+            <div class="form-group">
+                <label for="inputCategoria">Categoría</label>
+                <input type="text" id="inputCategoria" required>
             </div>
-            <div class="visor-panel">
-                <div class="visor-header hidden" id="visor-header-solicitudes">
-                    <h3 id="visor-titulo-solicitudes"></h3>
-                    <a id="visor-descarga-solicitudes" href="#" target="_blank" rel="noopener">Abrir en pestaña nueva ↗</a>
-                </div>
-                <div class="visor-body" id="visor-body-solicitudes">
-                    <div class="estado-vacio">
-                        <div class="ico">🗂️</div>
-                        <p>Elegí una solicitud de la izquierda para verla acá.</p>
-                    </div>
-                </div>
+            <div class="form-group">
+                <label for="inputEstado">Estado</label>
+                <select id="inputEstado">
+                    <option value="Activo">Activo</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Inactivo">Inactivo</option>
+                </select>
             </div>
-        </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" style="background:#e5e7eb; color:#374151;" onclick="closeEditor()">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+        </form>
     </div>
-
-    <!-- SECCIÓN 3: CONVENIOS -->
-    <div id="sec-convenios" class="hidden">
-        <div class="frame-container">
-            <iframe src="convenios/convenios.html" title="Convenios"></iframe>
-        </div>
-    </div>
-
-    <!-- SECCIÓN 4: BUSCADOR DE PRECIOS (PÚBLICO) -->
-    <div id="sec-precios" class="hidden">
-        <div class="frame-container">
-            <iframe src="buscador.html" title="Buscador de Precios"></iframe>
-        </div>
-    </div>
-
-    <!-- SECCIÓN 5: EDITOR EXCLUSIVO (PRIVADO) -->
-    <div id="sec-editor" class="hidden">
-        <div class="frame-container">
-            <iframe src="editor.html" title="Editor Exclusivo"></iframe>
-        </div>
-    </div>
-
 </div>
 
 <script>
-    const MANUALES = [
-        { icono: '📄', nombre: 'Consultas Médicas',              archivo: 'CONSULTAS MEDICAS' },
-        { icono: '📄', nombre: 'Convenio Laboratorio',            archivo: 'CONVENIO LABORATORIO' },
-        { icono: '📄', nombre: 'Convenio Nexo Terapéutico',       archivo: 'CONVENIO NEXO TERAPEUTICO' },
-        { icono: '📄', nombre: 'Convenios Prácticas Médicas',     archivo: 'CONVENIOS PRACTICAS MEDICAS' },
-        { icono: '📄', nombre: 'Electrocardiograma',              archivo: 'ELECTROCARDIOGRAMA' },
-        { icono: '📄', nombre: 'Notas de Crédito',                archivo: 'NOTAS DE CREDITO' },
-        { icono: '📄', nombre: 'Proceso Altas y Asociaciones',    archivo: 'PROCESO ALTAS Y ASOCIACIONES' },
-        { icono: '📄', nombre: 'Protocolo Emergencias',           archivo: 'PROTOCOLO EMERGENCIAS' },
-        { icono: '📄', nombre: 'Salones',                         archivo: 'SALONES' },
-        { icono: '📄', nombre: 'Tomografías Ópticas (OCT / HRT)', archivo: 'TOMOGRAFÍAS OPTICAS' },
-        { icono: '📄', nombre: 'Proceso Kinesiologia',            archivo: 'PROCESO KINESIOLOGIA' },
+    // Datos iniciales (Simulación de la estructura del Excel)
+    let dataset = [
+        { id: 1, nombre: "Juan Pérez", categoria: "Soporte", estado: "Activo" },
+        { id: 2, nombre: "María Gómez", categoria: "Ventas", estado: "Pendiente" },
+        { id: 3, nombre: "Carlos López", categoria: "Desarrollo", estado: "Activo" },
+        { id: 4, nombre: "Ana Martínez", categoria: "Diseño", estado: "Inactivo" }
     ];
-    const CARPETA = 'manuales/';
-    const cacheRutas = {};
 
-    const SOLICITUDES = [
-        { icono: '🗂️', nombre: 'Solicitud Integra 90',  archivo: 'SOLICITUD INTEGRA 90' },
-        { icono: '🗂️', nombre: 'Solicitud Integra 180', archivo: 'SOLICITUD INTEGRA 180' },
-        { icono: '🗂️', nombre: 'Solicitud Integra 360', archivo: 'SOLICITUD INTEGRA 360' },
-        { icono: '🗂️', nombre: 'Sepelio San Felipe',    archivo: 'SEPELIO SAN FELIPE' },
-    ];
-    const CARPETA_SOLICITUDES = 'solicitudes/';
-    const cacheRutasSolicitudes = {};
+    let currentEditId = null;
 
-    function quitarAcentos(str){ return str.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+    // Renderizar la tabla (Index)
+    function renderTable(data = dataset) {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
 
-    function generarVariantes(base, carpeta){
-        const variantes = new Set();
-        const formas = [base, base.replace(/_/g, ' '), base.replace(/ /g, '_')];
-        formas.forEach(f => {
-            [f, f.toUpperCase(), f.toLowerCase(), quitarAcentos(f), quitarAcentos(f).toUpperCase(), quitarAcentos(f).toLowerCase()]
-                .forEach(v => variantes.add(v));
+        if (data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="empty-state">No se encontraron registros.</td></tr>`;
+            return;
+        }
+
+        data.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.id}</td>
+                <td><strong>${escapeHtml(item.nombre)}</strong></td>
+                <td>${escapeHtml(item.categoria)}</td>
+                <td>${escapeHtml(item.estado)}</td>
+                <td>
+                    <button class="btn btn-primary btn-action" onclick="openEditor(${item.id})">Editar</button>
+                    <button class="btn btn-danger btn-action" onclick="deleteRecord(${item.id})">Eliminar</button>
+                </td>
+            `;
+            tbody.appendChild(row);
         });
-        const rutas = [];
-        variantes.forEach(v => rutas.push(carpeta + v + '.pdf'));
-        return rutas;
     }
 
-    async function existeArchivo(ruta){
-        try {
-            const res = await fetch(ruta, { method: 'HEAD' });
-            if (res.ok) return true;
-            if (res.status === 405) { const res2 = await fetch(ruta, { method: 'GET' }); return res2.ok; }
-            return false;
-        } catch (e) { return false; }
-    }
+    // Buscador en tiempo real
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        const query = e.target.value.toLowerCase().trim();
+        const filtered = dataset.filter(item => 
+            item.nombre.toLowerCase().includes(query) ||
+            item.categoria.toLowerCase().includes(query) ||
+            item.estado.toLowerCase().includes(query) ||
+            item.id.toString().includes(query)
+        );
+        renderTable(filtered);
+    });
 
-    async function resolverRuta(archivoBase, carpeta, cache){
-        if (cache[archivoBase] !== undefined) return cache[archivoBase];
-        const candidatos = generarVariantes(archivoBase, carpeta);
-        for (const ruta of candidatos) {
-            if (await existeArchivo(ruta)) { cache[archivoBase] = ruta; return ruta; }
-        }
-        cache[archivoBase] = null; return null;
-    }
+    // Abrir Editor (Modal) para crear o modificar
+    function openEditor(id = null) {
+        currentEditId = id;
+        const modal = document.getElementById('editorModal');
+        const title = document.getElementById('modalTitle');
 
-    function crearVisorDocumentos({ documentos, carpeta, cache, prefijo, listaId, headerId, tituloId, descargaId, bodyId }){
-        function renderizarLista(){
-            const cont = document.getElementById(listaId);
-            documentos.forEach((doc, i) => {
-                const btn = document.createElement('button');
-                btn.className = 'btn-manual';
-                btn.id = prefijo + '-' + i;
-                btn.innerHTML = `<span class="ico">${doc.icono}</span><span>${doc.nombre}</span>`;
-                btn.onclick = () => cargarDocumento(i);
-                cont.appendChild(btn);
-            });
+        if (id) {
+            const record = dataset.find(item => item.id === id);
+            if (!record) return;
+            title.textContent = "Editar Registro #" + id;
+            document.getElementById('recordId').value = record.id;
+            document.getElementById('inputNombre').value = record.nombre;
+            document.getElementById('inputCategoria').value = record.categoria;
+            document.getElementById('inputEstado').value = record.estado;
+        } else {
+            title.textContent = "Nuevo Registro";
+            document.getElementById('editorForm').reset();
+            document.getElementById('recordId').value = '';
         }
 
-        async function cargarDocumento(indice){
-            const doc = documentos[indice];
-            document.querySelectorAll('#' + listaId + ' .btn-manual').forEach(b => b.classList.remove('active'));
-            document.getElementById(prefijo + '-' + indice).classList.add('active');
+        modal.classList.add('active');
+    }
 
-            const cuerpo = document.getElementById(bodyId);
-            const header = document.getElementById(headerId);
-            header.classList.add('hidden');
+    function closeEditor() {
+        document.getElementById('editorModal').classList.remove('active');
+    }
 
-            cuerpo.innerHTML = `<div class="estado-vacio"><div class="spinner"></div><p>Buscando "${doc.nombre}"...</p></div>`;
-            const ruta = await resolverRuta(doc.archivo, carpeta, cache);
+    // Guardar (Agregar / Actualizar)
+    function saveRecord(e) {
+        e.preventDefault();
+        const idVal = document.getElementById('recordId').value;
+        const nombre = document.getElementById('inputNombre').value.trim();
+        const categoria = document.getElementById('inputCategoria').value.trim();
+        const estado = document.getElementById('inputEstado').value;
 
-            if (!ruta) {
-                cuerpo.innerHTML = `<div class="estado-error"><div class="ico">⚠️</div><p>No se pudo encontrar el PDF de "${doc.nombre}".</p></div>`;
-                return;
+        if (idVal) {
+            // Actualizar existente
+            const index = dataset.findIndex(item => item.id === parseInt(idVal));
+            if (index !== -1) {
+                dataset[index] = { id: parseInt(idVal), nombre, categoria, estado };
             }
-
-            cuerpo.innerHTML = `<iframe src="${ruta}" title="${doc.nombre}"></iframe>`;
-            document.getElementById(tituloId).textContent = doc.nombre;
-            document.getElementById(descargaId).href = ruta;
-            header.classList.remove('hidden');
+        } else {
+            // Crear nuevo registro con ID autoincrementable
+            const newId = dataset.length > 0 ? Math.max(...dataset.map(i => i.id)) + 1 : 1;
+            dataset.push({ id: newId, nombre, categoria, estado });
         }
 
-        renderizarLista();
-        return { cargarDocumento };
+        closeEditor();
+        renderTable();
+        document.getElementById('searchInput').value = ''; // Limpiar búsqueda
     }
 
-    const visorManuales = crearVisorDocumentos({
-        documentos: MANUALES, carpeta: CARPETA, cache: cacheRutas,
-        prefijo: 'btn-manual', listaId: 'lista-manuales', headerId: 'visor-header',
-        tituloId: 'visor-titulo', descargaId: 'visor-descarga', bodyId: 'visor-body'
-    });
-
-    const visorSolicitudes = crearVisorDocumentos({
-        documentos: SOLICITUDES, carpeta: CARPETA_SOLICITUDES, cache: cacheRutasSolicitudes,
-        prefijo: 'btn-solicitud', listaId: 'lista-solicitudes', headerId: 'visor-header-solicitudes',
-        tituloId: 'visor-titulo-solicitudes', descargaId: 'visor-descarga-solicitudes', bodyId: 'visor-body-solicitudes'
-    });
-
-    function mostrarSeccion(seccion){
-        const secciones = {
-            manuales: document.getElementById('sec-manuales'),
-            solicitudes: document.getElementById('sec-solicitudes'),
-            convenios: document.getElementById('sec-convenios'),
-            precios: document.getElementById('sec-precios'),
-            editor: document.getElementById('sec-editor')
-        };
-        const tabs = {
-            manuales: document.getElementById('tab-manuales'),
-            solicitudes: document.getElementById('tab-solicitudes'),
-            convenios: document.getElementById('tab-convenios'),
-            precios: document.getElementById('tab-precios'),
-            editor: document.getElementById('tab-editor')
-        };
-
-        Object.keys(secciones).forEach(clave => {
-            secciones[clave].classList.toggle('hidden', clave !== seccion);
-            tabs[clave].classList.toggle('active', clave === seccion);
-        });
+    // Eliminar registro
+    function deleteRecord(id) {
+        if (confirm(`¿Estás seguro de que deseas eliminar el registro #${id}?`)) {
+            dataset = dataset.filter(item => item.id !== id);
+            renderTable();
+        }
     }
+
+    // Exportar datos actualizados a archivo compatible con Excel (.csv)
+    function exportToCSV() {
+        if (dataset.length === 0) {
+            alert("No hay datos para exportar.");
+            return;
+        }
+
+        const headers = ["ID", "Nombre", "Categoria", "Estado"];
+        const rows = dataset.map(item => [
+            item.id,
+            `"${item.nombre.replace(/"/g, '""')}"`,
+            `"${item.categoria.replace(/"/g, '""')}"`,
+            `"${item.estado}"`
+        ]);
+
+        const csvContent = "\uFEFF" + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "registros_actualizados.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Sanitización simple contra XSS
+    function escapeHtml(text) {
+        return String(text)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    // Inicializar al cargar la página
+    document.addEventListener('DOMContentLoaded', () => renderTable());
 </script>
+
 </body>
 </html>
