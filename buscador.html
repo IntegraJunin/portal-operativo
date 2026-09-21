@@ -171,10 +171,22 @@
                 <div id="fila-cuotas" class="flex flex-wrap gap-1.5"></div>
             </div>
 
-            <!-- 3. CONVENIO -->
+            <!-- 3. CONVENIOS -->
             <div class="filtro-card">
-                <div class="filtro-titulo"><span>🟠</span> FILTRO POR CONVENIO</div>
+                <div class="filtro-titulo"><span>🤝</span> CONVENIOS</div>
                 <div id="fila-convenios" class="flex flex-wrap gap-1.5"></div>
+            </div>
+
+            <!-- 4. CONSULTAS -->
+            <div class="filtro-card">
+                <div class="filtro-titulo"><span>🩺</span> CONSULTAS</div>
+                <div id="fila-consultas" class="flex flex-wrap gap-1.5"></div>
+            </div>
+
+            <!-- 5. ODONTOLOGIA -->
+            <div class="filtro-card">
+                <div class="filtro-titulo"><span>🦷</span> ODONTOLOGIA</div>
+                <div id="fila-odontologia" class="flex flex-wrap gap-1.5"></div>
             </div>
 
             <!-- RESTO DE SERVICIOS -->
@@ -393,11 +405,12 @@
         }
 
         const CONVENIOS_FIJOS = [
-            { nombre: 'DRA. CAPPONI', claves: ['CAPPONI'] },
+            { nombre: 'CMD+', claves: ['CMD+'] },
             { nombre: 'COMED', claves: ['COMED'] },
-            { nombre: 'CMD (FAMY)', claves: ['CMD', 'FAMYL'] },
+            { nombre: 'DRA. CAPPONI', claves: ['CAPPONI'] },
             { nombre: 'DR. COSTANZI', claves: ['COSTANZI'] },
-            { nombre: 'NEXO TERAPIA', claves: ['NEXO TERAPIA', 'NEXO'] },
+            { nombre: 'LAB. MILANI', claves: ['MILANI'] },
+            { nombre: 'LAB. PETRAGLIA', claves: ['PETRAGLIA'] }
         ].map(c => ({ ...c, coincide: (cat) => c.claves.some(k => normalizarCategoria(cat).includes(k))}));
 
         let convenioActivo = null;
@@ -429,32 +442,24 @@
                 id: 'cuotas',
                 titulo: '💳 CUOTAS',
                 items: [
-                    { id: 'cs', nombre: 'CUOTA SOCIO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('CUOTA') && (txt.includes('SOCIO') || txt.includes('SOC')); } },
-                    { id: 'cp', nombre: 'CUOTA SEPELIO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('SEPELIO'); } }
+                    { id: 'cs', nombre: 'SOCIO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('CUOTA') && (txt.includes('SOCIO') || txt.includes('SOC')); } },
+                    { id: 'cp', nombre: 'SEPELIO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('SEPELIO'); } }
                 ]
             },
             {
-                id: 'consulta_medica',
-                titulo: '🩺 CONSULTA MÉDICA',
+                id: 'consultas',
+                titulo: '🩺 CONSULTAS',
                 items: [
-                    { id: 'ca', nombre: 'CONSULTA "A"', coincide: (i,c) => esConsultaDeLetra(i,c,'A') },
-                    { id: 'cb', nombre: 'CONSULTA "B"', coincide: (i,c) => esConsultaDeLetra(i,c,'B') },
-                    { id: 'cc', nombre: 'CONSULTA "C"', coincide: (i,c) => esConsultaDeLetra(i,c,'C') },
-                    { id: 'nu', nombre: 'NUTRICION', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('NUTRICI') }
-                ]
-            },
-            {
-                id: 'otras_consultas',
-                titulo: '🩺 OTRAS CONSULTAS',
-                items: [
-                    { id: 'co', nombre: 'ODONTO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('ODONTO') && txt.includes('CONSULTA'); } },
-                    { id: 'ki', nombre: 'KINESIOLOGIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('KINESIO') },
-                    { id: 'fo', nombre: 'FONO', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('FONO') }
+                    { id: 'ca', nombre: 'CONSULTA A', coincide: (i,c) => esConsultaDeLetra(i,c,'A') },
+                    { id: 'cb', nombre: 'CONSULTA B', coincide: (i,c) => esConsultaDeLetra(i,c,'B') },
+                    { id: 'cc', nombre: 'CONSULTA C', coincide: (i,c) => esConsultaDeLetra(i,c,'C') },
+                    { id: 'nu', nombre: 'NUTRICION', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('NUTRICI') },
+                    { id: 'co', nombre: 'ODONTOLOGIA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('ODONTO') && txt.includes('CONSULTA'); } }
                 ]
             },
             {
                 id: 'practicas_odonto',
-                titulo: '🦷 PRÁCTICAS ODONTO',
+                titulo: '🦷 ODONTOLOGIA',
                 items: [
                     { id: 'po_cir', nombre: 'CIRUGIAS ODONTOLOGICAS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CIRUGI') },
                     { id: 'po_con', nombre: 'CONDUCTOS ODONTOLOGICOS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CONDUCTO') },
@@ -518,8 +523,11 @@
         let servicioActivo = null;
         function renderizarFiltroServicios(){
             const grupoCuotas = SERVICIOS_GRUPOS.find(g => g.id === 'cuotas');
-            const otrosGrupos = SERVICIOS_GRUPOS.filter(g => g.id !== 'cuotas');
+            const grupoConsultas = SERVICIOS_GRUPOS.find(g => g.id === 'consultas');
+            const grupoOdonto = SERVICIOS_GRUPOS.find(g => g.id === 'practicas_odonto');
+            const otrosGrupos = SERVICIOS_GRUPOS.filter(g => !['cuotas', 'consultas', 'practicas_odonto'].includes(g.id));
 
+            // Render Cuotas
             const contCuotas = document.getElementById('fila-cuotas');
             const gCuotasIdx = SERVICIOS_GRUPOS.findIndex(g => g.id === 'cuotas');
             if (contCuotas && grupoCuotas) {
@@ -527,6 +535,23 @@
                     grupoCuotas.items.map(it => `<button class="chip-filtro" data-grupo="${gCuotasIdx}" data-servicio="${it.id}">${it.nombre}</button>`).join('');
             }
 
+            // Render Consultas
+            const contConsultas = document.getElementById('fila-consultas');
+            const gConsultasIdx = SERVICIOS_GRUPOS.findIndex(g => g.id === 'consultas');
+            if (contConsultas && grupoConsultas) {
+                contConsultas.innerHTML = `<button class="chip-filtro activo" data-grupo="${gConsultasIdx}" data-servicio="">TODOS</button>` +
+                    grupoConsultas.items.map(it => `<button class="chip-filtro" data-grupo="${gConsultasIdx}" data-servicio="${it.id}">${it.nombre}</button>`).join('');
+            }
+
+            // Render Odontología
+            const contOdonto = document.getElementById('fila-odontologia');
+            const gOdontoIdx = SERVICIOS_GRUPOS.findIndex(g => g.id === 'practicas_odonto');
+            if (contOdonto && grupoOdonto) {
+                contOdonto.innerHTML = `<button class="chip-filtro activo" data-grupo="${gOdontoIdx}" data-servicio="">TODOS</button>` +
+                    grupoOdonto.items.map(it => `<button class="chip-filtro" data-grupo="${gOdontoIdx}" data-servicio="${it.id}">${it.nombre}</button>`).join('');
+            }
+
+            // Render Resto de Servicios
             const contServicios = document.getElementById('contenedor-servicios');
             if (contServicios) {
                 contServicios.innerHTML = otrosGrupos.map(g => {
@@ -543,23 +568,23 @@
             }
 
             const todosItems = SERVICIOS_GRUPOS.flatMap(g => g.items);
-            document.querySelectorAll('#fila-cuotas .chip-filtro, #contenedor-servicios .chip-filtro').forEach(btn => {
+            document.querySelectorAll('#fila-cuotas .chip-filtro, #fila-consultas .chip-filtro, #fila-odontologia .chip-filtro, #contenedor-servicios .chip-filtro').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const id = btn.dataset.servicio;
                     servicioActivo = id ? todosItems.find(it => it.id === id) : null;
-                    document.querySelectorAll('#fila-cuotas .chip-filtro, #contenedor-servicios .chip-filtro').forEach(b => b.classList.remove('activo'));
+                    document.querySelectorAll('#fila-cuotas .chip-filtro, #fila-consultas .chip-filtro, #fila-odontologia .chip-filtro, #contenedor-servicios .chip-filtro').forEach(b => b.classList.remove('activo'));
 
                     if (servicioActivo) {
                         btn.classList.add('activo');
                         SERVICIOS_GRUPOS.forEach((g, idx) => {
                             if (String(idx) !== btn.dataset.grupo) {
-                                const selector = `#fila-cuotas .chip-filtro[data-grupo="${idx}"][data-servicio=""], #contenedor-servicios .chip-filtro[data-grupo="${idx}"][data-servicio=""]`;
+                                const selector = `#fila-cuotas .chip-filtro[data-grupo="${idx}"][data-servicio=""], #fila-consultas .chip-filtro[data-grupo="${idx}"][data-servicio=""], #fila-odontologia .chip-filtro[data-grupo="${idx}"][data-servicio=""], #contenedor-servicios .chip-filtro[data-grupo="${idx}"][data-servicio=""]`;
                                 document.querySelector(selector)?.classList.add('activo');
                             }
                         });
                     } else {
                         SERVICIOS_GRUPOS.forEach((g, idx) => {
-                            const selector = `#fila-cuotas .chip-filtro[data-grupo="${idx}"][data-servicio=""], #contenedor-servicios .chip-filtro[data-grupo="${idx}"][data-servicio=""]`;
+                            const selector = `#fila-cuotas .chip-filtro[data-grupo="${idx}"][data-servicio=""], #fila-consultas .chip-filtro[data-grupo="${idx}"][data-servicio=""], #fila-odontologia .chip-filtro[data-grupo="${idx}"][data-servicio=""], #contenedor-servicios .chip-filtro[data-grupo="${idx}"][data-servicio=""]`;
                             document.querySelector(selector)?.classList.add('activo');
                         });
                     }
