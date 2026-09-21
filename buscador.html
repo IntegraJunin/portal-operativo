@@ -171,18 +171,18 @@
             <!-- SECCIÓN SCROLLEABLE INFERIOR -->
             <div class="flex-1 overflow-y-auto space-y-3 pb-8 pr-2">
                 <!-- 2. CUOTAS -->
-                <div class="filtro-card">
+                <div id="card-cuotas" class="filtro-card">
                     <div class="filtro-titulo"><span>💳</span> CUOTAS</div>
                     <div id="fila-cuotas" class="flex flex-wrap gap-1.5"></div>
                 </div>
 
-                <!-- 3. CONVENIO -->
-                <div class="filtro-card">
+                <!-- 3. CONVENIOS -->
+                <div id="card-convenios" class="filtro-card">
                     <div class="filtro-titulo"><span>🟠</span> FILTRO POR CONVENIO</div>
                     <div id="fila-convenios" class="flex flex-wrap gap-1.5"></div>
                 </div>
 
-                <!-- RESTO DE SERVICIOS -->
+                <!-- RESTO DE SERVICIOS (TARJETAS DINÁMICAS ORGANIZADAS) -->
                 <div id="contenedor-servicios" class="space-y-3"></div>
             </div>
         </aside>
@@ -270,7 +270,7 @@
             const cat = normalizarCategoria(categoria);
             const it = normalizarCategoria(item);
             if (PALABRAS_CLAVE_EXCLUIDAS_IN180.some(kw => cat.includes(kw))) return false;
-            if (it.includes('COMED') || it.includes('FAMYL') || it.includes('PETRAGLIA')) return false;
+            if (it.includes('COMED') || it.includes('FAMYL') || it.includes('PETRAGLIA') || it.includes('PSIQUIATRIA')) return false;
             return true;
         }
 
@@ -361,45 +361,82 @@
                 filaFiltros.appendChild(btn);
             });
 
-            // Agrupar categorías
-            const categoriasUnicas = [...new Set(baseDeDatos.map(d => d.categoria).filter(Boolean))];
-            
-            const cuotasCat = categoriasUnicas.filter(c => normalizarCategoria(c).includes('CUOTA'));
-            const conveniosCat = categoriasUnicas.filter(c => normalizarCategoria(c).includes('CONVENIO'));
-            const otrasCat = categoriasUnicas.filter(c => !cuotasCat.includes(c) && !conveniosCat.includes(c));
+            // Palabras clave para clasificar Convenios
+            const PALABRAS_CONVENIO = ['CONVENIO', 'FAMYL', 'PETRAGLIA', 'COMED', 'PSIQUIATRIA'];
 
-            // Render Cuotas
-            cuotasCat.forEach(cat => {
-                const btn = document.createElement('button');
-                btn.className = 'chip-filtro';
-                btn.innerText = cat;
-                btn.onclick = () => toggleFiltro('categoria', cat, btn);
-                filaCuotas.appendChild(btn);
+            const cuotasSet = new Set();
+            const conveniosSet = new Set();
+            const mapaItemCategorias = {};
+
+            baseDeDatos.forEach(d => {
+                const cat = d.categoria;
+                const item = d.item;
+
+                const catNorm = normalizarCategoria(cat);
+                const itemNorm = normalizarCategoria(item);
+
+                const esCuota = catNorm.includes('CUOTA') || itemNorm.includes('CUOTA');
+                const esConvenio = PALABRAS_CONVENIO.some(kw => catNorm.includes(kw) || itemNorm.includes(kw));
+
+                if (esCuota) {
+                    if (cat) cuotasSet.add(cat);
+                } else if (esConvenio) {
+                    if (cat) conveniosSet.add(cat);
+                    else if (item) conveniosSet.add(item);
+                } else {
+                    const grupoClave = item || 'OTROS SERVICIOS';
+                    if (!mapaItemCategorias[grupoClave]) {
+                        mapaItemCategorias[grupoClave] = new Set();
+                    }
+                    if (cat) mapaItemCategorias[grupoClave].add(cat);
+                }
             });
 
-            // Render Convenios
-            conveniosCat.forEach(cat => {
-                const btn = document.createElement('button');
-                btn.className = 'chip-filtro';
-                btn.innerText = cat;
-                btn.onclick = () => toggleFiltro('categoria', cat, btn);
-                filaConvenios.appendChild(btn);
-            });
+            // Render 2. Cuotas
+            if (cuotasSet.size > 0) {
+                document.getElementById('card-cuotas').style.display = 'block';
+                cuotasSet.forEach(cat => {
+                    const btn = document.createElement('button');
+                    btn.className = 'chip-filtro';
+                    btn.innerText = cat;
+                    btn.onclick = () => toggleFiltro('categoria', cat, btn);
+                    filaCuotas.appendChild(btn);
+                });
+            } else {
+                document.getElementById('card-cuotas').style.display = 'none';
+            }
 
-            // Render Resto de servicios
-            if (otrasCat.length > 0) {
+            // Render 3. Convenios
+            if (conveniosSet.size > 0) {
+                document.getElementById('card-convenios').style.display = 'block';
+                conveniosSet.forEach(cat => {
+                    const btn = document.createElement('button');
+                    btn.className = 'chip-filtro';
+                    btn.innerText = cat;
+                    btn.onclick = () => toggleFiltro('categoria', cat, btn);
+                    filaConvenios.appendChild(btn);
+                });
+            } else {
+                document.getElementById('card-convenios').style.display = 'none';
+            }
+
+            // Render Resto de Servicios (Agrupados por Tarjetas según su Servicio/Ítem)
+            Object.keys(mapaItemCategorias).forEach(servicioNombre => {
+                const categoriasSet = mapaItemCategorias[servicioNombre];
+                if (categoriasSet.size === 0) return;
+
                 const cardGroup = document.createElement('div');
                 cardGroup.className = 'filtro-card';
-                
+
                 const title = document.createElement('div');
                 title.className = 'filtro-titulo';
-                title.innerHTML = '<span>📋</span> OTROS SERVICIOS';
+                title.innerHTML = `<span>📋</span> ${servicioNombre.toUpperCase()}`;
                 cardGroup.appendChild(title);
 
                 const wrap = document.createElement('div');
                 wrap.className = 'flex flex-wrap gap-1.5';
 
-                otrasCat.forEach(cat => {
+                categoriasSet.forEach(cat => {
                     const btn = document.createElement('button');
                     btn.className = 'chip-filtro';
                     btn.innerText = cat;
@@ -409,7 +446,7 @@
 
                 cardGroup.appendChild(wrap);
                 contenedorServicios.appendChild(cardGroup);
-            }
+            });
 
             filtrarYMostrar();
         }
@@ -441,7 +478,7 @@
 
                 if (filtroActivo) {
                     if (filtroActivo.tipo === 'categoria') {
-                        return row.categoria === filtroActivo.valor;
+                        return row.categoria === filtroActivo.valor || row.item === filtroActivo.valor;
                     }
                 }
                 return true;
@@ -494,7 +531,7 @@
                 html += `</tr>`;
             });
 
-            html += 'tbody></table>';
+            html += '</tbody></table>';
             wrap.innerHTML = html;
         }
 
