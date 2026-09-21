@@ -162,25 +162,16 @@
         <aside class="lg:col-span-4 xl:col-span-4 h-full overflow-y-auto pr-2 space-y-3">
             <h2 class="text-lg font-extrabold text-[#3b291a] sticky top-0 bg-[#f4e7dc] py-1 z-10">Filtros</h2>
 
-            <!-- 1. TIPO DE SOCIO -->
             <div class="filtro-card">
                 <div class="filtro-titulo"><span>👤</span> FILTRO POR TIPO DE SOCIO</div>
                 <div id="fila-filtros" class="flex flex-wrap gap-1.5"></div>
             </div>
 
-            <!-- 2. CUOTAS -->
-            <div class="filtro-card">
-                <div class="filtro-titulo"><span>💳</span> CUOTAS</div>
-                <div id="fila-cuotas" class="flex flex-wrap gap-1.5"></div>
-            </div>
-
-            <!-- 3. CONVENIO -->
             <div class="filtro-card">
                 <div class="filtro-titulo"><span>🟠</span> FILTRO POR CONVENIO</div>
                 <div id="fila-convenios" class="flex flex-wrap gap-1.5"></div>
             </div>
 
-            <!-- RESTO DE SERVICIOS -->
             <div id="contenedor-servicios" class="space-y-3"></div>
         </aside>
 
@@ -251,12 +242,7 @@
             throw new Error('No se pudo encontrar el archivo excel');
         }
 
-        // REGLAS DE NEGOCIO
-        const PALABRAS_CLAVE_IN90_PERMITIDO = [
-            'TURISMO', 'QUINCHO', 'SALON', 'PILETA', 'COLONIA', 'MUSICA', 'FUTBOL',
-            'AUDITORIO', 'MASAJE', 'PODOLOG', 'COSMETO', 'PELUQUER', 'LAGUNA', 'ARROYO',
-            'RESERVA', 'CUOTA', 'SEPELIO'
-        ];
+        const PALABRAS_CLAVE_IN90_PERMITIDO = ['TURISMO', 'QUINCHO', 'SALON', 'PILETA', 'COLONIA', 'MUSICA', 'FUTBOL'];
         function in90PermitidoEnCategoria(categoria){
             const cat = normalizarCategoria(categoria);
             return PALABRAS_CLAVE_IN90_PERMITIDO.some(kw => cat.includes(kw));
@@ -313,7 +299,6 @@
                 const colDetalle = normalizar(fila[2]);
 
                 if (colCategoria) categoriaActual = colCategoria;
-
                 if (!colItem) continue;
 
                 const nombreItemFinal = colDetalle ? `${colItem} (${colDetalle})` : colItem;
@@ -428,142 +413,62 @@
         }
 
         const SERVICIOS_GRUPOS = [
-            {
-                id: 'cuotas',
-                titulo: '💳 CUOTAS',
-                items: [
-                    { id: 'cs', nombre: 'CUOTA SOCIO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('CUOTA') && (txt.includes('SOCIO') || txt.includes('SOC')); } },
-                    { id: 'cp', nombre: 'CUOTA SEPELIO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('SEPELIO'); } }
-                ]
-            },
-            {
-                id: 'consulta_medica',
-                titulo: '🩺 CONSULTA MÉDICA',
-                items: [
-                    { id: 'ca', nombre: 'CONSULTA "A"', coincide: (i,c) => esConsultaDeLetra(i,c,'A') },
-                    { id: 'cb', nombre: 'CONSULTA "B"', coincide: (i,c) => esConsultaDeLetra(i,c,'B') },
-                    { id: 'cc', nombre: 'CONSULTA "C"', coincide: (i,c) => esConsultaDeLetra(i,c,'C') },
-                    { id: 'nu', nombre: 'NUTRICION', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('NUTRICI') }
-                ]
-            },
-            {
-                id: 'otras_consultas',
-                titulo: '🩺 OTRAS CONSULTAS',
-                items: [
-                    { id: 'co', nombre: 'ODONTO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('ODONTO') && txt.includes('CONSULTA'); } },
-                    { id: 'ki', nombre: 'KINESIOLOGIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('KINESIO') },
-                    { id: 'fo', nombre: 'FONO', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('FONO') }
-                ]
-            },
-            {
-                id: 'practicas_odonto',
-                titulo: '🦷 PRÁCTICAS ODONTO',
-                items: [
-                    { id: 'po_cir', nombre: 'CIRUGIAS ODONTOLOGICAS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CIRUGI') },
-                    { id: 'po_con', nombre: 'CONDUCTOS ODONTOLOGICOS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CONDUCTO') },
-                    { id: 'po_cav', nombre: 'CAVITADOR (METODO DE LIMPIEZA)', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('CAVITADOR') || txt.includes('LIMPIEZA'); } },
-                    { id: 'po_sel', nombre: 'SELLADOR', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('SELLADOR') },
-                    { id: 'po_obl', nombre: 'OBTURACION LAMPARA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('OBTURAC') && txt.includes('LAMPARA'); } },
-                    { id: 'po_oba', nombre: 'OBTURACION CON AMALGAMA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('OBTURAC') && txt.includes('AMALGAMA'); } },
-                    { id: 'po_obi', nombre: 'OBTURACION CON IONOMERO VITRIO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('OBTURAC') && (txt.includes('IONOMERO') || txt.includes('VITRIO')); } },
-                    { id: 'po_ext', nombre: 'EXTRACCIONES', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('EXTRACCION') },
-                    { id: 'po_rep', nombre: 'REPARACION', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('REPARAC') },
-                    { id: 'po_pac', nombre: 'PROTESIS ACRILICO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('PROTESIS') && txt.includes('ACRILIC'); } },
-                    { id: 'po_pla', nombre: 'PLACAS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PLACA') },
-                    { id: 'po_cro', nombre: 'CROMO', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CROMO') },
-                    { id: 'po_fij', nombre: 'FIJAS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('FIJA') },
-                    { id: 'po_pfl', nombre: 'PROTESIS FLEXIBLES', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('PROTESIS') && txt.includes('FLEXIBLE'); } }
-                ]
-            },
-            {
-                id: 'salones',
-                titulo: '🏛️ SALONES',
-                items: [
-                    { id: 'qu', nombre: 'QUINCHOS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('QUINCHO') },
-                    { id: 's1', nombre: 'SALON 1', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return /\bsalon\s*(?:n[°º\.]?\s*)?1\b/i.test(txt) || (txt.includes('SALON') && txt.includes('1') && !txt.includes('180') && !txt.includes('10')); } },
-                    { id: 's2', nombre: 'SALON 2', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return /\bsalon\s*(?:n[°º\.]?\s*)?2\b/i.test(txt) || (txt.includes('SALON') && txt.includes('2')); } },
-                    { id: 's3', nombre: 'SALON 3', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return /\bsalon\s*(?:n[°º\.]?\s*)?3\b/i.test(txt) || (txt.includes('SALON') && txt.includes('3')); } },
-                    { id: 'aud', nombre: 'AUDITORIO', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('AUDITORIO') }
-                ]
-            },
-            {
-                id: 'recreacion',
-                titulo: '⚽ RECREACIÓN',
-                items: [
-                    { id: 'pi', nombre: 'PILETA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PILETA') },
-                    { id: 'cv', nombre: 'COLONIA VERANO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('COLONIA') && txt.includes('VERANO'); } },
-                    { id: 'ci', nombre: 'COLONIA INVIERNO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('COLONIA') && txt.includes('INVIERNO'); } },
-                    { id: 'em', nombre: 'ESCUELA MUSICA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('MUSICA') },
-                    { id: 'ef', nombre: 'ESCUELA FUTBOL', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('FUTBOL') }
-                ]
-            },
-            {
-                id: 'cuidado_personal',
-                titulo: '💆 CUIDADO PERSONAL',
-                items: [
-                    { id: 'cp_mas', nombre: 'MASAJES', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('MASAJE') },
-                    { id: 'cp_pod', nombre: 'PODOLOGIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PODOLOG') },
-                    { id: 'cp_cos', nombre: 'COSMETOLOGIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('COSMETO') },
-                    { id: 'cp_pel', nombre: 'PELUQUERIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PELUQUER') }
-                ]
-            },
-            {
-                id: 'turismo',
-                titulo: '✈️ TURISMO',
-                items: [
-                    { id: 'tu_lag', nombre: 'LAGUNA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('LAGUNA') },
-                    { id: 'tu_arr', nombre: 'ARROYO DE LOS PATOS', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('ARROYO') || txt.includes('PATOS'); } },
-                    { id: 'tu_res', nombre: 'GASTOS DE RESERVA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('RESERVA') || (txt.includes('GASTO') && txt.includes('RESERVA')); } }
-                ]
-            }
+            { titulo: '🩺 CONSULTA MÉDICA', items: [
+                { id: 'ca', nombre: 'CONSULTA "A"', coincide: (i,c) => esConsultaDeLetra(i,c,'A') },
+                { id: 'cb', nombre: 'CONSULTA "B"', coincide: (i,c) => esConsultaDeLetra(i,c,'B') },
+                { id: 'cc', nombre: 'CONSULTA "C"', coincide: (i,c) => esConsultaDeLetra(i,c,'C') },
+                { id: 'nu', nombre: 'NUTRICION', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('NUTRICI') }
+            ]},
+            { titulo: '🩺 OTRAS CONSULTAS', items: [
+                { id: 'co', nombre: 'ODONTO', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('ODONTO') },
+                { id: 'cav', nombre: 'CAVITADOR', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CAVITADOR') },
+                { id: 'pod', nombre: 'PODOLOGÍA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PODOLOG') },
+                { id: 'ki', nombre: 'KINESIOLOGIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('KINESIO') }
+            ]},
+            { titulo: '🏛️ SALONES Y RECREACIÓN', items: [
+                { id: 's1', nombre: 'SALÓN 1', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('SALON 1') },
+                { id: 's2', nombre: 'SALÓN 2', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('SALON 2') },
+                { id: 's3', nombre: 'SALÓN 3', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('SALON 3') },
+                { id: 'q12', nombre: 'QUINCHO 1 Y 2', coincide: (i,c) => { 
+                    const txt = quitarAcentos(i+' '+c).toUpperCase(); 
+                    return txt.includes('QUINCHO 1') || txt.includes('QUINCHO 2'); 
+                }},
+                { id: 'pi', nombre: 'PILETA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PILETA') }
+            ]},
+            { titulo: '🏖️ TURISMO', items: [
+                { id: 'lag', nombre: 'LAGUNA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('LAGUNA') }
+            ]}
         ];
 
         let servicioActivo = null;
         function renderizarFiltroServicios(){
-            const grupoCuotas = SERVICIOS_GRUPOS.find(g => g.id === 'cuotas');
-            const otrosGrupos = SERVICIOS_GRUPOS.filter(g => g.id !== 'cuotas');
-
-            const contCuotas = document.getElementById('fila-cuotas');
-            const gCuotasIdx = SERVICIOS_GRUPOS.findIndex(g => g.id === 'cuotas');
-            if (contCuotas && grupoCuotas) {
-                contCuotas.innerHTML = `<button class="chip-filtro activo" data-grupo="${gCuotasIdx}" data-servicio="">TODOS</button>` +
-                    grupoCuotas.items.map(it => `<button class="chip-filtro" data-grupo="${gCuotasIdx}" data-servicio="${it.id}">${it.nombre}</button>`).join('');
-            }
-
-            const contServicios = document.getElementById('contenedor-servicios');
-            if (contServicios) {
-                contServicios.innerHTML = otrosGrupos.map(g => {
-                    const gIdx = SERVICIOS_GRUPOS.indexOf(g);
-                    return `
-                        <div class="filtro-card">
-                            <div class="filtro-titulo">${g.titulo}</div>
-                            <div class="flex flex-wrap gap-1.5">
-                                <button class="chip-filtro activo" data-grupo="${gIdx}" data-servicio="">TODOS</button>
-                                ${g.items.map(it => `<button class="chip-filtro" data-grupo="${gIdx}" data-servicio="${it.id}">${it.nombre}</button>`).join('')}
-                            </div>
-                        </div>`;
-                }).join('');
-            }
+            const cont = document.getElementById('contenedor-servicios');
+            cont.innerHTML = SERVICIOS_GRUPOS.map((g, gIdx) => `
+                <div class="filtro-card">
+                    <div class="filtro-titulo">${g.titulo}</div>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button class="chip-filtro activo" data-grupo="${gIdx}" data-servicio="">TODOS</button>
+                        ${g.items.map(it => `<button class="chip-filtro" data-grupo="${gIdx}" data-servicio="${it.id}">${it.nombre}</button>`).join('')}
+                    </div>
+                </div>`).join('');
 
             const todosItems = SERVICIOS_GRUPOS.flatMap(g => g.items);
-            document.querySelectorAll('#fila-cuotas .chip-filtro, #contenedor-servicios .chip-filtro').forEach(btn => {
+            cont.querySelectorAll('.chip-filtro').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const id = btn.dataset.servicio;
                     servicioActivo = id ? todosItems.find(it => it.id === id) : null;
-                    document.querySelectorAll('#fila-cuotas .chip-filtro, #contenedor-servicios .chip-filtro').forEach(b => b.classList.remove('activo'));
+                    cont.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
 
                     if (servicioActivo) {
                         btn.classList.add('activo');
                         SERVICIOS_GRUPOS.forEach((g, idx) => {
                             if (String(idx) !== btn.dataset.grupo) {
-                                const selector = `#fila-cuotas .chip-filtro[data-grupo="${idx}"][data-servicio=""], #contenedor-servicios .chip-filtro[data-grupo="${idx}"][data-servicio=""]`;
-                                document.querySelector(selector)?.classList.add('activo');
+                                cont.querySelector(`.chip-filtro[data-grupo="${idx}"][data-servicio=""]`)?.classList.add('activo');
                             }
                         });
                     } else {
                         SERVICIOS_GRUPOS.forEach((g, idx) => {
-                            const selector = `#fila-cuotas .chip-filtro[data-grupo="${idx}"][data-servicio=""], #contenedor-servicios .chip-filtro[data-grupo="${idx}"][data-servicio=""]`;
-                            document.querySelector(selector)?.classList.add('activo');
+                            cont.querySelector(`.chip-filtro[data-grupo="${idx}"][data-servicio=""]`)?.classList.add('activo');
                         });
                     }
                     aplicarBusquedaYFiltro();
@@ -606,7 +511,9 @@
                 return;
             }
 
-            const columnas = planFiltrado ? [planFiltrado] : ORDEN_PLANES.filter(clave => datos.some(r => r.precios[clave]));
+            // Aquí se corrigió la evaluación del 0 asegurando que != undefined sea lo único que decida si hay valor
+            const columnas = planFiltrado ? [planFiltrado] : ORDEN_PLANES.filter(clave => datos.some(r => r.precios[clave] !== undefined));
+            
             const theadHTML = `<tr><th>Práctica / Servicio</th>${columnas.map((clave, i) => `<th data-col="${i}">${(etiquetaPorClave[clave] || clave).toUpperCase()}</th>`).join('')}</tr>`;
             
             const tbodyHTML = datos.map((r, fila) => `
