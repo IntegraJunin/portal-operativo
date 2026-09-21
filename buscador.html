@@ -47,8 +47,8 @@
             background-color: var(--chip-bg);
             color: var(--chip-text);
             font-weight: 700;
-            font-size: 10px; /* Reducido para hacer más chica la letra */
-            padding: 4px 10px; /* Padding ligeramente más compacto */
+            font-size: 10px;
+            padding: 4px 10px;
             border-radius: 9999px;
             transition: all 0.15s ease;
             text-transform: uppercase;
@@ -67,11 +67,11 @@
             background-color: var(--bg-box);
             border: 1.5px solid var(--border-box);
             border-radius: 12px;
-            padding: 8px 10px; /* Padding más compacto */
+            padding: 8px 10px;
         }
 
         .filtro-titulo {
-            font-size: 10px; /* Reducido para combinar con los chips */
+            font-size: 10px;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.04em;
@@ -155,21 +155,20 @@
 <body class="p-3 md:p-4 flex flex-col h-screen">
 
     <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-0">
-        <!-- COLUMNA IZQUIERDA: FILTROS (Se modificó el span para hacerla más ancha) -->
+        <!-- COLUMNA IZQUIERDA: FILTROS -->
         <aside class="lg:col-span-5 xl:col-span-4 h-full flex flex-col pr-1 gap-2">
             
-            <!-- SECCIÓN FIJA SUPERIOR -->
+            <!-- SECCIÓN FIJA SUPERIOR (TIPO DE SOCIO) -->
             <div class="flex-shrink-0 bg-[#f4e7dc] z-10 pb-2">
                 <h2 class="text-lg font-extrabold text-[#3b291a] py-1">Filtros</h2>
                 
-                <!-- 1. TIPO DE SOCIO (AHORA FIJO) -->
                 <div class="filtro-card mt-1 shadow-sm border-[#d2bfae]">
                     <div class="filtro-titulo"><span>👤</span> FILTRO POR TIPO DE SOCIO</div>
                     <div id="fila-filtros" class="flex flex-wrap gap-1.5"></div>
                 </div>
             </div>
 
-            <!-- SECCIÓN SCROLLEABLE INFERIOR (El resto de filtros scrollea aquí dentro) -->
+            <!-- SECCIÓN SCROLLEABLE INFERIOR -->
             <div class="flex-1 overflow-y-auto space-y-3 pb-8 pr-2">
                 <!-- 2. CUOTAS -->
                 <div class="filtro-card">
@@ -188,7 +187,7 @@
             </div>
         </aside>
 
-        <!-- COLUMNA DERECHA: RESULTADOS Y TABLA (Se modificó el span para hacerla un poco más angosta) -->
+        <!-- COLUMNA DERECHA: RESULTADOS Y TABLA -->
         <main class="lg:col-span-7 xl:col-span-8 h-full overflow-hidden flex flex-col gap-3">
             <h2 class="text-lg font-extrabold text-[#3b291a] sticky top-0 bg-[#f4e7dc] py-1 z-10">Resultados</h2>
 
@@ -234,7 +233,7 @@
             return [...claves].sort((a, b) => {
                 const ia = PRIORIDAD_ORDEN.indexOf(a);
                 const ib = PRIORIDAD_ORDEN.indexOf(b);
-                if (ia === -1 && ib === -1) return 0;
+                if (ia === -1 && ib === -1) return a.localeCompare(b);
                 if (ia === -1) return 1;
                 if (ib === -1) return -1;
                 return ia - ib;
@@ -271,48 +270,247 @@
             const cat = normalizarCategoria(categoria);
             const it = normalizarCategoria(item);
             if (PALABRAS_CLAVE_EXCLUIDAS_IN180.some(kw => cat.includes(kw))) return false;
-            if (itPara lograr lo que necesitas, vamos a realizar tres ajustes en tu archivo `buscador_6.html`:
-
-1.  **Cambiar el ancho de las columnas**: Modificaremos las clases de la grilla de Tailwind (`col-span`) para darle más espacio al panel izquierdo y quitárselo al derecho[cite: 2].
-2.  **Reducir el tamaño de la fuente**: Ajustaremos el CSS de las clases `.chip-filtro`, `.filtro-titulo` y `.filtro-card` para achicar la letra y los márgenes internos[cite: 2].
-3.  **Fijar el primer filtro y permitir scroll en el resto**: Reestructuraremos el contenedor `<aside>` usando Flexbox. Dejaremos el título y el primer filtro fijos arriba, y envolveremos los demás en un contenedor con la propiedad `overflow-y-auto`[cite: 2].
-
-Aquí tienes el código con los cambios aplicados:
-
-### 1. Actualiza el CSS (Estilos)
-Busca estas clases en tu etiqueta `<style>` y reemplázalas para achicar la letra y los botones[cite: 2]:
-
-```css
-        .chip-filtro {
-            background-color: var(--chip-bg);
-            color: var(--chip-text);
-            font-weight: 700;
-            font-size: 10px; /* Reducido de 11px a 10px */
-            padding: 4px 10px; /* Reducido para que el botón sea más sutil */
-            border-radius: 9999px;
-            transition: all 0.15s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-            border: 1px solid transparent;
+            if (it.includes('COMED') || it.includes('FAMYL') || it.includes('PETRAGLIA')) return false;
+            return true;
         }
 
-        /* ... otras clases sin cambios ... */
-
-        .filtro-card {
-            background-color: var(--bg-box);
-            border: 1.5px solid var(--border-box);
-            border-radius: 14px;
-            padding: 8px 10px; /* Reducido levemente para acompañar la letra más chica */
+        function planBloqueadoParaFila(plan, categoria, item){
+            const p = claveComparable(plan);
+            if (PLANES_SIEMPRE_BLOQUEADOS.includes(p)) return true;
+            if (p === 'IN 90') {
+                return !in90PermitidoEnCategoria(categoria);
+            }
+            if (p === 'IN 180') {
+                return !in180PermitidoEn(categoria, item);
+            }
+            return false;
         }
 
-        .filtro-titulo {
-            font-size: 10px; /* Reducido de 11px a 10px */
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            color: var(--text-brand);
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+        function procesarLibro(workbook) {
+            const hoja = workbook.Sheets[workbook.SheetNames[0]];
+            const json = XLSX.utils.sheet_to_json(hoja, { header: 1, defval: '' });
+
+            if (json.length < 2) return;
+
+            const encabezados = json[0].map(c => normalizar(c));
+            const colItemIndex = encabezados.findIndex(e => e.toUpperCase() === 'ITEM' || e.toUpperCase() === 'PRACTICA');
+            const colCatIndex = encabezados.findIndex(e => e.toUpperCase() === 'CATEGORIA' || e.toUpperCase() === 'SERVICIO');
+
+            const indexItem = colItemIndex !== -1 ? colItemIndex : 0;
+            const indexCat = colCatIndex !== -1 ? colCatIndex : 1;
+
+            const columnasPlanes = [];
+            for (let i = 0; i < encabezados.length; i++) {
+                if (i !== indexItem && i !== indexCat && encabezados[i]) {
+                    columnasPlanes.push({ index: i, nombre: encabezados[i] });
+                }
+            }
+
+            ORDEN_PLANES = ordenarPlanes(columnasPlanes.map(p => p.nombre));
+
+            baseDeDatos = [];
+            for (let r = 1; r < json.length; r++) {
+                const fila = json[r];
+                const itemNombre = normalizar(fila[indexItem]);
+                const categoriaNombre = normalizar(fila[indexCat]);
+
+                if (!itemNombre && !categoriaNombre) continue;
+
+                const precios = {};
+                columnasPlanes.forEach(p => {
+                    let val = fila[p.index];
+                    if (typeof val === 'number') {
+                        val = '$ ' + val.toLocaleString('es-AR', { minimumFractionDigits: 0 });
+                    } else {
+                        val = normalizar(val);
+                    }
+                    precios[p.nombre] = val;
+                });
+
+                baseDeDatos.push({
+                    item: itemNombre,
+                    categoria: categoriaNombre,
+                    precios: precios
+                });
+            }
+
+            renderizarInterfaz();
         }
+
+        function renderizarInterfaz() {
+            document.getElementById('input-busqueda').disabled = false;
+            document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
+            document.getElementById('badge-estado').innerText = 'Base Lista';
+
+            const filaFiltros = document.getElementById('fila-filtros');
+            const filaCuotas = document.getElementById('fila-cuotas');
+            const filaConvenios = document.getElementById('fila-convenios');
+            const contenedorServicios = document.getElementById('contenedor-servicios');
+
+            filaFiltros.innerHTML = '';
+            filaCuotas.innerHTML = '';
+            filaConvenios.innerHTML = '';
+            contenedorServicios.innerHTML = '';
+
+            // 1. Tipo de socio
+            ORDEN_PLANES.forEach(plan => {
+                const btn = document.createElement('button');
+                btn.className = 'chip-filtro';
+                btn.innerText = plan;
+                btn.onclick = () => toggleFiltro('plan', plan, btn);
+                filaFiltros.appendChild(btn);
+            });
+
+            // Agrupar categorías
+            const categoriasUnicas = [...new Set(baseDeDatos.map(d => d.categoria).filter(Boolean))];
+            
+            const cuotasCat = categoriasUnicas.filter(c => normalizarCategoria(c).includes('CUOTA'));
+            const conveniosCat = categoriasUnicas.filter(c => normalizarCategoria(c).includes('CONVENIO'));
+            const otrasCat = categoriasUnicas.filter(c => !cuotasCat.includes(c) && !conveniosCat.includes(c));
+
+            // Render Cuotas
+            cuotasCat.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = 'chip-filtro';
+                btn.innerText = cat;
+                btn.onclick = () => toggleFiltro('categoria', cat, btn);
+                filaCuotas.appendChild(btn);
+            });
+
+            // Render Convenios
+            conveniosCat.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = 'chip-filtro';
+                btn.innerText = cat;
+                btn.onclick = () => toggleFiltro('categoria', cat, btn);
+                filaConvenios.appendChild(btn);
+            });
+
+            // Render Resto de servicios
+            if (otrasCat.length > 0) {
+                const cardGroup = document.createElement('div');
+                cardGroup.className = 'filtro-card';
+                
+                const title = document.createElement('div');
+                title.className = 'filtro-titulo';
+                title.innerHTML = '<span>📋</span> OTROS SERVICIOS';
+                cardGroup.appendChild(title);
+
+                const wrap = document.createElement('div');
+                wrap.className = 'flex flex-wrap gap-1.5';
+
+                otrasCat.forEach(cat => {
+                    const btn = document.createElement('button');
+                    btn.className = 'chip-filtro';
+                    btn.innerText = cat;
+                    btn.onclick = () => toggleFiltro('categoria', cat, btn);
+                    wrap.appendChild(btn);
+                });
+
+                cardGroup.appendChild(wrap);
+                contenedorServicios.appendChild(cardGroup);
+            }
+
+            filtrarYMostrar();
+        }
+
+        function toggleFiltro(tipo, valor, elemento) {
+            const yaActivo = elemento.classList.contains('activo');
+            document.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
+
+            if (yaActivo) {
+                filtroActivo = null;
+            } else {
+                elemento.classList.add('activo');
+                filtroActivo = { tipo, valor };
+            }
+
+            filtrarYMostrar();
+        }
+
+        document.getElementById('input-busqueda').addEventListener('input', filtrarYMostrar);
+
+        function filtrarYMostrar() {
+            const busqueda = quitarAcentos(document.getElementById('input-busqueda').value.toLowerCase().trim());
+
+            let datosFiltrados = baseDeDatos.filter(row => {
+                const textoCompleto = quitarAcentos((row.item + ' ' + row.categoria).toLowerCase());
+                const coincideBusqueda = !busqueda || textoCompleto.includes(busqueda);
+
+                if (!coincideBusqueda) return false;
+
+                if (filtroActivo) {
+                    if (filtroActivo.tipo === 'categoria') {
+                        return row.categoria === filtroActivo.valor;
+                    }
+                }
+                return true;
+            });
+
+            renderTabla(datosFiltrados);
+        }
+
+        function renderTabla(datos) {
+            const wrap = document.getElementById('tabla-wrap');
+            const txtRes = document.getElementById('texto-resultados');
+
+            if (datos.length === 0) {
+                wrap.innerHTML = '<div class="p-8 text-center text-gray-500 font-bold text-sm">No se encontraron resultados para la búsqueda.</div>';
+                txtRes.innerText = '0 registros encontrados';
+                return;
+            }
+
+            txtRes.innerText = `${datos.length} registros encontrados`;
+
+            let html = '<table><thead><tr><th>PRÁCTICA / ITEM</th>';
+
+            ORDEN_PLANES.forEach(plan => {
+                const esResaltada = filtroActivo && filtroActivo.tipo === 'plan' && filtroActivo.valor === plan;
+                html += `<th class="${esResaltada ? 'resaltada' : ''}">${plan}</th>`;
+            });
+
+            html += '</tr></thead><tbody>';
+
+            datos.forEach(row => {
+                html += `<tr>`;
+                html += `<td class="celda-item">
+                    ${row.categoria ? `<span class="celda-categoria">${row.categoria}</span><br>` : ''}
+                    ${row.item}
+                </td>`;
+
+                ORDEN_PLANES.forEach(plan => {
+                    const esResaltada = filtroActivo && filtroActivo.tipo === 'plan' && filtroActivo.valor === plan;
+                    const estaBloqueado = planBloqueadoParaFila(plan, row.categoria, row.item);
+                    
+                    let valor = row.precios[plan] || '-';
+
+                    if (estaBloqueado) {
+                        html += `<td class="celda-vacia ${esResaltada ? 'resaltada' : ''}">-</td>`;
+                    } else {
+                        html += `<td class="${esResaltada ? 'resaltada' : ''}">${valor}</td>`;
+                    }
+                });
+
+                html += `</tr>`;
+            });
+
+            html += 'tbody></table>';
+            wrap.innerHTML = html;
+        }
+
+        // Cargar al iniciar
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await descargarExcel();
+                const workbook = XLSX.read(res.data, { type: 'array' });
+                procesarLibro(workbook);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('texto-resultados').innerText = 'Error al cargar el archivo Excel.';
+                document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-red-500';
+                document.getElementById('badge-estado').innerText = 'Error';
+            }
+        });
+    </script>
+</body>
+</html>
