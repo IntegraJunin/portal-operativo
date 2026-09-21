@@ -242,6 +242,7 @@
             throw new Error('No se pudo encontrar el archivo excel');
         }
 
+        // REGLAS DE NEGOCIO
         const PALABRAS_CLAVE_IN90_PERMITIDO = ['TURISMO', 'QUINCHO', 'SALON', 'PILETA', 'COLONIA', 'MUSICA', 'FUTBOL'];
         function in90PermitidoEnCategoria(categoria){
             const cat = normalizarCategoria(categoria);
@@ -260,12 +261,14 @@
 
         let etiquetaPorClave = {};
 
+        // NUEVO MOTOR DE LECTURA ADAPTADO AL FORMATO XLSX ESTRUCTURADO
         function parsearFilas(filas){
             const registros = [];
             let mapaColumnas = {};
             etiquetaPorClave = {};
             ORDEN_PLANES = [];
 
+            // Buscar la fila de los encabezados (donde empiezan las columnas de planes a partir de la col 3)
             let filaHeaderIndex = 0;
             for(let i=0; i < filas.length; i++) {
                 if(filas[i][3]) { 
@@ -276,6 +279,7 @@
 
             const headerRow = filas[filaHeaderIndex];
             
+            // Mapear los planes (In 90, In 180, etc.)
             for (let c = 3; c < headerRow.length; c++) {
                 const nombrePlan = normalizar(headerRow[c]);
                 if (nombrePlan) {
@@ -290,22 +294,28 @@
 
             let categoriaActual = 'GENERAL';
 
+            // Iterar los datos de las filas
             for (let i = filaHeaderIndex + 1; i < filas.length; i++) {
                 const fila = filas[i];
                 if (!fila || fila.length === 0) continue;
 
                 const colCategoria = normalizar(fila[0]);
                 const colItem = normalizar(fila[1]);
-                const colDetalle = normalizar(fila[2]);
+                const colDetalle = normalizar(fila[2]); // Ej: "Valor por turno", "DEPOSITO"
 
+                // Si hay una categoría explícita, actualizarla. Si no, mantiene la anterior (comportamiento en cascada)
                 if (colCategoria) categoriaActual = colCategoria;
-                if (!colItem) continue;
 
+                if (!colItem) continue; // Si no hay ítem, es fila vacía de contenido
+
+                // Unir ítem y detalle si existe
                 const nombreItemFinal = colDetalle ? `${colItem} (${colDetalle})` : colItem;
                 const precios = {};
 
+                // Leer los precios basados en el mapa de columnas
                 Object.entries(mapaColumnas).forEach(([colIndex, clave]) => {
                     const valor = fila[Number(colIndex)];
+                    // Ignorar vacíos o textos no numéricos si no aplica
                     if (valor !== undefined && valor !== '' && valor !== null && valor !== 'NaN') {
                         precios[clave] = valor;
                     }
@@ -313,6 +323,7 @@
 
                 if (Object.keys(precios).length === 0) continue;
 
+                // Reglas de negocio
                 PLANES_SIEMPRE_BLOQUEADOS.forEach(clave => { delete precios[clave]; });
                 if ('IN 90' in precios && !in90PermitidoEnCategoria(categoriaActual)) {
                     delete precios['IN 90'];
@@ -334,6 +345,7 @@
                 .then(({ data }) => {
                     const workbook = XLSX.read(data, { type: 'array' });
                     const primeraHoja = workbook.Sheets[workbook.SheetNames[0]];
+                    // 'defval: null' asegura que celdas vacías vengan vacías sin corromper el índice del array
                     const filas = XLSX.utils.sheet_to_json(primeraHoja, { header: 1, defval: null });
 
                     if (filas.length === 0) throw new Error('El Excel está vacío');
@@ -358,6 +370,7 @@
                 });
         });
 
+        // ------------------ (FILTROS Y RENDERIZADO IDÉNTICOS AL ORIGINAL) ------------------
         function buscarEstricto(termino){
             const t = quitarAcentos(termino).toLowerCase().trim();
             if (!t) return [];
@@ -421,17 +434,29 @@
             ]},
             { titulo: '🩺 OTRAS CONSULTAS', items: [
                 { id: 'co', nombre: 'ODONTO', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('ODONTO') },
-                { id: 'cav', nombre: 'CAVITADOR', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CAVITADOR') },
+                { id: 'cav', nombre: 'CAVITADOR', coincide: (i,c) => { 
+                    const txt = quitarAcentos(i+' '+c).toUpperCase();
+                    return txt.includes('CAVITADOR') && !txt.includes('LAGUNA');
+                }},
                 { id: 'pod', nombre: 'PODOLOGÍA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PODOLOG') },
                 { id: 'ki', nombre: 'KINESIOLOGIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('KINESIO') }
             ]},
             { titulo: '🏛️ SALONES Y RECREACIÓN', items: [
-                { id: 's1', nombre: 'SALÓN 1', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('SALON 1') },
-                { id: 's2', nombre: 'SALÓN 2', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('SALON 2') },
-                { id: 's3', nombre: 'SALÓN 3', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('SALON 3') },
-                { id: 'q12', nombre: 'QUINCHO 1 Y 2', coincide: (i,c) => { 
-                    const txt = quitarAcentos(i+' '+c).toUpperCase(); 
-                    return txt.includes('QUINCHO 1') || txt.includes('QUINCHO 2'); 
+                { id: 's1', nombre: 'SALÓN 1', coincide: (i,c) => {
+                    const txt = quitarAcentos(i+' '+c).toUpperCase();
+                    return txt.includes('SALON 1') && !txt.includes('QUINCHO');
+                }},
+                { id: 's2', nombre: 'SALÓN 2', coincide: (i,c) => {
+                    const txt = quitarAcentos(i+' '+c).toUpperCase();
+                    return txt.includes('SALON 2') && !txt.includes('QUINCHO');
+                }},
+                { id: 's3', nombre: 'SALÓN 3', coincide: (i,c) => {
+                    const txt = quitarAcentos(i+' '+c).toUpperCase();
+                    return txt.includes('SALON 3') && !txt.includes('QUINCHO');
+                }},
+                { id: 'q12', nombre: 'QUINCHOS 1 Y 2', coincide: (i,c) => {
+                    const txt = quitarAcentos(i+' '+c).toUpperCase();
+                    return txt.includes('QUINCHO');
                 }},
                 { id: 'pi', nombre: 'PILETA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PILETA') }
             ]},
@@ -511,9 +536,7 @@
                 return;
             }
 
-            // Aquí se corrigió la evaluación del 0 asegurando que != undefined sea lo único que decida si hay valor
             const columnas = planFiltrado ? [planFiltrado] : ORDEN_PLANES.filter(clave => datos.some(r => r.precios[clave] !== undefined));
-            
             const theadHTML = `<tr><th>Práctica / Servicio</th>${columnas.map((clave, i) => `<th data-col="${i}">${(etiquetaPorClave[clave] || clave).toUpperCase()}</th>`).join('')}</tr>`;
             
             const tbodyHTML = datos.map((r, fila) => `
