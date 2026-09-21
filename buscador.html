@@ -32,7 +32,6 @@
             background-color: var(--bg-main);
             font-family: 'Comfortaa', cursive;
             color: var(--text-brand);
-            /* Removidos los bloqueos de altura y overflow que rompían el scroll */
         }
 
         h1, h2, h3, button, input, table, .font-outfit {
@@ -459,7 +458,7 @@
                 items: [
                     { id: 'po_cir', nombre: 'CIRUGIAS ODONTOLOGICAS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CIRUGI') },
                     { id: 'po_con', nombre: 'CONDUCTOS ODONTOLOGICOS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CONDUCTO') },
-                    { id: 'po_cav', nombre: 'CAVITADOR (METODO DE LIMPIEZA)', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('CAVITADOR') || txt.includes('LIMPIEZA'); } },
+                    { id: 'po_cav', nombre: 'CAVITADOR (METODO DE LIMPIEZA)', coincide: (i,c) => { const it = quitarAcentos(i).toUpperCase(); const cat = quitarAcentos(c).toUpperCase(); return it.includes('CAVITADOR') || (it.includes('LIMPIEZA') && !it.includes('LAGUNA') && !cat.includes('TURISMO')); } },
                     { id: 'po_sel', nombre: 'SELLADOR', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('SELLADOR') },
                     { id: 'po_obl', nombre: 'OBTURACION LAMPARA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('OBTURAC') && txt.includes('LAMPARA'); } },
                     { id: 'po_oba', nombre: 'OBTURACION CON AMALGAMA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('OBTURAC') && txt.includes('AMALGAMA'); } },
@@ -477,10 +476,10 @@
                 id: 'salones',
                 titulo: '🏛️ SALONES',
                 items: [
-                    { id: 'qu', nombre: 'QUINCHOS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('QUINCHO') },
-                    { id: 's1', nombre: 'SALON 1', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return /\bsalon\s*(?:n[°º\.]?\s*)?1\b/i.test(txt) || (txt.includes('SALON') && txt.includes('1') && !txt.includes('180') && !txt.includes('10')); } },
-                    { id: 's2', nombre: 'SALON 2', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return /\bsalon\s*(?:n[°º\.]?\s*)?2\b/i.test(txt) || (txt.includes('SALON') && txt.includes('2')); } },
-                    { id: 's3', nombre: 'SALON 3', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return /\bsalon\s*(?:n[°º\.]?\s*)?3\b/i.test(txt) || (txt.includes('SALON') && txt.includes('3')); } },
+                    { id: 's1', nombre: 'SALON 1', coincide: (i,c) => { const it = quitarAcentos(i).toUpperCase(); const txt = quitarAcentos(i+' '+c).toUpperCase(); return !it.includes('QUINCHO') && (/\bsalon\s*(?:n[°º\.]?\s*)?1\b/i.test(txt) || (it.includes('SALON') && it.includes('1'))); } },
+                    { id: 's2', nombre: 'SALON 2', coincide: (i,c) => { const it = quitarAcentos(i).toUpperCase(); const txt = quitarAcentos(i+' '+c).toUpperCase(); return !it.includes('QUINCHO') && (/\bsalon\s*(?:n[°º\.]?\s*)?2\b/i.test(txt) || (it.includes('SALON') && it.includes('2'))); } },
+                    { id: 's3', nombre: 'SALON 3', coincide: (i,c) => { const it = quitarAcentos(i).toUpperCase(); const txt = quitarAcentos(i+' '+c).toUpperCase(); return !it.includes('QUINCHO') && (/\bsalon\s*(?:n[°º\.]?\s*)?3\b/i.test(txt) || (it.includes('SALON') && it.includes('3'))); } },
+                    { id: 'qu', nombre: 'QUINCHOS 1 Y 2', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('QUINCHO') },
                     { id: 'aud', nombre: 'AUDITORIO', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('AUDITORIO') }
                 ]
             },
@@ -604,14 +603,14 @@
                 return;
             }
 
-            const columnas = planFiltrado ? [planFiltrado] : ORDEN_PLANES.filter(clave => datos.some(r => r.precios[clave]));
+            const columnas = planFiltrado ? [planFiltrado] : ORDEN_PLANES.filter(clave => datos.some(r => r.precios[clave] !== undefined && r.precios[clave] !== null));
             const theadHTML = `<tr><th>Práctica / Servicio</th>${columnas.map((clave, i) => `<th data-col="${i}">${(etiquetaPorClave[clave] || clave).toUpperCase()}</th>`).join('')}</tr>`;
             
             const tbodyHTML = datos.map((r, fila) => `
                 <tr>
                     <td data-fila="${fila}" class="celda-item"><span class="celda-categoria">${r.categoria}</span><br>${r.item}</td>
                     ${columnas.map((clave, col) => {
-                        const tiene = r.precios[clave] !== undefined;
+                        const tiene = r.precios[clave] !== undefined && r.precios[clave] !== null;
                         return `<td data-fila="${fila}" data-col="${col}" class="${!tiene ? 'celda-vacia' : ''}">${tiene ? formatearValor(r.precios[clave]) : '—'}</td>`;
                     }).join('')}
                 </tr>`).join('');
