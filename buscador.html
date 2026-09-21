@@ -434,34 +434,12 @@
             ]},
             { titulo: '🩺 OTRAS CONSULTAS', items: [
                 { id: 'co', nombre: 'ODONTO', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('ODONTO') },
-                { id: 'cav', nombre: 'CAVITADOR', coincide: (i,c) => { 
-                    const txt = quitarAcentos(i+' '+c).toUpperCase();
-                    return txt.includes('CAVITADOR') && !txt.includes('LAGUNA');
-                }},
-                { id: 'pod', nombre: 'PODOLOGÍA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PODOLOG') },
                 { id: 'ki', nombre: 'KINESIOLOGIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('KINESIO') }
             ]},
             { titulo: '🏛️ SALONES Y RECREACIÓN', items: [
-                { id: 's1', nombre: 'SALÓN 1', coincide: (i,c) => {
-                    const txt = quitarAcentos(i+' '+c).toUpperCase();
-                    return txt.includes('SALON 1') && !txt.includes('QUINCHO');
-                }},
-                { id: 's2', nombre: 'SALÓN 2', coincide: (i,c) => {
-                    const txt = quitarAcentos(i+' '+c).toUpperCase();
-                    return txt.includes('SALON 2') && !txt.includes('QUINCHO');
-                }},
-                { id: 's3', nombre: 'SALÓN 3', coincide: (i,c) => {
-                    const txt = quitarAcentos(i+' '+c).toUpperCase();
-                    return txt.includes('SALON 3') && !txt.includes('QUINCHO');
-                }},
-                { id: 'q12', nombre: 'QUINCHOS 1 Y 2', coincide: (i,c) => {
-                    const txt = quitarAcentos(i+' '+c).toUpperCase();
-                    return txt.includes('QUINCHO');
-                }},
+                { id: 'qu', nombre: 'QUINCHOS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('QUINCHO') },
+                { id: 's1', nombre: 'SALONES', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('SALON') },
                 { id: 'pi', nombre: 'PILETA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PILETA') }
-            ]},
-            { titulo: '🏖️ TURISMO', items: [
-                { id: 'lag', nombre: 'LAGUNA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('LAGUNA') }
             ]}
         ];
 
@@ -536,7 +514,7 @@
                 return;
             }
 
-            const columnas = planFiltrado ? [planFiltrado] : ORDEN_PLANES.filter(clave => datos.some(r => r.precios[clave] !== undefined));
+            const columnas = planFiltrado ? [planFiltrado] : ORDEN_PLANES.filter(clave => datos.some(r => r.precios[clave]));
             const theadHTML = `<tr><th>Práctica / Servicio</th>${columnas.map((clave, i) => `<th data-col="${i}">${(etiquetaPorClave[clave] || clave).toUpperCase()}</th>`).join('')}</tr>`;
             
             const tbodyHTML = datos.map((r, fila) => `
