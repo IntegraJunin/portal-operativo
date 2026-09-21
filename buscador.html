@@ -46,44 +46,7 @@
         ::-webkit-scrollbar-thumb { background: #d0beb0; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #b8a698; }
 
-        /* ==========================================================================
-           REGLAS DE BLINDAJE CSS PARA FILTROS (PROTECCIÓN ANTI-MANIPULACIÓN JS/SERVER)
-           ========================================================================== */
-        aside#columna-filtros,
-        aside#columna-filtros .filtro-card,
-        aside#columna-filtros #fila-filtros,
-        aside#columna-filtros #fila-convenios,
-        aside#columna-filtros #contenedor-servicios,
-        aside#columna-filtros .chip-filtro {
-            opacity: 1 !important;
-            visibility: visible !important;
-            pointer-events: auto !important;
-            transform: none !important;
-            clip: auto !important;
-            clip-path: none !important;
-            filter: none !important;
-        }
-
-        aside#columna-filtros {
-            display: block !important;
-        }
-
-        aside#columna-filtros .filtro-card,
-        aside#columna-filtros #contenedor-servicios {
-            display: block !important;
-        }
-
-        aside#columna-filtros #fila-filtros,
-        aside#columna-filtros #fila-convenios,
-        aside#columna-filtros .contenedor-chips {
-            display: flex !important;
-            flex-wrap: wrap !important;
-        }
-
         .chip-filtro {
-            display: inline-flex !important;
-            align-items: center;
-            justify-content: center;
             background-color: var(--chip-bg);
             color: var(--chip-text);
             font-weight: 700;
@@ -94,14 +57,13 @@
             text-transform: uppercase;
             letter-spacing: 0.02em;
             border: 1px solid transparent;
-            cursor: pointer;
         }
 
         .chip-filtro:hover { background-color: #ded0c5; }
         .chip-filtro.activo {
             background-color: var(--chip-active-bg) !important;
             color: var(--chip-active-text) !important;
-            border-color: var(--chip-active-bg) !important;
+            border-color: var(--chip-active-bg);
         }
 
         .filtro-card {
@@ -196,69 +158,30 @@
 <body class="p-3 md:p-4 flex flex-col h-screen overflow-hidden">
 
     <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-0 overflow-hidden">
-        <!-- COLUMNA IZQUIERDA: FILTROS (ESTRUCTURA HTML FIJA Y PROTEGIDA) -->
-        <aside id="columna-filtros" class="lg:col-span-4 xl:col-span-4 h-full overflow-y-auto pr-2 space-y-3">
+        <!-- COLUMNA IZQUIERDA: FILTROS -->
+        <aside class="lg:col-span-4 xl:col-span-4 h-full overflow-y-auto pr-2 space-y-3">
             <h2 class="text-lg font-extrabold text-[#3b291a] sticky top-0 bg-[#f4e7dc] py-1 z-10">Filtros</h2>
 
-            <!-- FILTRO POR TIPO DE SOCIO -->
+            <!-- 1. TIPO DE SOCIO -->
             <div class="filtro-card">
                 <div class="filtro-titulo"><span>👤</span> FILTRO POR TIPO DE SOCIO</div>
-                <div id="fila-filtros" class="flex flex-wrap gap-1.5">
-                    <button class="chip-filtro activo" data-plan="">TODOS</button>
-                    <button class="chip-filtro" data-plan="IN 90">IN 90</button>
-                    <button class="chip-filtro" data-plan="IN 90 (OSECAC)">IN 90 (OSECAC)</button>
-                    <button class="chip-filtro" data-plan="IN 180">IN 180</button>
-                    <button class="chip-filtro" data-plan="IN 360">IN 360</button>
-                    <button class="chip-filtro" data-plan="AFILIADO SEC">AFILIADO SEC</button>
-                    <button class="chip-filtro" data-plan="ASISTENCIAL">ASISTENCIAL</button>
-                </div>
+                <div id="fila-filtros" class="flex flex-wrap gap-1.5"></div>
             </div>
 
-            <!-- FILTRO POR CONVENIO -->
+            <!-- 2. CUOTAS -->
+            <div class="filtro-card">
+                <div class="filtro-titulo"><span>💳</span> CUOTAS</div>
+                <div id="fila-cuotas" class="flex flex-wrap gap-1.5"></div>
+            </div>
+
+            <!-- 3. CONVENIO -->
             <div class="filtro-card">
                 <div class="filtro-titulo"><span>🟠</span> FILTRO POR CONVENIO</div>
-                <div id="fila-convenios" class="flex flex-wrap gap-1.5">
-                    <button class="chip-filtro activo" data-convenio="">TODOS</button>
-                    <button class="chip-filtro" data-convenio="0">DRA. CAPPONI</button>
-                    <button class="chip-filtro" data-convenio="1">COMED</button>
-                    <button class="chip-filtro" data-convenio="2">CMD (FAMY)</button>
-                    <button class="chip-filtro" data-convenio="3">DR. COSTANZI</button>
-                    <button class="chip-filtro" data-convenio="4">NEXO TERAPIA</button>
-                </div>
+                <div id="fila-convenios" class="flex flex-wrap gap-1.5"></div>
             </div>
 
-            <!-- FILTRO POR SERVICIOS Y CATEGORÍAS -->
-            <div id="contenedor-servicios" class="space-y-3">
-                <div class="filtro-card">
-                    <div class="filtro-titulo">🩺 CONSULTA MÉDICA</div>
-                    <div class="contenedor-chips gap-1.5">
-                        <button class="chip-filtro activo" data-grupo="0" data-servicio="">TODOS</button>
-                        <button class="chip-filtro" data-grupo="0" data-servicio="ca">CONSULTA "A"</button>
-                        <button class="chip-filtro" data-grupo="0" data-servicio="cb">CONSULTA "B"</button>
-                        <button class="chip-filtro" data-grupo="0" data-servicio="cc">CONSULTA "C"</button>
-                        <button class="chip-filtro" data-grupo="0" data-servicio="nu">NUTRICION</button>
-                    </div>
-                </div>
-
-                <div class="filtro-card">
-                    <div class="filtro-titulo">🩺 OTRAS CONSULTAS</div>
-                    <div class="contenedor-chips gap-1.5">
-                        <button class="chip-filtro activo" data-grupo="1" data-servicio="">TODOS</button>
-                        <button class="chip-filtro" data-grupo="1" data-servicio="co">ODONTO</button>
-                        <button class="chip-filtro" data-grupo="1" data-servicio="ki">KINESIOLOGIA</button>
-                    </div>
-                </div>
-
-                <div class="filtro-card">
-                    <div class="filtro-titulo">🏛️ SALONES Y RECREACIÓN</div>
-                    <div class="contenedor-chips gap-1.5">
-                        <button class="chip-filtro activo" data-grupo="2" data-servicio="">TODOS</button>
-                        <button class="chip-filtro" data-grupo="2" data-servicio="qu">QUINCHOS</button>
-                        <button class="chip-filtro" data-grupo="2" data-servicio="s1">SALONES</button>
-                        <button class="chip-filtro" data-grupo="2" data-servicio="pi">PILETA</button>
-                    </div>
-                </div>
-            </div>
+            <!-- RESTO DE SERVICIOS -->
+            <div id="contenedor-servicios" class="space-y-3"></div>
         </aside>
 
         <!-- COLUMNA DERECHA: RESULTADOS Y TABLA -->
@@ -300,8 +223,8 @@
         function quitarAcentos(s){ return String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
         function normalizarCategoria(s){ return quitarAcentos(normalizar(s)).replace(/\s+/g, ' ').toUpperCase(); }
 
+        let ORDEN_PLANES = [];
         const PRIORIDAD_ORDEN = ['IN 90', 'IN 90 (OSECAC)', 'IN 180', 'IN 360', 'AFILIADO SEC', 'ASISTENCIAL'];
-        let ORDEN_PLANES = [...PRIORIDAD_ORDEN];
 
         function ordenarPlanes(claves){
             return [...claves].sort((a, b) => {
@@ -316,8 +239,6 @@
 
         let baseDeDatos = [];
         let filtroActivo = null;
-        let convenioActivo = null;
-        let servicioActivo = null;
 
         async function descargarExcel() {
             const variantes = ['precios(modificado).xlsx', 'precios.xlsx', 'PRECIOS.xlsx'];
@@ -331,7 +252,11 @@
         }
 
         // REGLAS DE NEGOCIO
-        const PALABRAS_CLAVE_IN90_PERMITIDO = ['TURISMO', 'QUINCHO', 'SALON', 'PILETA', 'COLONIA', 'MUSICA', 'FUTBOL'];
+        const PALABRAS_CLAVE_IN90_PERMITIDO = [
+            'TURISMO', 'QUINCHO', 'SALON', 'PILETA', 'COLONIA', 'MUSICA', 'FUTBOL',
+            'AUDITORIO', 'MASAJE', 'PODOLOG', 'COSMETO', 'PELUQUER', 'LAGUNA', 'ARROYO',
+            'RESERVA', 'CUOTA', 'SEPELIO'
+        ];
         function in90PermitidoEnCategoria(categoria){
             const cat = normalizarCategoria(categoria);
             return PALABRAS_CLAVE_IN90_PERMITIDO.some(kw => cat.includes(kw));
@@ -347,18 +272,13 @@
             return true;
         }
 
-        let etiquetaPorClave = {
-            'IN 90': 'IN 90',
-            'IN 90 (OSECAC)': 'IN 90 (OSECAC)',
-            'IN 180': 'IN 180',
-            'IN 360': 'IN 360',
-            'AFILIADO SEC': 'AFILIADO SEC',
-            'ASISTENCIAL': 'ASISTENCIAL'
-        };
+        let etiquetaPorClave = {};
 
         function parsearFilas(filas){
             const registros = [];
             let mapaColumnas = {};
+            etiquetaPorClave = {};
+            ORDEN_PLANES = [];
 
             let filaHeaderIndex = 0;
             for(let i=0; i < filas.length; i++) {
@@ -369,7 +289,7 @@
             }
 
             const headerRow = filas[filaHeaderIndex];
-
+            
             for (let c = 3; c < headerRow.length; c++) {
                 const nombrePlan = normalizar(headerRow[c]);
                 if (nombrePlan) {
@@ -377,8 +297,6 @@
                     mapaColumnas[c] = clave;
                     if (!(clave in etiquetaPorClave)) {
                         etiquetaPorClave[clave] = nombrePlan;
-                    }
-                    if (!ORDEN_PLANES.includes(clave)) {
                         ORDEN_PLANES.push(clave);
                     }
                 }
@@ -395,6 +313,7 @@
                 const colDetalle = normalizar(fila[2]);
 
                 if (colCategoria) categoriaActual = colCategoria;
+
                 if (!colItem) continue;
 
                 const nombreItemFinal = colDetalle ? `${colItem} (${colDetalle})` : colItem;
@@ -425,100 +344,7 @@
             return registros;
         }
 
-        const CONVENIOS_FIJOS = [
-            { nombre: 'DRA. CAPPONI', claves: ['CAPPONI'] },
-            { nombre: 'COMED', claves: ['COMED'] },
-            { nombre: 'CMD (FAMY)', claves: ['CMD', 'FAMYL'] },
-            { nombre: 'DR. COSTANZI', claves: ['COSTANZI'] },
-            { nombre: 'NEXO TERAPIA', claves: ['NEXO TERAPIA', 'NEXO'] },
-        ].map(c => ({ ...c, coincide: (cat) => c.claves.some(k => normalizarCategoria(cat).includes(k))}));
-
-        function esConsultaDeLetra(it, cat, letra){
-            const txt = quitarAcentos(it).toUpperCase();
-            const p = txt.split(/\s+/).filter(Boolean);
-            if(!p.includes('CONSULTA')) return false;
-            if(['ODONTO','KINESIO','NUTRI','ENFERM'].some(kw => p.some(pal=>pal.includes(kw)))) return false;
-            return p.includes(letra) && !['A','B','C'].filter(l => l!==letra).some(l=>p.includes(l));
-        }
-
-        const SERVICIOS_GRUPOS = [
-            { titulo: '🩺 CONSULTA MÉDICA', items: [
-                { id: 'ca', nombre: 'CONSULTA "A"', coincide: (i,c) => esConsultaDeLetra(i,c,'A') },
-                { id: 'cb', nombre: 'CONSULTA "B"', coincide: (i,c) => esConsultaDeLetra(i,c,'B') },
-                { id: 'cc', nombre: 'CONSULTA "C"', coincide: (i,c) => esConsultaDeLetra(i,c,'C') },
-                { id: 'nu', nombre: 'NUTRICION', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('NUTRICI') }
-            ]},
-            { titulo: '🩺 OTRAS CONSULTAS', items: [
-                { id: 'co', nombre: 'ODONTO', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('ODONTO') },
-                { id: 'ki', nombre: 'KINESIOLOGIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('KINESIO') }
-            ]},
-            { titulo: '🏛️ SALONES Y RECREACIÓN', items: [
-                { id: 'qu', nombre: 'QUINCHOS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('QUINCHO') },
-                { id: 's1', nombre: 'SALONES', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('SALON') },
-                { id: 'pi', nombre: 'PILETA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PILETA') }
-            ]}
-        ];
-
-        // VINCULACIÓN ESTÁTICA DE EVENTOS DE FILTROS
-        function inicializarEventosFiltros() {
-            // Eventos: Tipo de Socio
-            const contSocios = document.getElementById('fila-filtros');
-            if (contSocios) {
-                contSocios.querySelectorAll('.chip-filtro').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        filtroActivo = btn.dataset.plan || null;
-                        contSocios.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
-                        btn.classList.add('activo');
-                        aplicarBusquedaYFiltro();
-                    });
-                });
-            }
-
-            // Eventos: Convenios
-            const contConvenios = document.getElementById('fila-convenios');
-            if (contConvenios) {
-                contConvenios.querySelectorAll('.chip-filtro').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        convenioActivo = btn.dataset.convenio !== '' ? CONVENIOS_FIJOS[Number(btn.dataset.convenio)] : null;
-                        contConvenios.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
-                        btn.classList.add('activo');
-                        aplicarBusquedaYFiltro();
-                    });
-                });
-            }
-
-            // Eventos: Servicios
-            const contServicios = document.getElementById('contenedor-servicios');
-            if (contServicios) {
-                const todosItems = SERVICIOS_GRUPOS.flatMap(g => g.items);
-                contServicios.querySelectorAll('.chip-filtro').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const id = btn.dataset.servicio;
-                        servicioActivo = id ? todosItems.find(it => it.id === id) : null;
-                        contServicios.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
-
-                        if (servicioActivo) {
-                            btn.classList.add('activo');
-                            SERVICIOS_GRUPOS.forEach((g, idx) => {
-                                if (String(idx) !== btn.dataset.grupo) {
-                                    contServicios.querySelector(`.chip-filtro[data-grupo="${idx}"][data-servicio=""]`)?.classList.add('activo');
-                                }
-                            });
-                        } else {
-                            SERVICIOS_GRUPOS.forEach((g, idx) => {
-                                contServicios.querySelector(`.chip-filtro[data-grupo="${idx}"][data-servicio=""]`)?.classList.add('activo');
-                            });
-                        }
-                        aplicarBusquedaYFiltro();
-                    });
-                });
-            }
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
-            // Inicializar eventos de filtros estáticos de inmediato
-            inicializarEventosFiltros();
-
             descargarExcel()
                 .then(({ data }) => {
                     const workbook = XLSX.read(data, { type: 'array' });
@@ -528,13 +354,16 @@
                     if (filas.length === 0) throw new Error('El Excel está vacío');
 
                     baseDeDatos = parsearFilas(filas);
-
+                    
                     document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
                     document.getElementById('texto-resultados').textContent = `Base lista (${baseDeDatos.length} registros).`;
                     document.getElementById('badge-estado').textContent = 'Base Cargada';
                     document.getElementById('badge-estado').classList.add('text-emerald-600');
                     document.getElementById('input-busqueda').disabled = false;
 
+                    renderizarFiltros();
+                    renderizarFiltroConvenios();
+                    renderizarFiltroServicios();
                     aplicarBusquedaYFiltro();
                 })
                 .catch(err => {
@@ -566,7 +395,203 @@
             renderizarTabla(resultados, filtroActivo);
         }
 
+        const CONVENIOS_FIJOS = [
+            { nombre: 'DRA. CAPPONI', claves: ['CAPPONI'] },
+            { nombre: 'COMED', claves: ['COMED'] },
+            { nombre: 'CMD (FAMY)', claves: ['CMD', 'FAMYL'] },
+            { nombre: 'DR. COSTANZI', claves: ['COSTANZI'] },
+            { nombre: 'NEXO TERAPIA', claves: ['NEXO TERAPIA', 'NEXO'] },
+        ].map(c => ({ ...c, coincide: (cat) => c.claves.some(k => normalizarCategoria(cat).includes(k))}));
+
+        let convenioActivo = null;
+        function renderizarFiltroConvenios(){
+            const cont = document.getElementById('fila-convenios');
+            cont.innerHTML = `<button class="chip-filtro activo" data-convenio="">TODOS</button>` +
+                CONVENIOS_FIJOS.map((c, i) => `<button class="chip-filtro" data-convenio="${i}">${c.nombre}</button>`).join('');
+
+            cont.querySelectorAll('.chip-filtro').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    convenioActivo = btn.dataset.convenio !== '' ? CONVENIOS_FIJOS[Number(btn.dataset.convenio)] : null;
+                    cont.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
+                    btn.classList.add('activo');
+                    aplicarBusquedaYFiltro();
+                });
+            });
+        }
+
+        function esConsultaDeLetra(it, cat, letra){
+            const txt = quitarAcentos(it).toUpperCase();
+            const p = txt.split(/\s+/).filter(Boolean);
+            if(!p.includes('CONSULTA')) return false;
+            if(['ODONTO','KINESIO','NUTRI','ENFERM'].some(kw => p.some(pal=>pal.includes(kw)))) return false;
+            return p.includes(letra) && !['A','B','C'].filter(l => l!==letra).some(l=>p.includes(l));
+        }
+
+        const SERVICIOS_GRUPOS = [
+            {
+                id: 'cuotas',
+                titulo: '💳 CUOTAS',
+                items: [
+                    { id: 'cs', nombre: 'CUOTA SOCIO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('CUOTA') && (txt.includes('SOCIO') || txt.includes('SOC')); } },
+                    { id: 'cp', nombre: 'CUOTA SEPELIO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('SEPELIO'); } }
+                ]
+            },
+            {
+                id: 'consulta_medica',
+                titulo: '🩺 CONSULTA MÉDICA',
+                items: [
+                    { id: 'ca', nombre: 'CONSULTA "A"', coincide: (i,c) => esConsultaDeLetra(i,c,'A') },
+                    { id: 'cb', nombre: 'CONSULTA "B"', coincide: (i,c) => esConsultaDeLetra(i,c,'B') },
+                    { id: 'cc', nombre: 'CONSULTA "C"', coincide: (i,c) => esConsultaDeLetra(i,c,'C') },
+                    { id: 'nu', nombre: 'NUTRICION', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('NUTRICI') }
+                ]
+            },
+            {
+                id: 'otras_consultas',
+                titulo: '🩺 OTRAS CONSULTAS',
+                items: [
+                    { id: 'co', nombre: 'ODONTO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('ODONTO') && txt.includes('CONSULTA'); } },
+                    { id: 'ki', nombre: 'KINESIOLOGIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('KINESIO') },
+                    { id: 'fo', nombre: 'FONO', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('FONO') }
+                ]
+            },
+            {
+                id: 'practicas_odonto',
+                titulo: '🦷 PRÁCTICAS ODONTO',
+                items: [
+                    { id: 'po_cir', nombre: 'CIRUGIAS ODONTOLOGICAS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CIRUGI') },
+                    { id: 'po_con', nombre: 'CONDUCTOS ODONTOLOGICOS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CONDUCTO') },
+                    { id: 'po_cav', nombre: 'CAVITADOR (METODO DE LIMPIEZA)', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('CAVITADOR') || txt.includes('LIMPIEZA'); } },
+                    { id: 'po_sel', nombre: 'SELLADOR', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('SELLADOR') },
+                    { id: 'po_obl', nombre: 'OBTURACION LAMPARA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('OBTURAC') && txt.includes('LAMPARA'); } },
+                    { id: 'po_oba', nombre: 'OBTURACION CON AMALGAMA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('OBTURAC') && txt.includes('AMALGAMA'); } },
+                    { id: 'po_obi', nombre: 'OBTURACION CON IONOMERO VITRIO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('OBTURAC') && (txt.includes('IONOMERO') || txt.includes('VITRIO')); } },
+                    { id: 'po_ext', nombre: 'EXTRACCIONES', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('EXTRACCION') },
+                    { id: 'po_rep', nombre: 'REPARACION', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('REPARAC') },
+                    { id: 'po_pac', nombre: 'PROTESIS ACRILICO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('PROTESIS') && txt.includes('ACRILIC'); } },
+                    { id: 'po_pla', nombre: 'PLACAS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PLACA') },
+                    { id: 'po_cro', nombre: 'CROMO', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CROMO') },
+                    { id: 'po_fij', nombre: 'FIJAS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('FIJA') },
+                    { id: 'po_pfl', nombre: 'PROTESIS FLEXIBLES', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('PROTESIS') && txt.includes('FLEXIBLE'); } }
+                ]
+            },
+            {
+                id: 'salones',
+                titulo: '🏛️ SALONES',
+                items: [
+                    { id: 'qu', nombre: 'QUINCHOS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('QUINCHO') },
+                    { id: 's1', nombre: 'SALON 1', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return /\bsalon\s*(?:n[°º\.]?\s*)?1\b/i.test(txt) || (txt.includes('SALON') && txt.includes('1') && !txt.includes('180') && !txt.includes('10')); } },
+                    { id: 's2', nombre: 'SALON 2', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return /\bsalon\s*(?:n[°º\.]?\s*)?2\b/i.test(txt) || (txt.includes('SALON') && txt.includes('2')); } },
+                    { id: 's3', nombre: 'SALON 3', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return /\bsalon\s*(?:n[°º\.]?\s*)?3\b/i.test(txt) || (txt.includes('SALON') && txt.includes('3')); } },
+                    { id: 'aud', nombre: 'AUDITORIO', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('AUDITORIO') }
+                ]
+            },
+            {
+                id: 'recreacion',
+                titulo: '⚽ RECREACIÓN',
+                items: [
+                    { id: 'pi', nombre: 'PILETA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PILETA') },
+                    { id: 'cv', nombre: 'COLONIA VERANO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('COLONIA') && txt.includes('VERANO'); } },
+                    { id: 'ci', nombre: 'COLONIA INVIERNO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('COLONIA') && txt.includes('INVIERNO'); } },
+                    { id: 'em', nombre: 'ESCUELA MUSICA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('MUSICA') },
+                    { id: 'ef', nombre: 'ESCUELA FUTBOL', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('FUTBOL') }
+                ]
+            },
+            {
+                id: 'cuidado_personal',
+                titulo: '💆 CUIDADO PERSONAL',
+                items: [
+                    { id: 'cp_mas', nombre: 'MASAJES', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('MASAJE') },
+                    { id: 'cp_pod', nombre: 'PODOLOGIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PODOLOG') },
+                    { id: 'cp_cos', nombre: 'COSMETOLOGIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('COSMETO') },
+                    { id: 'cp_pel', nombre: 'PELUQUERIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PELUQUER') }
+                ]
+            },
+            {
+                id: 'turismo',
+                titulo: '✈️ TURISMO',
+                items: [
+                    { id: 'tu_lag', nombre: 'LAGUNA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('LAGUNA') },
+                    { id: 'tu_arr', nombre: 'ARROYO DE LOS PATOS', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('ARROYO') || txt.includes('PATOS'); } },
+                    { id: 'tu_res', nombre: 'GASTOS DE RESERVA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('RESERVA') || (txt.includes('GASTO') && txt.includes('RESERVA')); } }
+                ]
+            }
+        ];
+
+        let servicioActivo = null;
+        function renderizarFiltroServicios(){
+            const grupoCuotas = SERVICIOS_GRUPOS.find(g => g.id === 'cuotas');
+            const otrosGrupos = SERVICIOS_GRUPOS.filter(g => g.id !== 'cuotas');
+
+            const contCuotas = document.getElementById('fila-cuotas');
+            const gCuotasIdx = SERVICIOS_GRUPOS.findIndex(g => g.id === 'cuotas');
+            if (contCuotas && grupoCuotas) {
+                contCuotas.innerHTML = `<button class="chip-filtro activo" data-grupo="${gCuotasIdx}" data-servicio="">TODOS</button>` +
+                    grupoCuotas.items.map(it => `<button class="chip-filtro" data-grupo="${gCuotasIdx}" data-servicio="${it.id}">${it.nombre}</button>`).join('');
+            }
+
+            const contServicios = document.getElementById('contenedor-servicios');
+            if (contServicios) {
+                contServicios.innerHTML = otrosGrupos.map(g => {
+                    const gIdx = SERVICIOS_GRUPOS.indexOf(g);
+                    return `
+                        <div class="filtro-card">
+                            <div class="filtro-titulo">${g.titulo}</div>
+                            <div class="flex flex-wrap gap-1.5">
+                                <button class="chip-filtro activo" data-grupo="${gIdx}" data-servicio="">TODOS</button>
+                                ${g.items.map(it => `<button class="chip-filtro" data-grupo="${gIdx}" data-servicio="${it.id}">${it.nombre}</button>`).join('')}
+                            </div>
+                        </div>`;
+                }).join('');
+            }
+
+            const todosItems = SERVICIOS_GRUPOS.flatMap(g => g.items);
+            document.querySelectorAll('#fila-cuotas .chip-filtro, #contenedor-servicios .chip-filtro').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.dataset.servicio;
+                    servicioActivo = id ? todosItems.find(it => it.id === id) : null;
+                    document.querySelectorAll('#fila-cuotas .chip-filtro, #contenedor-servicios .chip-filtro').forEach(b => b.classList.remove('activo'));
+
+                    if (servicioActivo) {
+                        btn.classList.add('activo');
+                        SERVICIOS_GRUPOS.forEach((g, idx) => {
+                            if (String(idx) !== btn.dataset.grupo) {
+                                const selector = `#fila-cuotas .chip-filtro[data-grupo="${idx}"][data-servicio=""], #contenedor-servicios .chip-filtro[data-grupo="${idx}"][data-servicio=""]`;
+                                document.querySelector(selector)?.classList.add('activo');
+                            }
+                        });
+                    } else {
+                        SERVICIOS_GRUPOS.forEach((g, idx) => {
+                            const selector = `#fila-cuotas .chip-filtro[data-grupo="${idx}"][data-servicio=""], #contenedor-servicios .chip-filtro[data-grupo="${idx}"][data-servicio=""]`;
+                            document.querySelector(selector)?.classList.add('activo');
+                        });
+                    }
+                    aplicarBusquedaYFiltro();
+                });
+            });
+        }
+
         document.getElementById('input-busqueda').addEventListener('input', aplicarBusquedaYFiltro);
+
+        function renderizarFiltros(){
+            const planesPresentes = new Set();
+            baseDeDatos.forEach(r => Object.keys(r.precios).forEach(p => planesPresentes.add(p)));
+
+            const cont = document.getElementById('fila-filtros');
+            cont.innerHTML = `<button class="chip-filtro activo" data-plan="">TODOS</button>` +
+                ORDEN_PLANES.filter(p => planesPresentes.has(p)).map(clave => 
+                    `<button class="chip-filtro" data-plan="${clave}">${etiquetaPorClave[clave] || clave}</button>`
+                ).join('');
+
+            cont.querySelectorAll('.chip-filtro').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filtroActivo = btn.dataset.plan || null;
+                    cont.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
+                    btn.classList.add('activo');
+                    aplicarBusquedaYFiltro();
+                });
+            });
+        }
 
         function formatearValor(valor){
             if (typeof valor === 'number') return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(valor);
@@ -583,7 +608,7 @@
 
             const columnas = planFiltrado ? [planFiltrado] : ORDEN_PLANES.filter(clave => datos.some(r => r.precios[clave]));
             const theadHTML = `<tr><th>Práctica / Servicio</th>${columnas.map((clave, i) => `<th data-col="${i}">${(etiquetaPorClave[clave] || clave).toUpperCase()}</th>`).join('')}</tr>`;
-
+            
             const tbodyHTML = datos.map((r, fila) => `
                 <tr>
                     <td data-fila="${fila}" class="celda-item"><span class="celda-categoria">${r.categoria}</span><br>${r.item}</td>
