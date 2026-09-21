@@ -32,6 +32,8 @@
             background-color: var(--bg-main);
             font-family: 'Comfortaa', cursive;
             color: var(--text-brand);
+            height: 100vh;
+            overflow: hidden;
         }
 
         h1, h2, h3, button, input, table, .font-outfit {
@@ -152,14 +154,14 @@
         }
     </style>
 </head>
-<body class="p-3 md:p-4 flex flex-col h-screen">
+<body class="p-3 md:p-4 flex flex-col h-screen overflow-hidden">
 
-    <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-0">
-        <!-- COLUMNA IZQUIERDA: FILTROS -->
-        <aside class="lg:col-span-5 xl:col-span-4 h-full flex flex-col pr-1 gap-2">
+    <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 h-full min-h-0">
+        <!-- COLUMNA IZQUIERDA: FILTROS CON SCROLL INDEPENDIENTE -->
+        <aside class="lg:col-span-5 xl:col-span-4 h-full flex flex-col pr-1 gap-2 min-h-0 overflow-hidden">
             
             <!-- SECCIÓN FIJA SUPERIOR (TIPO DE SOCIO) -->
-            <div class="flex-shrink-0 bg-[#f4e7dc] z-10 pb-2">
+            <div class="flex-shrink-0 bg-[#f4e7dc] z-10 pb-1">
                 <h2 class="text-lg font-extrabold text-[#3b291a] py-1">Filtros</h2>
                 
                 <div class="filtro-card mt-1 shadow-sm border-[#d2bfae]">
@@ -168,8 +170,8 @@
                 </div>
             </div>
 
-            <!-- SECCIÓN SCROLLEABLE INFERIOR -->
-            <div class="flex-1 overflow-y-auto space-y-3 pb-8 pr-2">
+            <!-- SECCIÓN SCROLLEABLE INFERIOR DE FILTROS -->
+            <div class="flex-1 overflow-y-auto space-y-3 pb-8 pr-2 min-h-0">
                 <!-- 2. CUOTAS -->
                 <div id="card-cuotas" class="filtro-card">
                     <div class="filtro-titulo"><span>💳</span> CUOTAS</div>
@@ -182,13 +184,13 @@
                     <div id="fila-convenios" class="flex flex-wrap gap-1.5"></div>
                 </div>
 
-                <!-- RESTO DE SERVICIOS (TARJETAS DINÁMICAS ORGANIZADAS) -->
+                <!-- RESTO DE SERVICIOS -->
                 <div id="contenedor-servicios" class="space-y-3"></div>
             </div>
         </aside>
 
-        <!-- COLUMNA DERECHA: RESULTADOS Y TABLA -->
-        <main class="lg:col-span-7 xl:col-span-8 h-full overflow-hidden flex flex-col gap-3">
+        <!-- COLUMNA DERECHA: RESULTADOS Y TABLA CON SCROLL INDEPENDIENTE -->
+        <main class="lg:col-span-7 xl:col-span-8 h-full overflow-hidden flex flex-col gap-3 min-h-0">
             <h2 class="text-lg font-extrabold text-[#3b291a] sticky top-0 bg-[#f4e7dc] py-1 z-10">Resultados</h2>
 
             <div class="relative flex-shrink-0">
@@ -265,12 +267,12 @@
             return PALABRAS_CLAVE_IN90_PERMITIDO.some(kw => cat.includes(kw));
         }
 
-        const PALABRAS_CLAVE_EXCLUIDAS_IN180 = ['COMED', 'FAMYL', 'PETRAGLIA', 'PSIQUIATRIA'];
+        const PALABRAS_CLAVE_EXCLUIDAS_IN180 = ['COMED', 'FAMYL', 'PETRAGLIA', 'PSIQUIATRIA', 'CMD+'];
         function in180PermitidoEn(categoria, item){
             const cat = normalizarCategoria(categoria);
             const it = normalizarCategoria(item);
             if (PALABRAS_CLAVE_EXCLUIDAS_IN180.some(kw => cat.includes(kw))) return false;
-            if (it.includes('COMED') || it.includes('FAMYL') || it.includes('PETRAGLIA') || it.includes('PSIQUIATRIA')) return false;
+            if (it.includes('COMED') || it.includes('FAMYL') || it.includes('PETRAGLIA') || it.includes('PSIQUIATRIA') || it.includes('CMD+')) return false;
             return true;
         }
 
@@ -337,6 +339,9 @@
             renderizarInterfaz();
         }
 
+        // LISTA DE CONVENIOS PERMITIDOS PREDETERMINADOS
+        const CONVENIOS_DEFINIDOS = ['CMD+', 'COMED', 'Dra. Capponi', 'Dr. Costanzi', 'Lab. Milani', 'Lab. Petraglia', 'FAMYL', 'PSIQUIATRIA'];
+
         function renderizarInterfaz() {
             document.getElementById('input-busqueda').disabled = false;
             document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
@@ -361,12 +366,9 @@
                 filaFiltros.appendChild(btn);
             });
 
-            // Palabras clave para clasificar Convenios
-            const PALABRAS_CONVENIO = ['CONVENIO', 'FAMYL', 'PETRAGLIA', 'COMED', 'PSIQUIATRIA'];
-
             const cuotasSet = new Set();
-            const conveniosSet = new Set();
-            const mapaItemCategorias = {};
+            const conveniosEncontrados = new Set();
+            const mapaCategoriasServicio = {};
 
             baseDeDatos.forEach(d => {
                 const cat = d.categoria;
@@ -375,24 +377,32 @@
                 const catNorm = normalizarCategoria(cat);
                 const itemNorm = normalizarCategoria(item);
 
-                const esCuota = catNorm.includes('CUOTA') || itemNorm.includes('CUOTA');
-                const esConvenio = PALABRAS_CONVENIO.some(kw => catNorm.includes(kw) || itemNorm.includes(kw));
-
-                if (esCuota) {
+                // Cuotas
+                if (catNorm.includes('CUOTA') || itemNorm.includes('CUOTA')) {
                     if (cat) cuotasSet.add(cat);
-                } else if (esConvenio) {
-                    if (cat) conveniosSet.add(cat);
-                    else if (item) conveniosSet.add(item);
-                } else {
-                    const grupoClave = item || 'OTROS SERVICIOS';
-                    if (!mapaItemCategorias[grupoClave]) {
-                        mapaItemCategorias[grupoClave] = new Set();
+                    return;
+                }
+
+                // Detectar si pertenece a un Convenio
+                let esConvenio = false;
+                for (const conv of CONVENIOS_DEFINIDOS) {
+                    const convNorm = normalizarCategoria(conv);
+                    if (catNorm.includes(convNorm) || itemNorm.includes(convNorm)) {
+                        conveniosEncontrados.add(conv);
+                        esConvenio = true;
+                        break;
                     }
-                    if (cat) mapaItemCategorias[grupoClave].add(cat);
+                }
+
+                if (!esConvenio && cat) {
+                    if (!mapaCategoriasServicio[cat]) {
+                        mapaCategoriasServicio[cat] = new Set();
+                    }
+                    if (item) mapaCategoriasServicio[cat].add(item);
                 }
             });
 
-            // Render 2. Cuotas
+            // Render Cuotas
             if (cuotasSet.size > 0) {
                 document.getElementById('card-cuotas').style.display = 'block';
                 cuotasSet.forEach(cat => {
@@ -406,43 +416,37 @@
                 document.getElementById('card-cuotas').style.display = 'none';
             }
 
-            // Render 3. Convenios
-            if (conveniosSet.size > 0) {
-                document.getElementById('card-convenios').style.display = 'block';
-                conveniosSet.forEach(cat => {
-                    const btn = document.createElement('button');
-                    btn.className = 'chip-filtro';
-                    btn.innerText = cat;
-                    btn.onclick = () => toggleFiltro('categoria', cat, btn);
-                    filaConvenios.appendChild(btn);
-                });
-            } else {
-                document.getElementById('card-convenios').style.display = 'none';
-            }
+            // Render Convenios (Sólo los convenios explícitos)
+            const listaConvenios = Array.from(conveniosEncontrados).length > 0 
+                ? Array.from(conveniosEncontrados) 
+                : CONVENIOS_DEFINIDOS;
 
-            // Render Resto de Servicios (Agrupados por Tarjetas según su Servicio/Ítem)
-            Object.keys(mapaItemCategorias).forEach(servicioNombre => {
-                const categoriasSet = mapaItemCategorias[servicioNombre];
-                if (categoriasSet.size === 0) return;
+            listaConvenios.forEach(conv => {
+                const btn = document.createElement('button');
+                btn.className = 'chip-filtro';
+                btn.innerText = conv;
+                btn.onclick = () => toggleFiltro('convenio', conv, btn);
+                filaConvenios.appendChild(btn);
+            });
 
+            // Render Resto de Categorías
+            Object.keys(mapaCategoriasServicio).forEach(catNombre => {
                 const cardGroup = document.createElement('div');
                 cardGroup.className = 'filtro-card';
 
                 const title = document.createElement('div');
                 title.className = 'filtro-titulo';
-                title.innerHTML = `<span>📋</span> ${servicioNombre.toUpperCase()}`;
+                title.innerHTML = `<span>📋</span> ${catNombre.toUpperCase()}`;
                 cardGroup.appendChild(title);
 
                 const wrap = document.createElement('div');
                 wrap.className = 'flex flex-wrap gap-1.5';
 
-                categoriasSet.forEach(cat => {
-                    const btn = document.createElement('button');
-                    btn.className = 'chip-filtro';
-                    btn.innerText = cat;
-                    btn.onclick = () => toggleFiltro('categoria', cat, btn);
-                    wrap.appendChild(btn);
-                });
+                const btnCat = document.createElement('button');
+                btnCat.className = 'chip-filtro';
+                btnCat.innerText = 'VER TODO EN ' + catNombre;
+                btnCat.onclick = () => toggleFiltro('categoria', catNombre, btnCat);
+                wrap.appendChild(btnCat);
 
                 cardGroup.appendChild(wrap);
                 contenedorServicios.appendChild(cardGroup);
@@ -478,7 +482,13 @@
 
                 if (filtroActivo) {
                     if (filtroActivo.tipo === 'categoria') {
-                        return row.categoria === filtroActivo.valor || row.item === filtroActivo.valor;
+                        return row.categoria === filtroActivo.valor;
+                    }
+                    if (filtroActivo.tipo === 'convenio') {
+                        const valNorm = normalizarCategoria(filtroActivo.valor);
+                        const catNorm = normalizarCategoria(row.categoria);
+                        const itemNorm = normalizarCategoria(row.item);
+                        return catNorm.includes(valNorm) || itemNorm.includes(valNorm);
                     }
                 }
                 return true;
