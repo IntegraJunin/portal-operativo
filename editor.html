@@ -671,17 +671,25 @@
             const wb = XLSX.utils.book_new();
             const datosArray = [];
 
-            const columnasExportar = ['IN 90', 'IN 90 (OSECAC)', 'IN 180', 'IN 360', 'AFILIADO SEC', 'ASISTENCIAL'];
-            datosArray.push(["CATEGORIA", "PRÁCTICA / SERVICIO", "DETALLE", ...columnasExportar]);
+            // 1. Array con los nombres EXACTOS y en el ORDEN EXACTO del precios.xlsx original
+            const encabezadosOriginales = ['In 90', 'In 180', 'In 360', 'Afiliado SEC', 'Asistencial', 'In 90 (OSECAC)'];
+            
+            // 2. Las primeras tres columnas van vacías ("") para igualar el formato original
+            datosArray.push(["", "", "", ...encabezadosOriginales]);
 
             baseDeDatos.forEach(reg => {
                 const fila = [
                     reg.categoria,
-                    reg.itemOriginal || reg.item,
+                    reg.itemOriginal || reg.item, // Se mantiene el ítem original
                     reg.detalle || ""
                 ];
 
-                columnasExportar.forEach(clave => {
+                // 3. Extraemos el precio usando la clave normalizada, iterando en el orden correcto
+                encabezadosOriginales.forEach(encabezado => {
+                    // Normalizamos el encabezado original para buscar en reg.precios (ej: "IN 90 (OSECAC)")
+                    const clave = claveComparable(encabezado);
+                    
+                    // Si el valor existe, lo agregamos. Si no, dejamos la celda vacía
                     fila.push(reg.precios[clave] !== undefined ? reg.precios[clave] : "");
                 });
 
@@ -689,12 +697,24 @@
             });
 
             const ws = XLSX.utils.aoa_to_sheet(datosArray);
-            ws['!cols'] = [ {wch: 30}, {wch: 45}, {wch: 20}, {wch: 12}, {wch: 15}, {wch: 12}, {wch: 12}, {wch: 15}, {wch: 15} ];
             
-            XLSX.utils.book_append_sheet(wb, ws, "Base Actualizada");
-            XLSX.writeFile(wb, "precios(modificado).xlsx");
+            // 4. Ajustar los anchos de columna para que sean lo más fieles posible al original
+            ws['!cols'] = [ 
+                {wch: 25}, // Categoría
+                {wch: 45}, // Ítem
+                {wch: 20}, // Detalle
+                {wch: 12}, // In 90
+                {wch: 12}, // In 180
+                {wch: 12}, // In 360
+                {wch: 15}, // Afiliado SEC
+                {wch: 15}, // Asistencial
+                {wch: 18}  // In 90 (OSECAC)
+            ];
+            
+            XLSX.utils.book_append_sheet(wb, ws, "Hoja1"); // Opcional: poner "Hoja1" que es el estándar
+            XLSX.writeFile(wb, "precios.xlsx"); // Recomendado usar el mismo nombre
 
-            alert("¡Archivo generado con éxito! Guarda el descargado 'precios(modificado).xlsx' en la carpeta de tu sistema.");
+            alert("¡Archivo generado con éxito! Guarda el descargado 'precios.xlsx' reemplazando tu archivo actual.");   
         }
     </script>
 </body>
