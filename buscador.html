@@ -415,6 +415,7 @@
             { nombre: 'DR. COSTANZI', claves: ['COSTANZI'] },
             { nombre: 'LAB. MILANI', claves: ['MILANI'] },
             { nombre: 'LAB. PETRAGLIA', claves: ['PETRAGLIA'] }
+            { nombre: 'NEXO', claves: ['NEXO'] }
         ].map(c => ({ ...c, coincide: (cat) => c.claves.some(k => normalizarCategoria(cat).includes(k))}));
 
         let convenioActivo = null;
