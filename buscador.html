@@ -156,41 +156,45 @@
 
     <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-0">
         <!-- COLUMNA IZQUIERDA: FILTROS -->
-        <aside class="lg:col-span-4 xl:col-span-3 h-full overflow-y-auto pr-2 pb-8 space-y-3">
-            <h2 class="text-lg font-extrabold text-[#3b291a] sticky top-0 bg-[#f4e7dc] py-1 z-10">Filtros</h2>
-
-            <!-- 1. TIPO DE SOCIO -->
-            <div class="filtro-card">
-                <div class="filtro-titulo"><span>👤</span> FILTRO POR TIPO DE SOCIO</div>
-                <div id="fila-filtros" class="flex flex-wrap gap-1.5"></div>
+        <aside class="lg:col-span-4 xl:col-span-3 h-full overflow-y-auto pr-2 pb-8">
+            
+            <div class="sticky top-0 bg-[#f4e7dc] z-20 pb-3 mb-3 pt-1">
+                <h2 class="text-lg font-extrabold text-[#3b291a] py-1 mb-2">Filtros</h2>
+                <!-- 1. TIPO DE SOCIO -->
+                <div class="filtro-card shadow-sm">
+                    <div class="filtro-titulo"><span>👤</span> FILTRO POR TIPO DE SOCIO</div>
+                    <div id="fila-filtros" class="flex flex-wrap gap-1.5"></div>
+                </div>
             </div>
 
-            <!-- 2. CUOTAS -->
-            <div class="filtro-card">
-                <div class="filtro-titulo"><span>💳</span> CUOTAS</div>
-                <div id="fila-cuotas" class="flex flex-wrap gap-1.5"></div>
-            </div>
+            <div class="space-y-3">
+                <!-- 2. CUOTAS -->
+                <div class="filtro-card">
+                    <div class="filtro-titulo"><span>💳</span> CUOTAS</div>
+                    <div id="fila-cuotas" class="flex flex-wrap gap-1.5"></div>
+                </div>
 
-            <!-- 3. CONVENIOS -->
-            <div class="filtro-card">
-                <div class="filtro-titulo"><span>🤝</span> CONVENIOS</div>
-                <div id="fila-convenios" class="flex flex-wrap gap-1.5"></div>
-            </div>
+                <!-- 3. CONVENIOS -->
+                <div class="filtro-card">
+                    <div class="filtro-titulo"><span>🤝</span> CONVENIOS</div>
+                    <div id="fila-convenios" class="flex flex-wrap gap-1.5"></div>
+                </div>
 
-            <!-- 4. CONSULTAS -->
-            <div class="filtro-card">
-                <div class="filtro-titulo"><span>🩺</span> CONSULTAS</div>
-                <div id="fila-consultas" class="flex flex-wrap gap-1.5"></div>
-            </div>
+                <!-- 4. CONSULTAS -->
+                <div class="filtro-card">
+                    <div class="filtro-titulo"><span>🩺</span> CONSULTAS</div>
+                    <div id="fila-consultas" class="flex flex-wrap gap-1.5"></div>
+                </div>
 
-            <!-- 5. ODONTOLOGIA -->
-            <div class="filtro-card">
-                <div class="filtro-titulo"><span>🦷</span> ODONTOLOGIA</div>
-                <div id="fila-odontologia" class="flex flex-wrap gap-1.5"></div>
-            </div>
+                <!-- 5. ODONTOLOGIA -->
+                <div class="filtro-card">
+                    <div class="filtro-titulo"><span>🦷</span> ODONTOLOGIA</div>
+                    <div id="fila-odontologia" class="flex flex-wrap gap-1.5"></div>
+                </div>
 
-            <!-- RESTO DE SERVICIOS -->
-            <div id="contenedor-servicios" class="space-y-3"></div>
+                <!-- RESTO DE SERVICIOS -->
+                <div id="contenedor-servicios" class="space-y-3"></div>
+            </div>
         </aside>
 
         <!-- COLUMNA DERECHA: RESULTADOS Y TABLA -->
@@ -405,7 +409,7 @@
         }
 
         const CONVENIOS_FIJOS = [
-            { nombre: 'CMD+', claves: ['CMD+'] },
+            { nombre: 'CMD+', claves: ['CMD'] },
             { nombre: 'COMED', claves: ['COMED'] },
             { nombre: 'DRA. CAPPONI', claves: ['CAPPONI'] },
             { nombre: 'DR. COSTANZI', claves: ['COSTANZI'] },
@@ -463,7 +467,7 @@
                 items: [
                     { id: 'po_cir', nombre: 'CIRUGIAS ODONTOLOGICAS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CIRUGI') },
                     { id: 'po_con', nombre: 'CONDUCTOS ODONTOLOGICOS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CONDUCTO') },
-                    { id: 'po_cav', nombre: 'CAVITADOR (METODO DE LIMPIEZA)', coincide: (i,c) => { const it = quitarAcentos(i).toUpperCase(); const cat = quitarAcentos(c).toUpperCase(); return it.includes('CAVITADOR') || (it.includes('LIMPIEZA') && !it.includes('LAGUNA') && !cat.includes('TURISMO')); } },
+                    { id: 'po_cav', nombre: 'CAVITADOR (METODO DE LIMPIEZA)', coincide: (i,c) => normalizarCategoria(i) === 'CAVITADOR (METODO DE LIMPIEZA)' },
                     { id: 'po_sel', nombre: 'SELLADOR', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('SELLADOR') },
                     { id: 'po_obl', nombre: 'OBTURACION LAMPARA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('OBTURAC') && txt.includes('LAMPARA'); } },
                     { id: 'po_oba', nombre: 'OBTURACION CON AMALGAMA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('OBTURAC') && txt.includes('AMALGAMA'); } },
