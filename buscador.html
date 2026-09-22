@@ -467,7 +467,7 @@
                 items: [
                     { id: 'po_cir', nombre: 'CIRUGIAS ODONTOLOGICAS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CIRUGI') },
                     { id: 'po_con', nombre: 'CONDUCTOS ODONTOLOGICOS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CONDUCTO') },
-                    { id: 'po_cav', nombre: 'CAVITADOR (METODO DE LIMPIEZA)', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes'CAVITADOR (METODO DE LIMPIEZA)' },
+                    { id: 'po_cav', nombre: 'CAVITADOR (METODO DE LIMPIEZA)', coincide: (i,c) => normalizarCategoria(i) === 'CAVITADOR (METODO DE LIMPIEZA)' },
                     { id: 'po_sel', nombre: 'SELLADOR', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('SELLADOR') },
                     { id: 'po_obl', nombre: 'OBTURACION LAMPARA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('OBTURAC') && txt.includes('LAMPARA'); } },
                     { id: 'po_oba', nombre: 'OBTURACION CON AMALGAMA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('OBTURAC') && txt.includes('AMALGAMA'); } },
