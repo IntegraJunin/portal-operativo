@@ -234,9 +234,15 @@
                         <span>Habilitar Edición</span>
                     </label>
 
-                    <button id="btn-guardar-excel" class="bg-[#b85a3c] hover:bg-[#964229] text-white font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 shadow transition">
-                        <span>💾</span> Guardar Excel (.xlsx)
-                    </button>
+                    <<!-- En la parte superior/header de tu editor.html -->
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
+    <h2>Editor Exclusivo de Precios</h2>
+    
+    <!-- Botón único de guardado en la esquina superior derecha -->
+    <button onclick="guardarEnJSON()" style="background-color: #28a745; color: white; padding: 10px 18px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+        💾 Guardar Cambios (precios.json)
+    </button>
+</div>
                 </div>
             </div>
 
