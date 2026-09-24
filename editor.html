@@ -770,6 +770,52 @@
 
             alert("¡Archivo 'precios.xlsx' guardado con columnas D-I centradas y celdas recuadradas!");   
         }
+
+function guardarEnJSON() {
+            if (!baseDeDatos || baseDeDatos.length === 0) {
+                alert("No hay datos cargados para exportar.");
+                return;
+            }
+
+            // Convertir la base de datos a formato JSON limpio con indentación
+            const jsonString = JSON.stringify(baseDeDatos, null, 2);
+            
+            // Crear el archivo en memoria y forzar la descarga
+            const blob = new Blob([jsonString], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "precios.json";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            alert("¡Archivo 'precios.json' generado y descargado con éxito!");
+        }
+
+<button onclick="guardarEnJSON()" style="background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer;">
+    💾 Guardar como precios.json
+</button>
+
+// Cargar precios automáticamente al abrir la página
+fetch('precios.json')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("No se pudo cargar el archivo precios.json");
+        }
+        return response.json();
+    })
+    .then(data => {
+        baseDeDatos = data;
+        renderizarTabla(); // Tu función que dibuja los precios en la pantalla
+        console.log("Precios cargados correctamente desde precios.json");
+    })
+    .catch(error => {
+        console.error("Error al cargar los precios:", error);
+    });
+
     </script>
 </body>
 </html>
