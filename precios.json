@@ -1,0 +1,2514 @@
+[
+  {
+    "idRegistro": 0,
+    "item": "SEPELIO",
+    "itemOriginal": "SEPELIO",
+    "detalle": "",
+    "categoria": "Cuotas Sepelio",
+    "precios": {
+      "IN 180": 5550,
+      "IN 360": "incluida",
+      "AFILIADO SEC": 4550,
+      "ASISTENCIAL": 5550
+    }
+  },
+  {
+    "idRegistro": 1,
+    "item": "SEPELIO FAMILIAR por integrante",
+    "itemOriginal": "SEPELIO FAMILIAR por integrante",
+    "detalle": "",
+    "categoria": "Cuotas Sepelio",
+    "precios": {
+      "IN 180": 5550,
+      "IN 360": "incluida",
+      "ASISTENCIAL": 11100
+    }
+  },
+  {
+    "idRegistro": 2,
+    "item": "Cuota TITULAR",
+    "itemOriginal": "Cuota TITULAR",
+    "detalle": "",
+    "categoria": "Cuotas Socios",
+    "precios": {
+      "IN 180": 15000,
+      "IN 360": 30000
+    }
+  },
+  {
+    "idRegistro": 3,
+    "item": "Cuota FLIAR POR INTEGRANTES",
+    "itemOriginal": "Cuota FLIAR POR INTEGRANTES",
+    "detalle": "",
+    "categoria": "Cuotas Socios",
+    "precios": {
+      "IN 180": 7500,
+      "IN 360": 15000
+    }
+  },
+  {
+    "idRegistro": 4,
+    "item": "BONO SOLIDARIO",
+    "itemOriginal": "BONO SOLIDARIO",
+    "detalle": "",
+    "categoria": "Consultas / practicas",
+    "precios": {
+      "IN 90 (OSECAC)": 4800
+    }
+  },
+  {
+    "idRegistro": 5,
+    "item": "ELECTROCARDIOGRAMA",
+    "itemOriginal": "ELECTROCARDIOGRAMA",
+    "detalle": "",
+    "categoria": "Consultas / practicas",
+    "precios": {
+      "IN 360": 6000,
+      "AFILIADO SEC": 6000,
+      "ASISTENCIAL": 6000
+    }
+  },
+  {
+    "idRegistro": 6,
+    "item": "NUTRICION",
+    "itemOriginal": "NUTRICION",
+    "detalle": "",
+    "categoria": "Consultas / practicas",
+    "precios": {
+      "IN 360": 12000,
+      "AFILIADO SEC": 12000,
+      "ASISTENCIAL": 12000
+    }
+  },
+  {
+    "idRegistro": 7,
+    "item": "CONSULTA MEDICA A",
+    "itemOriginal": "CONSULTA MEDICA A",
+    "detalle": "",
+    "categoria": "Consultas / practicas",
+    "precios": {
+      "IN 360": 15000,
+      "AFILIADO SEC": 15000,
+      "ASISTENCIAL": 15000
+    }
+  },
+  {
+    "idRegistro": 8,
+    "item": "CONSULTA MEDICA B",
+    "itemOriginal": "CONSULTA MEDICA B",
+    "detalle": "",
+    "categoria": "Consultas / practicas",
+    "precios": {
+      "IN 360": 18000,
+      "AFILIADO SEC": 18000,
+      "ASISTENCIAL": 18000
+    }
+  },
+  {
+    "idRegistro": 9,
+    "item": "CONSULTA MEDICA C",
+    "itemOriginal": "CONSULTA MEDICA C",
+    "detalle": "",
+    "categoria": "Consultas / practicas",
+    "precios": {
+      "IN 360": 20000,
+      "AFILIADO SEC": 7000,
+      "ASISTENCIAL": 7000,
+      "IN 90 (OSECAC)": 35000
+    }
+  },
+  {
+    "idRegistro": 10,
+    "item": "DIRECTO SEC X 5 SESIONES",
+    "itemOriginal": "DIRECTO SEC X 5 SESIONES",
+    "detalle": "",
+    "categoria": "CONSULTA KINESIOLOGIA",
+    "precios": {
+      "IN 180": 61950,
+      "IN 360": 53100,
+      "AFILIADO SEC": 14750,
+      "ASISTENCIAL": 0
+    }
+  },
+  {
+    "idRegistro": 11,
+    "item": "DIRECTO SEC X 10 SESIONES",
+    "itemOriginal": "DIRECTO SEC X 10 SESIONES",
+    "detalle": "",
+    "categoria": "CONSULTA KINESIOLOGIA",
+    "precios": {
+      "IN 180": 123900,
+      "IN 360": 106200,
+      "AFILIADO SEC": 29500,
+      "ASISTENCIAL": 0
+    }
+  },
+  {
+    "idRegistro": 12,
+    "item": "Valor por consulta",
+    "itemOriginal": "Valor por consulta",
+    "detalle": "",
+    "categoria": "CONSULTA ODONTOLOGICA",
+    "precios": {
+      "IN 180": 14000,
+      "IN 360": 12000,
+      "AFILIADO SEC": 5400,
+      "ASISTENCIAL": 0,
+      "IN 90 (OSECAC)": 17400
+    }
+  },
+  {
+    "idRegistro": 13,
+    "item": "Valor por Cirugia",
+    "itemOriginal": "Valor por Cirugia",
+    "detalle": "",
+    "categoria": "CIRUGIAS ODONTOLOGICAS",
+    "precios": {
+      "IN 180": 159834,
+      "IN 360": 137000,
+      "AFILIADO SEC": 74000,
+      "ASISTENCIAL": 74000,
+      "IN 90 (OSECAC)": 199000
+    }
+  },
+  {
+    "idRegistro": 14,
+    "item": "Valor por tratamiento",
+    "itemOriginal": "Valor por tratamiento",
+    "detalle": "",
+    "categoria": "CONDUCTOS ODONTOLOGICOS",
+    "precios": {
+      "IN 180": 50400,
+      "IN 360": 43200,
+      "AFILIADO SEC": 16800,
+      "ASISTENCIAL": 16800,
+      "IN 90 (OSECAC)": 43400
+    }
+  },
+  {
+    "idRegistro": 15,
+    "item": "Valor por practica",
+    "itemOriginal": "Valor por practica",
+    "detalle": "",
+    "categoria": "CAVITADOR (METODO DE LIMPIEZA)",
+    "precios": {
+      "IN 180": 23100,
+      "IN 360": 19800,
+      "AFILIADO SEC": 10800,
+      "ASISTENCIAL": 10800,
+      "IN 90 (OSECAC)": 20300
+    }
+  },
+  {
+    "idRegistro": 16,
+    "item": "Valor por practica",
+    "itemOriginal": "Valor por practica",
+    "detalle": "",
+    "categoria": "SELLADOR",
+    "precios": {
+      "IN 180": 17220,
+      "IN 360": 14760,
+      "AFILIADO SEC": 6300,
+      "ASISTENCIAL": 6300,
+      "IN 90 (OSECAC)": 15200
+    }
+  },
+  {
+    "idRegistro": 17,
+    "item": "Valor por practica",
+    "itemOriginal": "Valor por practica",
+    "detalle": "",
+    "categoria": "OBTURACION LAMPARA",
+    "precios": {
+      "IN 180": 17220,
+      "IN 360": 14760,
+      "AFILIADO SEC": 6300,
+      "ASISTENCIAL": 6300,
+      "IN 90 (OSECAC)": 15200
+    }
+  },
+  {
+    "idRegistro": 18,
+    "item": "Valor por practica",
+    "itemOriginal": "Valor por practica",
+    "detalle": "",
+    "categoria": "OBTURACION CON AMALGAMA",
+    "precios": {
+      "IN 180": 17220,
+      "IN 360": 14760,
+      "AFILIADO SEC": 6300,
+      "ASISTENCIAL": 6300,
+      "IN 90 (OSECAC)": 15200
+    }
+  },
+  {
+    "idRegistro": 19,
+    "item": "Valor por practica",
+    "itemOriginal": "Valor por practica",
+    "detalle": "",
+    "categoria": "OBTURACION CON IONOMERO VITRIO",
+    "precios": {
+      "IN 180": 17220,
+      "IN 360": 14760,
+      "AFILIADO SEC": 6300,
+      "ASISTENCIAL": 6300,
+      "IN 90 (OSECAC)": 15200
+    }
+  },
+  {
+    "idRegistro": 20,
+    "item": "Valor por practica",
+    "itemOriginal": "Valor por practica",
+    "detalle": "",
+    "categoria": "EXTRACCIONES",
+    "precios": {
+      "IN 180": 50400,
+      "IN 360": 43200,
+      "AFILIADO SEC": 16800,
+      "ASISTENCIAL": 16800,
+      "IN 90 (OSECAC)": 43400
+    }
+  },
+  {
+    "idRegistro": 21,
+    "item": "REPARACION SIMPLE",
+    "itemOriginal": "REPARACION SIMPLE",
+    "detalle": "",
+    "categoria": "REPARACION",
+    "precios": {
+      "IN 180": 62220.2,
+      "IN 360": 53331.6,
+      "AFILIADO SEC": 24647,
+      "ASISTENCIAL": 24647,
+      "IN 90 (OSECAC)": 88886
+    }
+  },
+  {
+    "idRegistro": 22,
+    "item": "REPARACION C/REF.",
+    "itemOriginal": "REPARACION C/REF.",
+    "detalle": "",
+    "categoria": "REPARACION",
+    "precios": {
+      "IN 180": 72592.09999999999,
+      "IN 360": 62221.799999999996,
+      "AFILIADO SEC": 28755,
+      "ASISTENCIAL": 28755,
+      "IN 90 (OSECAC)": 103703
+    }
+  },
+  {
+    "idRegistro": 23,
+    "item": "AGREGAR 1 PIEZA O RETENEDOR",
+    "itemOriginal": "AGREGAR 1 PIEZA O RETENEDOR",
+    "detalle": "",
+    "categoria": "REPARACION",
+    "precios": {
+      "IN 180": 122310.29999999999,
+      "IN 360": 104837.4,
+      "AFILIADO SEC": 48449,
+      "ASISTENCIAL": 48449,
+      "IN 90 (OSECAC)": 174729
+    }
+  },
+  {
+    "idRegistro": 24,
+    "item": "SUBSIGUIENTE",
+    "itemOriginal": "SUBSIGUIENTE",
+    "detalle": "",
+    "categoria": "REPARACION",
+    "precios": {
+      "IN 180": 15556.099999999999,
+      "IN 360": 13333.8,
+      "AFILIADO SEC": 6162,
+      "ASISTENCIAL": 6162,
+      "IN 90 (OSECAC)": 22223
+    }
+  },
+  {
+    "idRegistro": 25,
+    "item": "REBASADO",
+    "itemOriginal": "REBASADO",
+    "detalle": "",
+    "categoria": "REPARACION",
+    "precios": {
+      "IN 180": 77777,
+      "IN 360": 66666,
+      "AFILIADO SEC": 30809,
+      "ASISTENCIAL": 30809,
+      "IN 90 (OSECAC)": 111110
+    }
+  },
+  {
+    "idRegistro": 26,
+    "item": "PROTESIS HASTA 4 DIENTES",
+    "itemOriginal": "PROTESIS HASTA 4 DIENTES",
+    "detalle": "",
+    "categoria": "PROTESIS ACRILICO",
+    "precios": {
+      "IN 180": 218880.19999999998,
+      "IN 360": 187611.6,
+      "AFILIADO SEC": 85421,
+      "ASISTENCIAL": 85421,
+      "IN 90 (OSECAC)": 312686
+    }
+  },
+  {
+    "idRegistro": 27,
+    "item": "PROTESIS HASTA 8 DIENTES",
+    "itemOriginal": "PROTESIS HASTA 8 DIENTES",
+    "detalle": "",
+    "categoria": "PROTESIS ACRILICO",
+    "precios": {
+      "IN 180": 244806.09999999998,
+      "IN 360": 209833.8,
+      "AFILIADO SEC": 95539,
+      "ASISTENCIAL": 95539,
+      "IN 90 (OSECAC)": 349723
+    }
+  },
+  {
+    "idRegistro": 28,
+    "item": "PROTESIS HASTA 12 DIENTES",
+    "itemOriginal": "PROTESIS HASTA 12 DIENTES",
+    "detalle": "",
+    "categoria": "PROTESIS ACRILICO",
+    "precios": {
+      "IN 180": 312211.19999999995,
+      "IN 360": 267609.6,
+      "AFILIADO SEC": 121845,
+      "ASISTENCIAL": 121845,
+      "IN 90 (OSECAC)": 446016
+    }
+  },
+  {
+    "idRegistro": 29,
+    "item": "MIORELAJANTE",
+    "itemOriginal": "MIORELAJANTE",
+    "detalle": "",
+    "categoria": "PLACAS",
+    "precios": {
+      "IN 180": 90134.09999999999,
+      "IN 360": 77257.8,
+      "AFILIADO SEC": 35704,
+      "ASISTENCIAL": 35704,
+      "IN 90 (OSECAC)": 128763
+    }
+  },
+  {
+    "idRegistro": 30,
+    "item": "MIORELAJANTE C/ PLANI LISO",
+    "itemOriginal": "MIORELAJANTE C/ PLANI LISO",
+    "detalle": "",
+    "categoria": "PLACAS",
+    "precios": {
+      "IN 180": 139833.4,
+      "IN 360": 119857.2,
+      "AFILIADO SEC": 55391,
+      "ASISTENCIAL": 55391,
+      "IN 90 (OSECAC)": 199762
+    }
+  },
+  {
+    "idRegistro": 31,
+    "item": "COBALTO ARMAZON",
+    "itemOriginal": "COBALTO ARMAZON",
+    "detalle": "",
+    "categoria": "CROMO",
+    "precios": {
+      "IN 180": 334390.69999999995,
+      "IN 360": 286620.6,
+      "AFILIADO SEC": 132458,
+      "ASISTENCIAL": 132458,
+      "IN 90 (OSECAC)": 477701
+    }
+  },
+  {
+    "idRegistro": 32,
+    "item": "4 DIENTES HASTA TERMINACION",
+    "itemOriginal": "4 DIENTES HASTA TERMINACION",
+    "detalle": "",
+    "categoria": "CROMO",
+    "precios": {
+      "IN 180": 165561.19999999998,
+      "IN 360": 141909.6,
+      "AFILIADO SEC": 65582,
+      "ASISTENCIAL": 65582,
+      "IN 90 (OSECAC)": 236516
+    }
+  },
+  {
+    "idRegistro": 33,
+    "item": "8 DIENTES HASTA TERMINACION",
+    "itemOriginal": "8 DIENTES HASTA TERMINACION",
+    "detalle": "",
+    "categoria": "CROMO",
+    "precios": {
+      "IN 180": 192411.09999999998,
+      "IN 360": 164923.8,
+      "AFILIADO SEC": 76217,
+      "ASISTENCIAL": 76217,
+      "IN 90 (OSECAC)": 274873
+    }
+  },
+  {
+    "idRegistro": 34,
+    "item": "12 DIENTES HASTA TERMINACION",
+    "itemOriginal": "12 DIENTES HASTA TERMINACION",
+    "detalle": "",
+    "categoria": "CROMO",
+    "precios": {
+      "IN 180": 219242.09999999998,
+      "IN 360": 187921.8,
+      "AFILIADO SEC": 86846,
+      "ASISTENCIAL": 86846,
+      "IN 90 (OSECAC)": 313203
+    }
+  },
+  {
+    "idRegistro": 35,
+    "item": "PERNO",
+    "itemOriginal": "PERNO",
+    "detalle": "",
+    "categoria": "FIJAS",
+    "precios": {
+      "IN 180": 97786.5,
+      "IN 360": 83817,
+      "AFILIADO SEC": 38735,
+      "ASISTENCIAL": 38735,
+      "IN 90 (OSECAC)": 139695
+    }
+  },
+  {
+    "idRegistro": 36,
+    "item": "CAQUETE",
+    "itemOriginal": "CAQUETE",
+    "detalle": "",
+    "categoria": "FIJAS",
+    "precios": {
+      "IN 180": 107361.09999999999,
+      "IN 360": 92023.8,
+      "AFILIADO SEC": 42528,
+      "ASISTENCIAL": 42528,
+      "IN 90 (OSECAC)": 153373
+    }
+  },
+  {
+    "idRegistro": 37,
+    "item": "CORONA CERAMICA BIZCOCHADO",
+    "itemOriginal": "CORONA CERAMICA BIZCOCHADO",
+    "detalle": "",
+    "categoria": "FIJAS",
+    "precios": {
+      "IN 180": 128830.79999999999,
+      "IN 360": 110426.4,
+      "AFILIADO SEC": 51032,
+      "ASISTENCIAL": 51032,
+      "IN 90 (OSECAC)": 184044
+    }
+  },
+  {
+    "idRegistro": 38,
+    "item": "CORONA PROVISORIA ACRILICA",
+    "itemOriginal": "CORONA PROVISORIA ACRILICA",
+    "detalle": "",
+    "categoria": "FIJAS",
+    "precios": {
+      "IN 180": 34354.6,
+      "IN 360": 29446.8,
+      "AFILIADO SEC": 13608,
+      "ASISTENCIAL": 13608,
+      "IN 90 (OSECAC)": 49078
+    }
+  },
+  {
+    "idRegistro": 39,
+    "item": "FLEX 2 A 6 DIENTES",
+    "itemOriginal": "FLEX 2 A 6 DIENTES",
+    "detalle": "",
+    "categoria": "PROTESIS FLEXIBLES",
+    "precios": {
+      "IN 180": 463303.39999999997,
+      "IN 360": 397117.2,
+      "AFILIADO SEC": 183523,
+      "ASISTENCIAL": 183523,
+      "IN 90 (OSECAC)": 661862
+    }
+  },
+  {
+    "idRegistro": 40,
+    "item": "FLEX 7 A 14 DIENTES",
+    "itemOriginal": "FLEX 7 A 14 DIENTES",
+    "detalle": "",
+    "categoria": "PROTESIS FLEXIBLES",
+    "precios": {
+      "IN 180": 484789.19999999995,
+      "IN 360": 415533.6,
+      "AFILIADO SEC": 192034,
+      "ASISTENCIAL": 192034,
+      "IN 90 (OSECAC)": 692556
+    }
+  },
+  {
+    "idRegistro": 41,
+    "item": "DUPLICACI DE MODULO",
+    "itemOriginal": "DUPLICACI DE MODULO",
+    "detalle": "",
+    "categoria": "PROTESIS FLEXIBLES",
+    "precios": {
+      "IN 180": 63054.6,
+      "IN 360": 54046.799999999996,
+      "AFILIADO SEC": 24977,
+      "ASISTENCIAL": 24977,
+      "IN 90 (OSECAC)": 90078
+    }
+  },
+  {
+    "idRegistro": 42,
+    "item": "TENSION ARTERIAL",
+    "itemOriginal": "TENSION ARTERIAL",
+    "detalle": "",
+    "categoria": "ENFERMERIA",
+    "precios": {
+      "IN 180": 8400,
+      "IN 360": 7200,
+      "AFILIADO SEC": 0,
+      "ASISTENCIAL": 0,
+      "IN 90 (OSECAC)": 5300
+    }
+  },
+  {
+    "idRegistro": 43,
+    "item": "GLUCEMIA",
+    "itemOriginal": "GLUCEMIA",
+    "detalle": "",
+    "categoria": "ENFERMERIA",
+    "precios": {
+      "IN 180": 8400,
+      "IN 360": 7200,
+      "AFILIADO SEC": 0,
+      "ASISTENCIAL": 0,
+      "IN 90 (OSECAC)": 5300
+    }
+  },
+  {
+    "idRegistro": 44,
+    "item": "INYECTABLE",
+    "itemOriginal": "INYECTABLE",
+    "detalle": "",
+    "categoria": "ENFERMERIA",
+    "precios": {
+      "IN 180": 8400,
+      "IN 360": 7200,
+      "AFILIADO SEC": 0,
+      "ASISTENCIAL": 0,
+      "IN 90 (OSECAC)": 5300
+    }
+  },
+  {
+    "idRegistro": 45,
+    "item": "NEBULIZACIONES",
+    "itemOriginal": "NEBULIZACIONES",
+    "detalle": "",
+    "categoria": "ENFERMERIA",
+    "precios": {
+      "IN 180": 8400,
+      "IN 360": 7200,
+      "AFILIADO SEC": 0,
+      "ASISTENCIAL": 0,
+      "IN 90 (OSECAC)": 5300
+    }
+  },
+  {
+    "idRegistro": 46,
+    "item": "PIERNA ENTERA",
+    "itemOriginal": "PIERNA ENTERA",
+    "detalle": "",
+    "categoria": "COSMETOLOGIA",
+    "precios": {
+      "IN 180": 14000,
+      "IN 360": 12000,
+      "AFILIADO SEC": 4100,
+      "ASISTENCIAL": 4100
+    }
+  },
+  {
+    "idRegistro": 47,
+    "item": "DEP. 1/2 PIERNA",
+    "itemOriginal": "DEP. 1/2 PIERNA",
+    "detalle": "",
+    "categoria": "COSMETOLOGIA",
+    "precios": {
+      "IN 180": 10500,
+      "IN 360": 9000,
+      "AFILIADO SEC": 4900,
+      "ASISTENCIAL": 4900
+    }
+  },
+  {
+    "idRegistro": 48,
+    "item": "DEP. AXILAS",
+    "itemOriginal": "DEP. AXILAS",
+    "detalle": "",
+    "categoria": "COSMETOLOGIA",
+    "precios": {
+      "IN 180": 10500,
+      "IN 360": 9000,
+      "AFILIADO SEC": 4900,
+      "ASISTENCIAL": 4900
+    }
+  },
+  {
+    "idRegistro": 49,
+    "item": "DEP. ROSTRO-CEJAS Y BOZO",
+    "itemOriginal": "DEP. ROSTRO-CEJAS Y BOZO",
+    "detalle": "",
+    "categoria": "COSMETOLOGIA",
+    "precios": {
+      "IN 180": 14000,
+      "IN 360": 12000,
+      "AFILIADO SEC": 3400,
+      "ASISTENCIAL": 3400
+    }
+  },
+  {
+    "idRegistro": 50,
+    "item": "CAVADO Y TIRA DE COLA",
+    "itemOriginal": "CAVADO Y TIRA DE COLA",
+    "detalle": "",
+    "categoria": "COSMETOLOGIA",
+    "precios": {
+      "IN 180": 14000,
+      "IN 360": 12000,
+      "AFILIADO SEC": 3400,
+      "ASISTENCIAL": 3400
+    }
+  },
+  {
+    "idRegistro": 51,
+    "item": "PELVIS COMPLETA",
+    "itemOriginal": "PELVIS COMPLETA",
+    "detalle": "",
+    "categoria": "COSMETOLOGIA",
+    "precios": {
+      "IN 180": 14000,
+      "IN 360": 12000,
+      "AFILIADO SEC": 3400,
+      "ASISTENCIAL": 3400
+    }
+  },
+  {
+    "idRegistro": 52,
+    "item": "LIMP. CUTIS",
+    "itemOriginal": "LIMP. CUTIS",
+    "detalle": "",
+    "categoria": "COSMETOLOGIA",
+    "precios": {
+      "IN 180": 14000,
+      "IN 360": 12000,
+      "AFILIADO SEC": 5700,
+      "ASISTENCIAL": 5700
+    }
+  },
+  {
+    "idRegistro": 53,
+    "item": "PODOLOGIA SESION",
+    "itemOriginal": "PODOLOGIA SESION",
+    "detalle": "",
+    "categoria": "PODOLOGIA",
+    "precios": {
+      "IN 180": 9000,
+      "IN 360": 7500,
+      "AFILIADO SEC": 2700,
+      "ASISTENCIAL": 0
+    }
+  },
+  {
+    "idRegistro": 54,
+    "item": "CORTE",
+    "itemOriginal": "CORTE",
+    "detalle": "",
+    "categoria": "PELUQUERIA",
+    "precios": {
+      "IN 180": 8400,
+      "IN 360": 7200,
+      "AFILIADO SEC": 3900,
+      "ASISTENCIAL": 2700
+    }
+  },
+  {
+    "idRegistro": 55,
+    "item": "DRENAJE MEDIO CUERPO",
+    "itemOriginal": "DRENAJE MEDIO CUERPO",
+    "detalle": "",
+    "categoria": "MASAJES",
+    "precios": {
+      "IN 180": 14000,
+      "IN 360": 12000,
+      "AFILIADO SEC": 5500,
+      "ASISTENCIAL": 5500
+    }
+  },
+  {
+    "idRegistro": 56,
+    "item": "DRENAJE CUERPO ENTERO",
+    "itemOriginal": "DRENAJE CUERPO ENTERO",
+    "detalle": "",
+    "categoria": "MASAJES",
+    "precios": {
+      "IN 180": 21000,
+      "IN 360": 18000,
+      "AFILIADO SEC": 8400,
+      "ASISTENCIAL": 8400
+    }
+  },
+  {
+    "idRegistro": 57,
+    "item": "MASAJE FACIAL/CORPORAL",
+    "itemOriginal": "MASAJE FACIAL/CORPORAL",
+    "detalle": "",
+    "categoria": "MASAJES",
+    "precios": {
+      "IN 180": 14000,
+      "IN 360": 12000,
+      "AFILIADO SEC": 5000,
+      "ASISTENCIAL": 5000
+    }
+  },
+  {
+    "idRegistro": 58,
+    "item": "MASOTERAPIA",
+    "itemOriginal": "MASOTERAPIA",
+    "detalle": "",
+    "categoria": "MASAJES",
+    "precios": {
+      "IN 180": 21000,
+      "IN 360": 18000,
+      "AFILIADO SEC": 5200,
+      "ASISTENCIAL": 5200
+    }
+  },
+  {
+    "idRegistro": 59,
+    "item": "REFLEXOLOGIA",
+    "itemOriginal": "REFLEXOLOGIA",
+    "detalle": "",
+    "categoria": "MASAJES",
+    "precios": {
+      "IN 180": 21000,
+      "IN 360": 18000,
+      "AFILIADO SEC": 7900,
+      "ASISTENCIAL": 7900
+    }
+  },
+  {
+    "idRegistro": 60,
+    "item": "QUINCHO CERRADO 1 Y 2 (Valor por Turno)",
+    "itemOriginal": "QUINCHO CERRADO 1 Y 2",
+    "detalle": "Valor por Turno",
+    "categoria": "SALONES",
+    "precios": {
+      "IN 90": 111000,
+      "IN 180": 77700,
+      "IN 360": 66600,
+      "AFILIADO SEC": 46700,
+      "ASISTENCIAL": 46700
+    }
+  },
+  {
+    "idRegistro": 61,
+    "item": "QUINCHO CERRADO 1 Y 2 (DEPOSITO)",
+    "itemOriginal": "QUINCHO CERRADO 1 Y 2",
+    "detalle": "DEPOSITO",
+    "categoria": "SALONES",
+    "precios": {
+      "IN 90": 51000,
+      "IN 180": 35700,
+      "IN 360": 30600,
+      "AFILIADO SEC": 21300,
+      "ASISTENCIAL": 21300
+    }
+  },
+  {
+    "idRegistro": 62,
+    "item": "SALON 1 (Valor por turno)",
+    "itemOriginal": "SALON 1",
+    "detalle": "Valor por turno",
+    "categoria": "SALONES",
+    "precios": {
+      "IN 90": 241000,
+      "IN 180": 168700,
+      "IN 360": 144600,
+      "AFILIADO SEC": 76000,
+      "ASISTENCIAL": 76000
+    }
+  },
+  {
+    "idRegistro": 63,
+    "item": "SALON 1 (DEPOSITO)",
+    "itemOriginal": "SALON 1",
+    "detalle": "DEPOSITO",
+    "categoria": "SALONES",
+    "precios": {
+      "IN 90": 70000,
+      "IN 180": 63000,
+      "IN 360": 56000,
+      "AFILIADO SEC": 48000,
+      "ASISTENCIAL": 48000
+    }
+  },
+  {
+    "idRegistro": 64,
+    "item": "SALON 2 (Valor por turno)",
+    "itemOriginal": "SALON 2",
+    "detalle": "Valor por turno",
+    "categoria": "SALONES",
+    "precios": {
+      "IN 90": 551000,
+      "IN 180": 385700,
+      "IN 360": 330600,
+      "AFILIADO SEC": 209000,
+      "ASISTENCIAL": 209000
+    }
+  },
+  {
+    "idRegistro": 65,
+    "item": "SALON 2 (DEPOSITO)",
+    "itemOriginal": "SALON 2",
+    "detalle": "DEPOSITO",
+    "categoria": "SALONES",
+    "precios": {
+      "IN 90": 132000,
+      "IN 180": 92400,
+      "IN 360": 79200,
+      "AFILIADO SEC": 75000,
+      "ASISTENCIAL": 75000
+    }
+  },
+  {
+    "idRegistro": 66,
+    "item": "SALON 3 (Valor por Turno)",
+    "itemOriginal": "SALON 3",
+    "detalle": "Valor por Turno",
+    "categoria": "SALONES",
+    "precios": {
+      "IN 90": 962000,
+      "IN 180": 673400,
+      "IN 360": 577200,
+      "AFILIADO SEC": 464000,
+      "ASISTENCIAL": 464000
+    }
+  },
+  {
+    "idRegistro": 67,
+    "item": "SALON 3 (DEPOSITO)",
+    "itemOriginal": "SALON 3",
+    "detalle": "DEPOSITO",
+    "categoria": "SALONES",
+    "precios": {
+      "IN 90": 203000,
+      "IN 180": 142100,
+      "IN 360": 121800,
+      "AFILIADO SEC": 139000,
+      "ASISTENCIAL": 139000
+    }
+  },
+  {
+    "idRegistro": 68,
+    "item": "4 HS.",
+    "itemOriginal": "4 HS.",
+    "detalle": "",
+    "categoria": "AUDITORIO",
+    "precios": {
+      "IN 180": 176000,
+      "IN 360": 176000,
+      "AFILIADO SEC": 176000,
+      "ASISTENCIAL": 176000
+    }
+  },
+  {
+    "idRegistro": 69,
+    "item": "8 HS.",
+    "itemOriginal": "8 HS.",
+    "detalle": "",
+    "categoria": "AUDITORIO",
+    "precios": {
+      "IN 180": 233000,
+      "IN 360": 233000,
+      "AFILIADO SEC": 233000,
+      "ASISTENCIAL": 233000
+    }
+  },
+  {
+    "idRegistro": 70,
+    "item": "DEPOSITO ( se devuelve a las 48 hs)",
+    "itemOriginal": "DEPOSITO ( se devuelve a las 48 hs)",
+    "detalle": "",
+    "categoria": "AUDITORIO",
+    "precios": {
+      "IN 180": 41000,
+      "IN 360": 41000,
+      "AFILIADO SEC": 41000,
+      "ASISTENCIAL": 41000
+    }
+  },
+  {
+    "idRegistro": 71,
+    "item": "HONORARIOS RUBEN",
+    "itemOriginal": "HONORARIOS RUBEN",
+    "detalle": "",
+    "categoria": "AUDITORIO",
+    "precios": {
+      "IN 180": 7700,
+      "IN 360": 7700,
+      "AFILIADO SEC": 7700,
+      "ASISTENCIAL": 7700
+    }
+  },
+  {
+    "idRegistro": 72,
+    "item": "VALOR UNICO x Día",
+    "itemOriginal": "VALOR UNICO x Día",
+    "detalle": "",
+    "categoria": "SALON PARA INSTITUCIONES",
+    "precios": {
+      "IN 90": 64600,
+      "IN 180": 64600,
+      "IN 360": 64600,
+      "AFILIADO SEC": 64600,
+      "ASISTENCIAL": 64600
+    }
+  },
+  {
+    "idRegistro": 73,
+    "item": "VALOR DIARIO",
+    "itemOriginal": "VALOR DIARIO",
+    "detalle": "",
+    "categoria": "LAGUNA",
+    "precios": {
+      "IN 180": 67900,
+      "IN 360": 58200,
+      "AFILIADO SEC": 23500,
+      "ASISTENCIAL": 23500
+    }
+  },
+  {
+    "idRegistro": 74,
+    "item": "VALOR FIN DE SEMANA",
+    "itemOriginal": "VALOR FIN DE SEMANA",
+    "detalle": "",
+    "categoria": "LAGUNA",
+    "precios": {
+      "IN 180": 197400,
+      "IN 360": 169200,
+      "AFILIADO SEC": 72000,
+      "ASISTENCIAL": 72000
+    }
+  },
+  {
+    "idRegistro": 75,
+    "item": "VALOR PACK 3 DIAS SEMANA",
+    "itemOriginal": "VALOR PACK 3 DIAS SEMANA",
+    "detalle": "",
+    "categoria": "LAGUNA",
+    "precios": {
+      "IN 180": 179200,
+      "IN 360": 153600,
+      "AFILIADO SEC": 62000,
+      "ASISTENCIAL": 62000
+    }
+  },
+  {
+    "idRegistro": 76,
+    "item": "VALOR 6 DIAS",
+    "itemOriginal": "VALOR 6 DIAS",
+    "detalle": "",
+    "categoria": "LAGUNA",
+    "precios": {
+      "IN 180": 355600,
+      "IN 360": 304800,
+      "AFILIADO SEC": 124000,
+      "ASISTENCIAL": 124000
+    }
+  },
+  {
+    "idRegistro": 77,
+    "item": "VALOR LIMPIEZA",
+    "itemOriginal": "VALOR LIMPIEZA",
+    "detalle": "",
+    "categoria": "LAGUNA",
+    "precios": {
+      "IN 180": 5740,
+      "IN 360": 4920,
+      "AFILIADO SEC": 2500,
+      "ASISTENCIAL": 2500
+    }
+  },
+  {
+    "idRegistro": 78,
+    "item": "2 PERSONAS / día / cabaña",
+    "itemOriginal": "2 PERSONAS / día / cabaña",
+    "detalle": "",
+    "categoria": "ARROLLO DE LOS PATOS",
+    "precios": {
+      "IN 180": 72800,
+      "IN 360": 62400,
+      "AFILIADO SEC": 41600,
+      "ASISTENCIAL": 41600
+    }
+  },
+  {
+    "idRegistro": 79,
+    "item": "4 PERSONAS  / día / cabaña",
+    "itemOriginal": "4 PERSONAS  / día / cabaña",
+    "detalle": "",
+    "categoria": "ARROLLO DE LOS PATOS",
+    "precios": {
+      "IN 180": 101325,
+      "IN 360": 86850,
+      "AFILIADO SEC": 57900,
+      "ASISTENCIAL": 57900
+    }
+  },
+  {
+    "idRegistro": 80,
+    "item": "Bs AS",
+    "itemOriginal": "Bs AS",
+    "detalle": "",
+    "categoria": "GASTOS DE RESERVA Y ADMINISTRATIVOS/ DIARIOS",
+    "precios": {
+      "IN 180": 9400,
+      "IN 360": 8057,
+      "AFILIADO SEC": 0,
+      "ASISTENCIAL": 0
+    }
+  },
+  {
+    "idRegistro": 81,
+    "item": "RIVIERA",
+    "itemOriginal": "RIVIERA",
+    "detalle": "",
+    "categoria": "GASTOS DE RESERVA Y ADMINISTRATIVOS/ DIARIOS",
+    "precios": {
+      "IN 180": 13800,
+      "IN 360": 11829,
+      "AFILIADO SEC": 0,
+      "ASISTENCIAL": 0
+    }
+  },
+  {
+    "idRegistro": 82,
+    "item": "USPALLATA",
+    "itemOriginal": "USPALLATA",
+    "detalle": "",
+    "categoria": "GASTOS DE RESERVA Y ADMINISTRATIVOS/ DIARIOS",
+    "precios": {
+      "IN 180": 13800,
+      "IN 360": 11829,
+      "AFILIADO SEC": 0,
+      "ASISTENCIAL": 0
+    }
+  },
+  {
+    "idRegistro": 83,
+    "item": "CUOTA MENSUAL",
+    "itemOriginal": "CUOTA MENSUAL",
+    "detalle": "",
+    "categoria": "ESCUELA DE MUSICA",
+    "precios": {
+      "IN 90": 55600,
+      "IN 180": 38920,
+      "IN 360": 33360,
+      "AFILIADO SEC": 26800,
+      "ASISTENCIAL": 26800
+    }
+  },
+  {
+    "idRegistro": 84,
+    "item": "MATRICULA ANUAL",
+    "itemOriginal": "MATRICULA ANUAL",
+    "detalle": "",
+    "categoria": "ESCUELA DE MUSICA",
+    "precios": {
+      "IN 90": 13900,
+      "IN 180": 9730,
+      "IN 360": 8340,
+      "AFILIADO SEC": 13900,
+      "ASISTENCIAL": 13900
+    }
+  },
+  {
+    "idRegistro": 85,
+    "item": "ECODOPLER FETAL",
+    "itemOriginal": "ECODOPLER FETAL",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 99890,
+      "AFILIADO SEC": 99890,
+      "ASISTENCIAL": 99890
+    }
+  },
+  {
+    "idRegistro": 86,
+    "item": "ECODOPLER MAMARIO",
+    "itemOriginal": "ECODOPLER MAMARIO",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 90026,
+      "AFILIADO SEC": 90026,
+      "ASISTENCIAL": 90026
+    }
+  },
+  {
+    "idRegistro": 87,
+    "item": "ECODOPLER OBSTETRICO",
+    "itemOriginal": "ECODOPLER OBSTETRICO",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 49945,
+      "AFILIADO SEC": 49945,
+      "ASISTENCIAL": 49945
+    }
+  },
+  {
+    "idRegistro": 88,
+    "item": "ECODOPLER TIROIDES",
+    "itemOriginal": "ECODOPLER TIROIDES",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 95529,
+      "AFILIADO SEC": 95529,
+      "ASISTENCIAL": 95529
+    }
+  },
+  {
+    "idRegistro": 89,
+    "item": "ECOGRAFIA CADERA",
+    "itemOriginal": "ECOGRAFIA CADERA",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 14952,
+      "AFILIADO SEC": 14952,
+      "ASISTENCIAL": 14952
+    }
+  },
+  {
+    "idRegistro": 90,
+    "item": "ECOGRAFIA COMPLETA DE ABDOMEN",
+    "itemOriginal": "ECOGRAFIA COMPLETA DE ABDOMEN",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 21390,
+      "AFILIADO SEC": 21390,
+      "ASISTENCIAL": 21390
+    }
+  },
+  {
+    "idRegistro": 91,
+    "item": "ECOGRAFIA DE VESICULAS SEMINALES",
+    "itemOriginal": "ECOGRAFIA DE VESICULAS SEMINALES",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 17029,
+      "AFILIADO SEC": 17029,
+      "ASISTENCIAL": 17029
+    }
+  },
+  {
+    "idRegistro": 92,
+    "item": "ECOGRAFIA FETAL - TRANSLUCENCIA NUCAL",
+    "itemOriginal": "ECOGRAFIA FETAL - TRANSLUCENCIA NUCAL",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 36239,
+      "AFILIADO SEC": 36239,
+      "ASISTENCIAL": 36239
+    }
+  },
+  {
+    "idRegistro": 93,
+    "item": "ECOGRAFIA GINECOLOGICA con o sin trasductor vaginal",
+    "itemOriginal": "ECOGRAFIA GINECOLOGICA con o sin trasductor vaginal",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 17756,
+      "AFILIADO SEC": 17756,
+      "ASISTENCIAL": 17756
+    }
+  },
+  {
+    "idRegistro": 94,
+    "item": "ECOGRAFIA HEPATICA, BILIAR, ESPLENICA O TORACICA",
+    "itemOriginal": "ECOGRAFIA HEPATICA, BILIAR, ESPLENICA O TORACICA",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 20560,
+      "AFILIADO SEC": 20560,
+      "ASISTENCIAL": 20560
+    }
+  },
+  {
+    "idRegistro": 95,
+    "item": "ECOGRAFIA MAMARIA",
+    "itemOriginal": "ECOGRAFIA MAMARIA",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 17237,
+      "AFILIADO SEC": 17237,
+      "ASISTENCIAL": 17237
+    }
+  },
+  {
+    "idRegistro": 96,
+    "item": "ECOGRAFIA OBSTETRICA",
+    "itemOriginal": "ECOGRAFIA OBSTETRICA",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 17237,
+      "AFILIADO SEC": 17237,
+      "ASISTENCIAL": 17237
+    }
+  },
+  {
+    "idRegistro": 97,
+    "item": "ECOGRAFIA PANCREATICA O SUPRARRENAL",
+    "itemOriginal": "ECOGRAFIA PANCREATICA O SUPRARRENAL",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 17237,
+      "AFILIADO SEC": 17237,
+      "ASISTENCIAL": 17237
+    }
+  },
+  {
+    "idRegistro": 98,
+    "item": "ECOGRAFIA PAROTIDEA UNI O BILATERAL",
+    "itemOriginal": "ECOGRAFIA PAROTIDEA UNI O BILATERAL",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 12772,
+      "AFILIADO SEC": 12772,
+      "ASISTENCIAL": 12772
+    }
+  },
+  {
+    "idRegistro": 99,
+    "item": "ECOGRAFIA PARTES BLANDAS",
+    "itemOriginal": "ECOGRAFIA PARTES BLANDAS",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 14226,
+      "AFILIADO SEC": 14226,
+      "ASISTENCIAL": 14226
+    }
+  },
+  {
+    "idRegistro": 100,
+    "item": "ECOGRAFIA PIEL",
+    "itemOriginal": "ECOGRAFIA PIEL",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 14329,
+      "AFILIADO SEC": 14329,
+      "ASISTENCIAL": 14329
+    }
+  },
+  {
+    "idRegistro": 101,
+    "item": "ECOGRAFIA RENAL BILATERAL",
+    "itemOriginal": "ECOGRAFIA RENAL BILATERAL",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 18067,
+      "AFILIADO SEC": 18067,
+      "ASISTENCIAL": 18067
+    }
+  },
+  {
+    "idRegistro": 102,
+    "item": "ECOGRAFIA TRANSVAGINAL",
+    "itemOriginal": "ECOGRAFIA TRANSVAGINAL",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 17237,
+      "AFILIADO SEC": 17237,
+      "ASISTENCIAL": 17237
+    }
+  },
+  {
+    "idRegistro": 103,
+    "item": "ECOGRAFIA VEJIGA O PROSTATA  (VESICOPROSTATICA)",
+    "itemOriginal": "ECOGRAFIA VEJIGA O PROSTATA  (VESICOPROSTATICA)",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 17029,
+      "AFILIADO SEC": 17029,
+      "ASISTENCIAL": 17029
+    }
+  },
+  {
+    "idRegistro": 104,
+    "item": "ECOGRAFIAS 4D",
+    "itemOriginal": "ECOGRAFIAS 4D",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 70000,
+      "AFILIADO SEC": 70000,
+      "ASISTENCIAL": 70000
+    }
+  },
+  {
+    "idRegistro": 105,
+    "item": "SCAN FETAL - ECO MORFOLOGIA FETAL",
+    "itemOriginal": "SCAN FETAL - ECO MORFOLOGIA FETAL",
+    "detalle": "",
+    "categoria": "Ecografias Dra. Capponi",
+    "precios": {
+      "IN 360": 38835,
+      "AFILIADO SEC": 38835,
+      "ASISTENCIAL": 38835
+    }
+  },
+  {
+    "idRegistro": 106,
+    "item": "RX CONVENCIONAL (POR C/CODIGO)",
+    "itemOriginal": "RX CONVENCIONAL (POR C/CODIGO)",
+    "detalle": "",
+    "categoria": "COMED",
+    "precios": {
+      "IN 360": 12000,
+      "AFILIADO SEC": 12000,
+      "ASISTENCIAL": 12000
+    }
+  },
+  {
+    "idRegistro": 107,
+    "item": "MAMOGRAFIA CONVENCIONAL",
+    "itemOriginal": "MAMOGRAFIA CONVENCIONAL",
+    "detalle": "",
+    "categoria": "COMED",
+    "precios": {
+      "IN 360": 25000,
+      "AFILIADO SEC": 25000,
+      "ASISTENCIAL": 25000
+    }
+  },
+  {
+    "idRegistro": 108,
+    "item": "ECOGRAFIA DE PARTES BLANDAS (POR C/CODIGO)",
+    "itemOriginal": "ECOGRAFIA DE PARTES BLANDAS (POR C/CODIGO)",
+    "detalle": "",
+    "categoria": "COMED",
+    "precios": {
+      "IN 360": 22000,
+      "AFILIADO SEC": 22000,
+      "ASISTENCIAL": 22000
+    }
+  },
+  {
+    "idRegistro": 109,
+    "item": "ECOGRAFIA TIROIDEA (POR C/CODIGO)",
+    "itemOriginal": "ECOGRAFIA TIROIDEA (POR C/CODIGO)",
+    "detalle": "",
+    "categoria": "COMED",
+    "precios": {
+      "IN 360": 22000,
+      "AFILIADO SEC": 22000,
+      "ASISTENCIAL": 22000
+    }
+  },
+  {
+    "idRegistro": 110,
+    "item": "ECOGRAFIA MAMARIA UNI O BILATERAL (POR C/CODIGO)",
+    "itemOriginal": "ECOGRAFIA MAMARIA UNI O BILATERAL (POR C/CODIGO)",
+    "detalle": "",
+    "categoria": "COMED",
+    "precios": {
+      "IN 360": 22000,
+      "AFILIADO SEC": 22000,
+      "ASISTENCIAL": 22000
+    }
+  },
+  {
+    "idRegistro": 111,
+    "item": "ECOGRAFIA ABDOMINAL (POR C/CODIGO)",
+    "itemOriginal": "ECOGRAFIA ABDOMINAL (POR C/CODIGO)",
+    "detalle": "",
+    "categoria": "COMED",
+    "precios": {
+      "IN 360": 22000,
+      "AFILIADO SEC": 22000,
+      "ASISTENCIAL": 22000
+    }
+  },
+  {
+    "idRegistro": 112,
+    "item": "ECOGRAFIA RENAL UNI O BILATERAL (POR C/CODIGO)",
+    "itemOriginal": "ECOGRAFIA RENAL UNI O BILATERAL (POR C/CODIGO)",
+    "detalle": "",
+    "categoria": "COMED",
+    "precios": {
+      "IN 360": 22000,
+      "AFILIADO SEC": 22000,
+      "ASISTENCIAL": 22000
+    }
+  },
+  {
+    "idRegistro": 113,
+    "item": "ECOGRAFIA HEPATO-BILIO-PANCREATICA (POR C/CODIGO)",
+    "itemOriginal": "ECOGRAFIA HEPATO-BILIO-PANCREATICA (POR C/CODIGO)",
+    "detalle": "",
+    "categoria": "COMED",
+    "precios": {
+      "IN 360": 22000,
+      "AFILIADO SEC": 22000,
+      "ASISTENCIAL": 22000
+    }
+  },
+  {
+    "idRegistro": 114,
+    "item": "ECOGRAFIA VESICAL O VESICOPROSTATICA (POR C/CODIGO)",
+    "itemOriginal": "ECOGRAFIA VESICAL O VESICOPROSTATICA (POR C/CODIGO)",
+    "detalle": "",
+    "categoria": "COMED",
+    "precios": {
+      "IN 360": 22000,
+      "AFILIADO SEC": 22000,
+      "ASISTENCIAL": 22000
+    }
+  },
+  {
+    "idRegistro": 115,
+    "item": "VESICAL (VEJIGA) C/MEDICION DE RESIDUO POSTMICCIONAL",
+    "itemOriginal": "VESICAL (VEJIGA) C/MEDICION DE RESIDUO POSTMICCIONAL",
+    "detalle": "",
+    "categoria": "COMED",
+    "precios": {
+      "IN 360": 22000,
+      "AFILIADO SEC": 22000,
+      "ASISTENCIAL": 22000
+    }
+  },
+  {
+    "idRegistro": 116,
+    "item": "ECOGRAFIA GINECOLOGICA (POR C/CODIGO)",
+    "itemOriginal": "ECOGRAFIA GINECOLOGICA (POR C/CODIGO)",
+    "detalle": "",
+    "categoria": "COMED",
+    "precios": {
+      "IN 360": 22000,
+      "AFILIADO SEC": 22000,
+      "ASISTENCIAL": 22000
+    }
+  },
+  {
+    "idRegistro": 117,
+    "item": "ECOGRAFIA TRANSVAGINAL (POR C/CODIGO)",
+    "itemOriginal": "ECOGRAFIA TRANSVAGINAL (POR C/CODIGO)",
+    "detalle": "",
+    "categoria": "COMED",
+    "precios": {
+      "IN 360": 22000,
+      "AFILIADO SEC": 22000,
+      "ASISTENCIAL": 22000
+    }
+  },
+  {
+    "idRegistro": 118,
+    "item": "ECOGRAFIA TESTICULAR (POR C/CODIGO)",
+    "itemOriginal": "ECOGRAFIA TESTICULAR (POR C/CODIGO)",
+    "detalle": "",
+    "categoria": "COMED",
+    "precios": {
+      "IN 360": 22000,
+      "AFILIADO SEC": 22000,
+      "ASISTENCIAL": 22000
+    }
+  },
+  {
+    "idRegistro": 119,
+    "item": "ECODOPPLER TIROIDEO",
+    "itemOriginal": "ECODOPPLER TIROIDEO",
+    "detalle": "",
+    "categoria": "COMED",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 120,
+    "item": "ECODOPPLER VASOS DEL CUELLO",
+    "itemOriginal": "ECODOPPLER VASOS DEL CUELLO",
+    "detalle": "",
+    "categoria": "COMED",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 121,
+    "item": "ECODOPPLER TESTICULAR",
+    "itemOriginal": "ECODOPPLER TESTICULAR",
+    "detalle": "",
+    "categoria": "COMED",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 122,
+    "item": "SCAN FETAL",
+    "itemOriginal": "SCAN FETAL",
+    "detalle": "",
+    "categoria": "COMED",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 123,
+    "item": "TRANSLUCENCIA NUCAL",
+    "itemOriginal": "TRANSLUCENCIA NUCAL",
+    "detalle": "",
+    "categoria": "COMED",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 124,
+    "item": "PANORAMICA",
+    "itemOriginal": "PANORAMICA",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 24000,
+      "AFILIADO SEC": 24000,
+      "ASISTENCIAL": 24000
+    }
+  },
+  {
+    "idRegistro": 125,
+    "item": "COME BEAM 3D 1 REGION",
+    "itemOriginal": "COME BEAM 3D 1 REGION",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 72000,
+      "AFILIADO SEC": 72000,
+      "ASISTENCIAL": 72000
+    }
+  },
+  {
+    "idRegistro": 126,
+    "item": "COME BEAM 3D 1 MAXILAR",
+    "itemOriginal": "COME BEAM 3D 1 MAXILAR",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 87200,
+      "AFILIADO SEC": 87200,
+      "ASISTENCIAL": 87200
+    }
+  },
+  {
+    "idRegistro": 127,
+    "item": "ATM ARTICULACION TEMPOROMANDIBULAR",
+    "itemOriginal": "ATM ARTICULACION TEMPOROMANDIBULAR",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 35000,
+      "AFILIADO SEC": 35000,
+      "ASISTENCIAL": 35000
+    }
+  },
+  {
+    "idRegistro": 128,
+    "item": "RX CRANEO, CARA, SENOS PARANASALES",
+    "itemOriginal": "RX CRANEO, CARA, SENOS PARANASALES",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 16640,
+      "AFILIADO SEC": 16640,
+      "ASISTENCIAL": 16640
+    }
+  },
+  {
+    "idRegistro": 129,
+    "item": "RX SUBSIGUIENTE",
+    "itemOriginal": "RX SUBSIGUIENTE",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 9600,
+      "AFILIADO SEC": 9600,
+      "ASISTENCIAL": 9600
+    }
+  },
+  {
+    "idRegistro": 130,
+    "item": "RX RAQUIS - COLUMNA",
+    "itemOriginal": "RX RAQUIS - COLUMNA",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 16640,
+      "AFILIADO SEC": 16640,
+      "ASISTENCIAL": 16640
+    }
+  },
+  {
+    "idRegistro": 131,
+    "item": "RX SUBSIGUIENTE",
+    "itemOriginal": "RX SUBSIGUIENTE",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 9600,
+      "AFILIADO SEC": 9600,
+      "ASISTENCIAL": 9600
+    }
+  },
+  {
+    "idRegistro": 132,
+    "item": "RX HOMBRO, HUMERO, PELVIS, CADERA",
+    "itemOriginal": "RX HOMBRO, HUMERO, PELVIS, CADERA",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 16640,
+      "AFILIADO SEC": 16640,
+      "ASISTENCIAL": 16640
+    }
+  },
+  {
+    "idRegistro": 133,
+    "item": "RX SUBSIGUIENTE",
+    "itemOriginal": "RX SUBSIGUIENTE",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 9600,
+      "AFILIADO SEC": 9600,
+      "ASISTENCIAL": 9600
+    }
+  },
+  {
+    "idRegistro": 134,
+    "item": "RX CODO, ANTEBRAZO, MUÑECA, TOBILLO, PIE",
+    "itemOriginal": "RX CODO, ANTEBRAZO, MUÑECA, TOBILLO, PIE",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 16640,
+      "AFILIADO SEC": 16640,
+      "ASISTENCIAL": 16640
+    }
+  },
+  {
+    "idRegistro": 135,
+    "item": "RX SUBSIGUIENTE",
+    "itemOriginal": "RX SUBSIGUIENTE",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 9600,
+      "AFILIADO SEC": 9600,
+      "ASISTENCIAL": 9600
+    }
+  },
+  {
+    "idRegistro": 136,
+    "item": "RX TORAX",
+    "itemOriginal": "RX TORAX",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 16640,
+      "AFILIADO SEC": 16640,
+      "ASISTENCIAL": 16640
+    }
+  },
+  {
+    "idRegistro": 137,
+    "item": "RX SUBSIGUIENTE",
+    "itemOriginal": "RX SUBSIGUIENTE",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 9600,
+      "AFILIADO SEC": 9600,
+      "ASISTENCIAL": 9600
+    }
+  },
+  {
+    "idRegistro": 138,
+    "item": "RX SIMPLE DE ABDOMEN",
+    "itemOriginal": "RX SIMPLE DE ABDOMEN",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 16640,
+      "AFILIADO SEC": 16640,
+      "ASISTENCIAL": 16640
+    }
+  },
+  {
+    "idRegistro": 139,
+    "item": "RX SUBSIGUIENTE",
+    "itemOriginal": "RX SUBSIGUIENTE",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 9600,
+      "AFILIADO SEC": 9600,
+      "ASISTENCIAL": 9600
+    }
+  },
+  {
+    "idRegistro": 140,
+    "item": "RX SIMPLE DE ARBOL URINARIO",
+    "itemOriginal": "RX SIMPLE DE ARBOL URINARIO",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 16640,
+      "AFILIADO SEC": 16640,
+      "ASISTENCIAL": 16640
+    }
+  },
+  {
+    "idRegistro": 141,
+    "item": "RX SUBSIGUIENTE",
+    "itemOriginal": "RX SUBSIGUIENTE",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 9600,
+      "AFILIADO SEC": 9600,
+      "ASISTENCIAL": 9600
+    }
+  },
+  {
+    "idRegistro": 142,
+    "item": "ESPINOGRAMA FRENTE",
+    "itemOriginal": "ESPINOGRAMA FRENTE",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 36000,
+      "AFILIADO SEC": 36000,
+      "ASISTENCIAL": 36000
+    }
+  },
+  {
+    "idRegistro": 143,
+    "item": "ECOGRAFIA TOCOGINECOLOGICA",
+    "itemOriginal": "ECOGRAFIA TOCOGINECOLOGICA",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 144,
+    "item": "ECOGRAFIA MAMARIA UNI O BILATERAL",
+    "itemOriginal": "ECOGRAFIA MAMARIA UNI O BILATERAL",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 145,
+    "item": "ECOGRAFIA CEREBRAL",
+    "itemOriginal": "ECOGRAFIA CEREBRAL",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 146,
+    "item": "ECOGRAFIA TIORIDEA",
+    "itemOriginal": "ECOGRAFIA TIORIDEA",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 147,
+    "item": "ECOGRAFIA TESTICULAR",
+    "itemOriginal": "ECOGRAFIA TESTICULAR",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 148,
+    "item": "ECOGRAFIA COMPLETA DE ABDOMEN",
+    "itemOriginal": "ECOGRAFIA COMPLETA DE ABDOMEN",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 149,
+    "item": "ECOGRAFIA RENAL BILATERAL",
+    "itemOriginal": "ECOGRAFIA RENAL BILATERAL",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 150,
+    "item": "ECOGRAFIA DE AORTA ABDOMINAL DINAM. Y ESTAT.",
+    "itemOriginal": "ECOGRAFIA DE AORTA ABDOMINAL DINAM. Y ESTAT.",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 151,
+    "item": "ECOGRAFIA PANCREATICA O SUPRARRENAL",
+    "itemOriginal": "ECOGRAFIA PANCREATICA O SUPRARRENAL",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 152,
+    "item": "ECOGRAFIA PARA LA AMNIOCENTESIS",
+    "itemOriginal": "ECOGRAFIA PARA LA AMNIOCENTESIS",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 153,
+    "item": "ECOGRAFIA HEPATOBILIAR",
+    "itemOriginal": "ECOGRAFIA HEPATOBILIAR",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 154,
+    "item": "ECOGRAFIA DE PANCREAS",
+    "itemOriginal": "ECOGRAFIA DE PANCREAS",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 155,
+    "item": "ECOGRAFIA MUSCULO ESQUELETICO",
+    "itemOriginal": "ECOGRAFIA MUSCULO ESQUELETICO",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 156,
+    "item": "ECOGRAFIA DE CADERAS",
+    "itemOriginal": "ECOGRAFIA DE CADERAS",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 157,
+    "item": "ECOGRAFIA PAROTIDEA UNI O BILATERAL",
+    "itemOriginal": "ECOGRAFIA PAROTIDEA UNI O BILATERAL",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 158,
+    "item": "ECOGRAFIA DE PLEURA",
+    "itemOriginal": "ECOGRAFIA DE PLEURA",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 159,
+    "item": "ECOGRAFIA TRANSVAGINAL",
+    "itemOriginal": "ECOGRAFIA TRANSVAGINAL",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 35000,
+      "AFILIADO SEC": 35000,
+      "ASISTENCIAL": 35000
+    }
+  },
+  {
+    "idRegistro": 160,
+    "item": "ECOGRAFIA CERVICAL - CERVICOMETRIA",
+    "itemOriginal": "ECOGRAFIA CERVICAL - CERVICOMETRIA",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 161,
+    "item": "PRESUROMETRIA/MONIT. PRESION ART.",
+    "itemOriginal": "PRESUROMETRIA/MONIT. PRESION ART.",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 68000,
+      "AFILIADO SEC": 68000,
+      "ASISTENCIAL": 68000
+    }
+  },
+  {
+    "idRegistro": 162,
+    "item": "ECOGRAFIA DE VEJIGA Y PROSTATA",
+    "itemOriginal": "ECOGRAFIA DE VEJIGA Y PROSTATA",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 163,
+    "item": "ECOGRAFIA DE VESICULAS SEMINALES",
+    "itemOriginal": "ECOGRAFIA DE VESICULAS SEMINALES",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 164,
+    "item": "ECOGRAFIA DE PENE",
+    "itemOriginal": "ECOGRAFIA DE PENE",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 32000,
+      "AFILIADO SEC": 32000,
+      "ASISTENCIAL": 32000
+    }
+  },
+  {
+    "idRegistro": 165,
+    "item": "MAMO BILATERAL + PROYECCION AXILAR",
+    "itemOriginal": "MAMO BILATERAL + PROYECCION AXILAR",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 75000,
+      "AFILIADO SEC": 75000,
+      "ASISTENCIAL": 75000
+    }
+  },
+  {
+    "idRegistro": 166,
+    "item": "DENSITOMETRIA 2 REGIONES",
+    "itemOriginal": "DENSITOMETRIA 2 REGIONES",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 60000,
+      "AFILIADO SEC": 60000,
+      "ASISTENCIAL": 60000
+    }
+  },
+  {
+    "idRegistro": 167,
+    "item": "ECODDOPPLER COLOR TODAS LAS REGIONES",
+    "itemOriginal": "ECODDOPPLER COLOR TODAS LAS REGIONES",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 100000,
+      "AFILIADO SEC": 100000,
+      "ASISTENCIAL": 100000
+    }
+  },
+  {
+    "idRegistro": 168,
+    "item": "SCAN FETAL",
+    "itemOriginal": "SCAN FETAL",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 75000,
+      "AFILIADO SEC": 75000,
+      "ASISTENCIAL": 75000
+    }
+  },
+  {
+    "idRegistro": 169,
+    "item": "TRANSLUCENCIA NUCAL",
+    "itemOriginal": "TRANSLUCENCIA NUCAL",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 75000,
+      "AFILIADO SEC": 75000,
+      "ASISTENCIAL": 75000
+    }
+  },
+  {
+    "idRegistro": 170,
+    "item": "TAC OTROS ORGANOS Y REGIONES",
+    "itemOriginal": "TAC OTROS ORGANOS Y REGIONES",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 106880,
+      "AFILIADO SEC": 106880,
+      "ASISTENCIAL": 106880
+    }
+  },
+  {
+    "idRegistro": 171,
+    "item": "TAC DE OIDOS",
+    "itemOriginal": "TAC DE OIDOS",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 106880,
+      "AFILIADO SEC": 106880,
+      "ASISTENCIAL": 106880
+    }
+  },
+  {
+    "idRegistro": 172,
+    "item": "TAC DE SENOS PARANASALES",
+    "itemOriginal": "TAC DE SENOS PARANASALES",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 106880,
+      "AFILIADO SEC": 106880,
+      "ASISTENCIAL": 106880
+    }
+  },
+  {
+    "idRegistro": 173,
+    "item": "TAC DE MACIZO FACIAL",
+    "itemOriginal": "TAC DE MACIZO FACIAL",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 106880,
+      "AFILIADO SEC": 106880,
+      "ASISTENCIAL": 106880
+    }
+  },
+  {
+    "idRegistro": 174,
+    "item": "TAC DE MIEMBROS SUPERIORES UNILATERAL",
+    "itemOriginal": "TAC DE MIEMBROS SUPERIORES UNILATERAL",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 106880,
+      "AFILIADO SEC": 106880,
+      "ASISTENCIAL": 106880
+    }
+  },
+  {
+    "idRegistro": 175,
+    "item": "TAC DE MIEMBROS INFERIORES UNILATERAL",
+    "itemOriginal": "TAC DE MIEMBROS INFERIORES UNILATERAL",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 106880,
+      "AFILIADO SEC": 106880,
+      "ASISTENCIAL": 106880
+    }
+  },
+  {
+    "idRegistro": 176,
+    "item": "TAC DE COLUMNA CERVICAL",
+    "itemOriginal": "TAC DE COLUMNA CERVICAL",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 106880,
+      "AFILIADO SEC": 106880,
+      "ASISTENCIAL": 106880
+    }
+  },
+  {
+    "idRegistro": 177,
+    "item": "TAC DE COLUMNA DORSAL",
+    "itemOriginal": "TAC DE COLUMNA DORSAL",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 106880,
+      "AFILIADO SEC": 106880,
+      "ASISTENCIAL": 106880
+    }
+  },
+  {
+    "idRegistro": 178,
+    "item": "TAC DE COLUMNA LUMBO SACRA",
+    "itemOriginal": "TAC DE COLUMNA LUMBO SACRA",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 106880,
+      "AFILIADO SEC": 106880,
+      "ASISTENCIAL": 106880
+    }
+  },
+  {
+    "idRegistro": 179,
+    "item": "TAC CEREBRAL",
+    "itemOriginal": "TAC CEREBRAL",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 106880,
+      "AFILIADO SEC": 106880,
+      "ASISTENCIAL": 106880
+    }
+  },
+  {
+    "idRegistro": 180,
+    "item": "TAC TIROIDEA",
+    "itemOriginal": "TAC TIROIDEA",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 106880,
+      "AFILIADO SEC": 106880,
+      "ASISTENCIAL": 106880
+    }
+  },
+  {
+    "idRegistro": 181,
+    "item": "TAC MAMARIA",
+    "itemOriginal": "TAC MAMARIA",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 106880,
+      "AFILIADO SEC": 106880,
+      "ASISTENCIAL": 106880
+    }
+  },
+  {
+    "idRegistro": 182,
+    "item": "TAC GINECOLOGICA",
+    "itemOriginal": "TAC GINECOLOGICA",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 106880,
+      "AFILIADO SEC": 106880,
+      "ASISTENCIAL": 106880
+    }
+  },
+  {
+    "idRegistro": 183,
+    "item": "TAC HEPATOBILIAR",
+    "itemOriginal": "TAC HEPATOBILIAR",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 106880,
+      "AFILIADO SEC": 106880,
+      "ASISTENCIAL": 106880
+    }
+  },
+  {
+    "idRegistro": 184,
+    "item": "TAC TORACICA",
+    "itemOriginal": "TAC TORACICA",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 106880,
+      "AFILIADO SEC": 106880,
+      "ASISTENCIAL": 106880
+    }
+  },
+  {
+    "idRegistro": 185,
+    "item": "TAC COLUMNA",
+    "itemOriginal": "TAC COLUMNA",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 106880,
+      "AFILIADO SEC": 106880,
+      "ASISTENCIAL": 106880
+    }
+  },
+  {
+    "idRegistro": 186,
+    "item": "TAC DE ARBOL URINARIO",
+    "itemOriginal": "TAC DE ARBOL URINARIO",
+    "detalle": "",
+    "categoria": "CMD (FAMYL)",
+    "precios": {
+      "IN 360": 106880,
+      "AFILIADO SEC": 106880,
+      "ASISTENCIAL": 106880
+    }
+  },
+  {
+    "idRegistro": 187,
+    "item": "P.A.P.",
+    "itemOriginal": "P.A.P.",
+    "detalle": "",
+    "categoria": "PETRAGLIA",
+    "precios": {
+      "IN 360": 40000,
+      "AFILIADO SEC": 40000,
+      "ASISTENCIAL": 40000
+    }
+  },
+  {
+    "idRegistro": 188,
+    "item": "ADMISION",
+    "itemOriginal": "ADMISION",
+    "detalle": "",
+    "categoria": "NEXO TERAPIA",
+    "precios": {
+      "IN 180": 15000,
+      "IN 360": 15000,
+      "AFILIADO SEC": 15000,
+      "ASISTENCIAL": 15000
+    }
+  },
+  {
+    "idRegistro": 189,
+    "item": "PISCOLOGIA",
+    "itemOriginal": "PISCOLOGIA",
+    "detalle": "",
+    "categoria": "NEXO TERAPIA",
+    "precios": {
+      "IN 180": 18000,
+      "IN 360": 15000,
+      "AFILIADO SEC": 15000,
+      "ASISTENCIAL": 15000
+    }
+  },
+  {
+    "idRegistro": 190,
+    "item": "PISCOPEDAGOGIA",
+    "itemOriginal": "PISCOPEDAGOGIA",
+    "detalle": "",
+    "categoria": "NEXO TERAPIA",
+    "precios": {
+      "IN 180": 18000,
+      "IN 360": 15000,
+      "AFILIADO SEC": 15000,
+      "ASISTENCIAL": 15000
+    }
+  },
+  {
+    "idRegistro": 191,
+    "item": "FONOAUDIOLOGIA",
+    "itemOriginal": "FONOAUDIOLOGIA",
+    "detalle": "",
+    "categoria": "NEXO TERAPIA",
+    "precios": {
+      "IN 360": 20000,
+      "AFILIADO SEC": 20000,
+      "ASISTENCIAL": 20000
+    }
+  },
+  {
+    "idRegistro": 192,
+    "item": "TERAPIA OCUPACIONAL",
+    "itemOriginal": "TERAPIA OCUPACIONAL",
+    "detalle": "",
+    "categoria": "NEXO TERAPIA",
+    "precios": {
+      "IN 360": 20000,
+      "AFILIADO SEC": 20000,
+      "ASISTENCIAL": 20000
+    }
+  },
+  {
+    "idRegistro": 193,
+    "item": "OCT / TOMOGRAFIAS OCULARES",
+    "itemOriginal": "OCT / TOMOGRAFIAS OCULARES",
+    "detalle": "",
+    "categoria": "DR. LUIS COSTANZI",
+    "precios": {
+      "IN 360": 35000,
+      "AFILIADO SEC": 35000,
+      "ASISTENCIAL": 35000
+    }
+  },
+  {
+    "idRegistro": 194,
+    "item": "HRT / TOMOGRAFIAS OCULARES",
+    "itemOriginal": "HRT / TOMOGRAFIAS OCULARES",
+    "detalle": "",
+    "categoria": "DR. LUIS COSTANZI",
+    "precios": {
+      "IN 360": 35000,
+      "AFILIADO SEC": 35000,
+      "ASISTENCIAL": 35000
+    }
+  },
+  {
+    "idRegistro": 195,
+    "item": "INDIVIDUAL",
+    "itemOriginal": "INDIVIDUAL",
+    "detalle": "",
+    "categoria": "PILETA",
+    "precios": {
+      "IN 90": 200000,
+      "IN 180": 150000,
+      "IN 360": 75000,
+      "AFILIADO SEC": 50000,
+      "ASISTENCIAL": 50000
+    }
+  },
+  {
+    "idRegistro": 196,
+    "item": "GRUPO FAMILIAR",
+    "itemOriginal": "GRUPO FAMILIAR",
+    "detalle": "",
+    "categoria": "PILETA",
+    "precios": {
+      "AFILIADO SEC": 80000,
+      "ASISTENCIAL": 80000
+    }
+  },
+  {
+    "idRegistro": 197,
+    "item": "POR FAMILIAR (C/U)",
+    "itemOriginal": "POR FAMILIAR (C/U)",
+    "detalle": "",
+    "categoria": "PILETA",
+    "precios": {
+      "IN 90": 200000,
+      "IN 180": 80000,
+      "IN 360": 40000
+    }
+  },
+  {
+    "idRegistro": 198,
+    "item": "INDIVIDUAL",
+    "itemOriginal": "INDIVIDUAL",
+    "detalle": "",
+    "categoria": "COLONIA VERANO",
+    "precios": {
+      "IN 90": 280000,
+      "IN 180": 225000,
+      "IN 360": 180000,
+      "AFILIADO SEC": 120000,
+      "ASISTENCIAL": 120000
+    }
+  }
+]
