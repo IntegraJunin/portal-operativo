@@ -51,12 +51,14 @@
             color: var(--chip-text);
             font-weight: 700;
             font-size: 11px;
-            padding: 5px 12px;
+            padding: 6px 12px;
             border-radius: 9999px;
             transition: all 0.15s ease;
             text-transform: uppercase;
             letter-spacing: 0.02em;
             border: 1px solid transparent;
+            cursor: pointer;
+            text-align: left;
         }
 
         .chip-filtro:hover { background-color: #ded0c5; }
@@ -70,7 +72,7 @@
             background-color: var(--bg-box);
             border: 1.5px solid var(--border-box);
             border-radius: 14px;
-            padding: 10px 12px;
+            padding: 12px;
         }
 
         .filtro-titulo {
@@ -79,7 +81,7 @@
             text-transform: uppercase;
             letter-spacing: 0.04em;
             color: var(--text-brand);
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 6px;
@@ -196,53 +198,41 @@
 
     <!-- CONTENIDO PRINCIPAL (OCULTO HASTA AUTENTICARSE) -->
     <div id="contenido-principal" class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-0 overflow-hidden hidden">
-        <!-- COLUMNA IZQUIERDA: FILTROS -->
+        
+        <!-- COLUMNA IZQUIERDA: ÚNICAMENTE FILTRO POR CATEGORÍA -->
         <aside class="lg:col-span-4 xl:col-span-4 h-full overflow-y-auto pr-2 space-y-3">
             <div class="flex justify-between items-center sticky top-0 bg-[#f4e7dc] py-1 z-10">
-                <h2 class="text-lg font-extrabold text-[#3b291a]">Filtros</h2>
+                <h2 class="text-lg font-extrabold text-[#3b291a]">Categorías</h2>
                 <button onclick="cerrarSesion()" class="text-xs font-bold text-red-700 hover:underline bg-white px-2.5 py-1 rounded-lg border border-[#e5d3c5]">Cerrar Sesión</button>
             </div>
 
             <div class="filtro-card">
-                <div class="filtro-titulo"><span>🏷️</span> FILTRO POR CATEGORÍA (EXCEL)</div>
-                <select id="select-categoria" class="w-full p-2 text-xs font-bold rounded-xl border border-[#e5d3c5] bg-white text-gray-700 outline-none focus:ring-2 focus:ring-[#b85a3c]">
+                <div class="filtro-titulo"><span>🏷️</span> FILTRO POR CATEGORÍA</div>
+                
+                <!-- Selector desplegable -->
+                <select id="select-categoria" class="w-full p-2.5 text-xs font-bold rounded-xl border border-[#e5d3c5] bg-white text-gray-700 outline-none focus:ring-2 focus:ring-[#b85a3c] mb-3 shadow-sm">
                     <option value="">-- TODAS LAS CATEGORÍAS --</option>
                 </select>
-            </div>
 
-            <div class="filtro-card">
-                <div class="filtro-titulo"><span>👤</span> FILTRO POR TIPO DE SOCIO</div>
-                <div id="fila-filtros" class="flex flex-wrap gap-1.5"></div>
+                <!-- Lista interactiva de Chips de Categorías -->
+                <div id="fila-categorias" class="flex flex-wrap gap-1.5 max-h-[calc(100vh-190px)] overflow-y-auto pr-1"></div>
             </div>
-
-            <div class="filtro-card">
-                <div class="filtro-titulo"><span>🟠</span> FILTRO POR CONVENIO</div>
-                <div id="fila-convenios" class="flex flex-wrap gap-1.5"></div>
-            </div>
-
-            <div id="contenedor-servicios" class="space-y-3"></div>
         </aside>
 
         <!-- COLUMNA DERECHA: RESULTADOS Y TABLA -->
         <main class="lg:col-span-8 xl:col-span-8 h-full overflow-y-auto pr-2 flex flex-col gap-3">
             <div class="flex justify-between items-center sticky top-0 bg-[#f4e7dc] py-1 z-10">
-                <h2 class="text-lg font-extrabold text-[#3b291a]">Resultados y Edición</h2>
+                <h2 class="text-lg font-extrabold text-[#3b291a]">Editor Exclusivo de Precios</h2>
                 
                 <div class="flex items-center gap-3">
-                    <label class="flex items-center gap-1.5 text-xs font-bold text-[#4a3525] cursor-pointer">
+                    <label class="flex items-center gap-1.5 text-xs font-bold text-[#4a3525] cursor-pointer bg-white px-3 py-1.5 rounded-xl border border-[#e5d3c5]">
                         <input type="checkbox" id="check-modo-edicion" class="rounded text-[#b85a3c] focus:ring-[#b85a3c]">
                         <span>Habilitar Edición</span>
                     </label>
 
-                    <<!-- En la parte superior/header de tu editor.html -->
-<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
-    <h2>Editor Exclusivo de Precios</h2>
-    
-    <!-- Botón único de guardado en la esquina superior derecha -->
-    <button onclick="guardarEnJSON()" style="background-color: #28a745; color: white; padding: 10px 18px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-        💾 Guardar Cambios (precios.json)
-    </button>
-</div>
+                    <button onclick="guardarEnJSON()" style="background-color: #28a745; color: white; padding: 8px 16px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 12px;" class="shadow-sm hover:opacity-90 transition">
+                        💾 Guardar Cambios (precios.json)
+                    </button>
                 </div>
             </div>
 
@@ -251,7 +241,7 @@
                 <input
                     type="text"
                     id="input-busqueda"
-                    placeholder="Buscar por práctica, código o especialidad..."
+                    placeholder="Buscar por práctica, código o categoría..."
                     class="w-full pl-11 pr-4 py-2.5 rounded-2xl border border-[#e5d3c5] shadow-sm focus:ring-2 focus:ring-[#b85a3c] text-sm bg-white outline-none font-semibold text-gray-700 transition disabled:opacity-50"
                     disabled
                 >
@@ -286,7 +276,6 @@
                 document.getElementById('pantalla-login').classList.add('hidden');
                 document.getElementById('contenido-principal').classList.remove('hidden');
                 
-                // Disparar carga de la base si aún no se cargó
                 if (baseDeDatos.length === 0) {
                     inicializarSistema();
                 }
@@ -303,181 +292,114 @@
         }
 
         // --- LÓGICA PRINCIPAL DEL SISTEMA DE PRECIOS ---
-        const PLANES_SIEMPRE_BLOQUEADOS = ['AD', 'COS', 'MM', 'MM/COM', 'MON/OP NO COS'];
-
         function normalizar(v){ return String(v ?? '').trim(); }
-        function claveComparable(v){ return normalizar(v).replace(/\s+/g, ' ').toUpperCase(); }
         function quitarAcentos(s){ return String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
-        function normalizarCategoria(s){ return quitarAcentos(normalizar(s)).replace(/\s+/g, ' ').toUpperCase(); }
-
-        let ORDEN_PLANES = [];
-        const PRIORIDAD_ORDEN = ['IN 90', 'IN 90 (OSECAC)', 'IN 180', 'IN 360', 'AFILIADO SEC', 'ASISTENCIAL'];
-
-        function ordenarPlanes(claves){
-            return [...claves].sort((a, b) => {
-                const ia = PRIORIDAD_ORDEN.indexOf(a);
-                const ib = PRIORIDAD_ORDEN.indexOf(b);
-                if (ia === -1 && ib === -1) return 0;
-                if (ia === -1) return 1;
-                if (ib === -1) return -1;
-                return ia - ib;
-            });
-        }
 
         let baseDeDatos = [];
-        let filtroActivo = null;
         let categoriaSeleccionada = "";
         let modoEdicion = false;
-
-        async function descargarExcel() {
-            const variantes = ['precios(modificado).xlsx', 'precios.xlsx', 'PRECIOS.xlsx'];
-            for (const url of variantes) {
-                try {
-                    const res = await fetch(url);
-                    if (res.ok) return { tipo: 'array', data: await res.arrayBuffer() };
-                } catch (e) {}
-            }
-            throw new Error('No se pudo encontrar el archivo excel');
-        }
-
-        const PALABRAS_CLAVE_IN90_PERMITIDO = ['TURISMO', 'QUINCHO', 'SALON', 'PILETA', 'COLONIA', 'MUSICA', 'FUTBOL'];
-        function in90PermitidoEnCategoria(categoria){
-            const cat = normalizarCategoria(categoria);
-            return PALABRAS_CLAVE_IN90_PERMITIDO.some(kw => cat.includes(kw));
-        }
-
-        const PALABRAS_CLAVE_EXCLUIDAS_IN180 = ['COMED', 'FAMYL', 'PETRAGLIA', 'PSIQUIATRIA'];
-        function in180PermitidoEn(categoria, item){
-            const cat = normalizarCategoria(categoria);
-            const it = normalizarCategoria(item);
-            if (PALABRAS_CLAVE_EXCLUIDAS_IN180.some(kw => cat.includes(kw))) return false;
-            if (it.includes('CONVENIO')) return false;
-            if (it.startsWith('CONSULTA MEDICA')) return false;
-            return true;
-        }
-
+        let ORDEN_PLANES = ['IN 90', 'IN 90 (OSECAC)', 'IN 180', 'IN 360', 'AFILIADO SEC', 'ASISTENCIAL'];
         let etiquetaPorClave = {};
 
-        function parsearFilas(filas){
-            const registros = [];
-            let mapaColumnas = {};
-            etiquetaPorClave = {};
-            ORDEN_PLANES = [];
-
-            let filaHeaderIndex = 0;
-            for(let i=0; i < filas.length; i++) {
-                if(filas[i][3]) { 
-                    filaHeaderIndex = i;
-                    break;
-                }
-            }
-
-            const headerRow = filas[filaHeaderIndex];
-            
-            for (let c = 3; c < headerRow.length; c++) {
-                const nombrePlan = normalizar(headerRow[c]);
-                if (nombrePlan) {
-                    const clave = claveComparable(nombrePlan);
-                    mapaColumnas[c] = clave;
-                    if (!(clave in etiquetaPorClave)) {
-                        etiquetaPorClave[clave] = nombrePlan;
-                        ORDEN_PLANES.push(clave);
-                    }
-                }
-            }
-
-            let categoriaActual = 'GENERAL';
-
-            for (let i = filaHeaderIndex + 1; i < filas.length; i++) {
-                const fila = filas[i];
-                if (!fila || fila.length === 0) continue;
-
-                const colCategoria = normalizar(fila[0]);
-                const colItem = normalizar(fila[1]);
-                const colDetalle = normalizar(fila[2]);
-
-                if (colCategoria) categoriaActual = colCategoria;
-                if (!colItem) continue;
-
-                const nombreItemFinal = colDetalle ? `${colItem} (${colDetalle})` : colItem;
-                const precios = {};
-
-                Object.entries(mapaColumnas).forEach(([colIndex, clave]) => {
-                    const valor = fila[Number(colIndex)];
-                    if (valor !== undefined && valor !== '' && valor !== null && valor !== 'NaN') {
-                        precios[clave] = valor;
-                    }
-                });
-
-                if (Object.keys(precios).length === 0) continue;
-
-                PLANES_SIEMPRE_BLOQUEADOS.forEach(clave => { delete precios[clave]; });
-                if ('IN 90' in precios && !in90PermitidoEnCategoria(categoriaActual)) {
-                    delete precios['IN 90'];
-                }
-                if ('IN 180' in precios && !in180PermitidoEn(categoriaActual, nombreItemFinal)) {
-                    delete precios['IN 180'];
-                }
-
-                if (Object.keys(precios).length === 0) continue;
-
-                registros.push({ 
-                    idRegistro: registros.length,
-                    item: nombreItemFinal, 
-                    itemOriginal: colItem,
-                    detalle: colDetalle,
-                    categoria: categoriaActual, 
-                    precios 
-                });
-            }
-            ORDEN_PLANES = ordenarPlanes(ORDEN_PLANES);
-            return registros;
-        }
-
         function inicializarSistema() {
-            descargarExcel()
-                .then(({ data }) => {
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const primeraHoja = workbook.Sheets[workbook.SheetNames[0]];
-                    const filas = XLSX.utils.sheet_to_json(primeraHoja, { header: 1, defval: null });
+            fetch('precios.json')
+                .then(res => {
+                    if (!res.ok) throw new Error('No se pudo cargar el archivo precios.json');
+                    return res.json();
+                })
+                .then(data => {
+                    baseDeDatos = data;
 
-                    if (filas.length === 0) throw new Error('El Excel está vacío');
+                    // Extraer los nombres de los planes presentes
+                    const planesSet = new Set();
+                    baseDeDatos.forEach(r => {
+                        if (r.precios) {
+                            Object.keys(r.precios).forEach(p => planesSet.add(p));
+                        }
+                    });
 
-                    baseDeDatos = parsearFilas(filas);
-                    
+                    // Mantener el orden prioritario
+                    ORDEN_PLANES = [...planesSet].sort((a, b) => {
+                        const prioridades = ['IN 90', 'IN 90 (OSECAC)', 'IN 180', 'IN 360', 'AFILIADO SEC', 'ASISTENCIAL'];
+                        const ia = prioridades.indexOf(a);
+                        const ib = prioridades.indexOf(b);
+                        if (ia === -1 && ib === -1) return a.localeCompare(b);
+                        if (ia === -1) return 1;
+                        if (ib === -1) return -1;
+                        return ia - ib;
+                    });
+
+                    ORDEN_PLANES.forEach(p => { etiquetaPorClave[p] = p; });
+
                     document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
                     document.getElementById('texto-resultados').textContent = `Base lista (${baseDeDatos.length} registros).`;
                     document.getElementById('badge-estado').textContent = 'Base Cargada';
                     document.getElementById('badge-estado').classList.add('text-emerald-600');
                     document.getElementById('input-busqueda').disabled = false;
 
-                    poblarDesplegableCategorias();
-                    renderizarFiltros();
-                    renderizarFiltroConvenios();
-                    renderizarFiltroServicios();
+                    poblarCategorias();
                     aplicarBusquedaYFiltro();
                 })
                 .catch(err => {
                     console.error(err);
                     document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-red-500';
-                    document.getElementById('texto-resultados').textContent = 'Error al cargar precios.xlsx';
+                    document.getElementById('texto-resultados').textContent = 'Error al cargar precios.json';
                 });
         }
 
-        function poblarDesplegableCategorias() {
+        function poblarCategorias() {
             const select = document.getElementById('select-categoria');
-            const categoriasUnicas = [...new Set(baseDeDatos.map(r => r.categoria))].sort();
+            const contChips = document.getElementById('fila-categorias');
+
+            select.innerHTML = '<option value="">-- TODAS LAS CATEGORÍAS --</option>';
+            contChips.innerHTML = '<button class="chip-filtro activo" data-cat="">TODAS LAS CATEGORÍAS</button>';
+
+            // Extraer de forma única todas las categorías presentes en precios.json
+            const categoriasUnicas = [...new Set(baseDeDatos.map(r => r.categoria).filter(Boolean))]
+                .sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
 
             categoriasUnicas.forEach(cat => {
+                // Agregar al desplegable
                 const option = document.createElement('option');
                 option.value = cat;
                 option.textContent = cat;
                 select.appendChild(option);
+
+                // Agregar botón chip
+                const btn = document.createElement('button');
+                btn.className = 'chip-filtro';
+                btn.dataset.cat = cat;
+                btn.textContent = cat;
+                contChips.appendChild(btn);
             });
 
+            // Evento cambio de Select
             select.addEventListener('change', (e) => {
                 categoriaSeleccionada = e.target.value;
+                sincronizarChipsCategoria();
                 aplicarBusquedaYFiltro();
+            });
+
+            // Evento clic en Chips
+            contChips.querySelectorAll('.chip-filtro').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    categoriaSeleccionada = btn.dataset.cat || "";
+                    select.value = categoriaSeleccionada;
+                    sincronizarChipsCategoria();
+                    aplicarBusquedaYFiltro();
+                });
+            });
+        }
+
+        function sincronizarChipsCategoria() {
+            const contChips = document.getElementById('fila-categorias');
+            if (!contChips) return;
+            contChips.querySelectorAll('.chip-filtro').forEach(btn => {
+                if ((btn.dataset.cat || "") === categoriaSeleccionada) {
+                    btn.classList.add('activo');
+                } else {
+                    btn.classList.remove('activo');
+                }
             });
         }
 
@@ -492,102 +414,15 @@
 
         function aplicarBusquedaYFiltro(){
             const termino = document.getElementById('input-busqueda').value.trim();
-            let resultados = (!termino && !filtroActivo && !convenioActivo && !servicioActivo && !categoriaSeleccionada) 
-                ? baseDeDatos.slice(0, 20) 
+            let resultados = (!termino && !categoriaSeleccionada) 
+                ? baseDeDatos.slice(0, 30) 
                 : (termino ? buscarEstricto(termino) : baseDeDatos.slice());
 
-            if (categoriaSeleccionada) resultados = resultados.filter(r => r.categoria === categoriaSeleccionada);
-            if (filtroActivo) resultados = resultados.filter(r => Object.prototype.hasOwnProperty.call(r.precios, filtroActivo));
-            if (convenioActivo) resultados = resultados.filter(r => convenioActivo.coincide(r.categoria));
-            if (servicioActivo) resultados = resultados.filter(r => servicioActivo.coincide(r.item, r.categoria));
+            if (categoriaSeleccionada) {
+                resultados = resultados.filter(r => r.categoria === categoriaSeleccionada);
+            }
 
-            renderizarTabla(resultados, filtroActivo);
-        }
-
-        const CONVENIOS_FIJOS = [
-            { nombre: 'DRA. CAPPONI', claves: ['CAPPONI'] },
-            { nombre: 'COMED', claves: ['COMED'] },
-            { nombre: 'CMD (FAMY)', claves: ['CMD', 'FAMYL'] },
-            { nombre: 'DR. COSTANZI', claves: ['COSTANZI'] },
-            { nombre: 'NEXO TERAPIA', claves: ['NEXO TERAPIA', 'NEXO'] },
-        ].map(c => ({ ...c, coincide: (cat) => c.claves.some(k => normalizarCategoria(cat).includes(k))}));
-
-        let convenioActivo = null;
-        function renderizarFiltroConvenios(){
-            const cont = document.getElementById('fila-convenios');
-            cont.innerHTML = `<button class="chip-filtro activo" data-convenio="">TODOS</button>` +
-                CONVENIOS_FIJOS.map((c, i) => `<button class="chip-filtro" data-convenio="${i}">${c.nombre}</button>`).join('');
-
-            cont.querySelectorAll('.chip-filtro').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    convenioActivo = btn.dataset.convenio !== '' ? CONVENIOS_FIJOS[Number(btn.dataset.convenio)] : null;
-                    cont.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
-                    btn.classList.add('activo');
-                    aplicarBusquedaYFiltro();
-                });
-            });
-        }
-
-        function esConsultaDeLetra(it, cat, letra){
-            const txt = quitarAcentos(it).toUpperCase();
-            const p = txt.split(/\s+/).filter(Boolean);
-            if(!p.includes('CONSULTA')) return false;
-            if(['ODONTO','KINESIO','NUTRI','ENFERM'].some(kw => p.some(pal=>pal.includes(kw)))) return false;
-            return p.includes(letra) && !['A','B','C'].filter(l => l!==letra).some(l=>p.includes(l));
-        }
-
-        const SERVICIOS_GRUPOS = [
-            { titulo: '🩺 CONSULTA MÉDICA', items: [
-                { id: 'ca', nombre: 'CONSULTA "A"', coincide: (i,c) => esConsultaDeLetra(i,c,'A') },
-                { id: 'cb', nombre: 'CONSULTA "B"', coincide: (i,c) => esConsultaDeLetra(i,c,'B') },
-                { id: 'cc', nombre: 'CONSULTA "C"', coincide: (i,c) => esConsultaDeLetra(i,c,'C') },
-                { id: 'nu', nombre: 'NUTRICION', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('NUTRICI') }
-            ]},
-            { titulo: '🩺 OTRAS CONSULTAS', items: [
-                { id: 'co', nombre: 'ODONTO', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('ODONTO') },
-                { id: 'ki', nombre: 'KINESIOLOGIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('KINESIO') }
-            ]},
-            { titulo: '🏛️ SALONES Y RECREACIÓN', items: [
-                { id: 'qu', nombre: 'QUINCHOS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('QUINCHO') },
-                { id: 's1', nombre: 'SALONES', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('SALON') },
-                { id: 'pi', nombre: 'PILETA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PILETA') }
-            ]}
-        ];
-
-        let servicioActivo = null;
-        function renderizarFiltroServicios(){
-            const cont = document.getElementById('contenedor-servicios');
-            cont.innerHTML = SERVICIOS_GRUPOS.map((g, gIdx) => `
-                <div class="filtro-card">
-                    <div class="filtro-titulo">${g.titulo}</div>
-                    <div class="flex flex-wrap gap-1.5">
-                        <button class="chip-filtro activo" data-grupo="${gIdx}" data-servicio="">TODOS</button>
-                        ${g.items.map(it => `<button class="chip-filtro" data-grupo="${gIdx}" data-servicio="${it.id}">${it.nombre}</button>`).join('')}
-                    </div>
-                </div>`).join('');
-
-            const todosItems = SERVICIOS_GRUPOS.flatMap(g => g.items);
-            cont.querySelectorAll('.chip-filtro').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const id = btn.dataset.servicio;
-                    servicioActivo = id ? todosItems.find(it => it.id === id) : null;
-                    cont.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
-
-                    if (servicioActivo) {
-                        btn.classList.add('activo');
-                        SERVICIOS_GRUPOS.forEach((g, idx) => {
-                            if (String(idx) !== btn.dataset.grupo) {
-                                cont.querySelector(`.chip-filtro[data-grupo="${idx}"][data-servicio=""]`)?.classList.add('activo');
-                            }
-                        });
-                    } else {
-                        SERVICIOS_GRUPOS.forEach((g, idx) => {
-                            cont.querySelector(`.chip-filtro[data-grupo="${idx}"][data-servicio=""]`)?.classList.add('activo');
-                        });
-                    }
-                    aplicarBusquedaYFiltro();
-                });
-            });
+            renderizarTabla(resultados);
         }
 
         document.getElementById('input-busqueda').addEventListener('input', aplicarBusquedaYFiltro);
@@ -596,26 +431,6 @@
             modoEdicion = e.target.checked;
             aplicarBusquedaYFiltro();
         });
-
-        function renderizarFiltros(){
-            const planesPresentes = new Set();
-            baseDeDatos.forEach(r => Object.keys(r.precios).forEach(p => planesPresentes.add(p)));
-
-            const cont = document.getElementById('fila-filtros');
-            cont.innerHTML = `<button class="chip-filtro activo" data-plan="">TODOS</button>` +
-                ORDEN_PLANES.filter(p => planesPresentes.has(p)).map(clave => 
-                    `<button class="chip-filtro" data-plan="${clave}">${etiquetaPorClave[clave] || clave}</button>`
-                ).join('');
-
-            cont.querySelectorAll('.chip-filtro').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    filtroActivo = btn.dataset.plan || null;
-                    cont.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
-                    btn.classList.add('activo');
-                    aplicarBusquedaYFiltro();
-                });
-            });
-        }
 
         function formatearValor(valor){
             if (typeof valor === 'number') return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(valor);
@@ -626,29 +441,32 @@
         function actualizarPrecioEnBase(idReg, clavePlan, nuevoValor) {
             const reg = baseDeDatos.find(r => r.idRegistro === idReg);
             if (reg) {
+                if (!reg.precios) reg.precios = {};
                 if (nuevoValor === '' || nuevoValor === null) {
                     delete reg.precios[clavePlan];
                 } else {
-                    reg.precios[clavePlan] = nuevoValor;
+                    // Si el valor ingresado es un número, guardarlo como número
+                    const numVal = Number(nuevoValor);
+                    reg.precios[clavePlan] = (!isNaN(numVal) && nuevoValor.trim() !== '') ? numVal : nuevoValor;
                 }
             }
         }
 
-        function renderizarTabla(datos, planFiltrado) {
+        function renderizarTabla(datos) {
             const contenedor = document.getElementById('tabla-wrap');
-            if (datos.length === 0) {
+            if (!datos || datos.length === 0) {
                 contenedor.innerHTML = `<div class="text-center py-12"><p class="text-gray-400 font-bold text-base">No se encontraron resultados.</p></div>`;
                 return;
             }
 
-            const columnas = planFiltrado ? [planFiltrado] : ORDEN_PLANES.filter(clave => datos.some(r => r.precios[clave]));
-            const theadHTML = `<tr><th>Práctica / Servicio</th>${columnas.map((clave, i) => `<th data-col="${i}">${(etiquetaPorClave[clave] || clave).toUpperCase()}</th>`).join('')}</tr>`;
+            const columnas = ORDEN_PLANES;
+            const theadHTML = `<tr><th>Práctica / Servicio</th>${columnas.map((clave) => `<th>${clave.toUpperCase()}</th>`).join('')}</tr>`;
             
             const tbodyHTML = datos.map((r) => `
                 <tr>
                     <td class="celda-item"><span class="celda-categoria">${r.categoria}</span><br>${r.item}</td>
                     ${columnas.map((clave) => {
-                        const tiene = r.precios[clave] !== undefined;
+                        const tiene = r.precios && r.precios[clave] !== undefined;
                         const valorActual = tiene ? r.precios[clave] : '';
 
                         if (modoEdicion) {
@@ -669,124 +487,13 @@
             contenedor.innerHTML = `<table><thead>${theadHTML}</thead><tbody>${tbodyHTML}</tbody></table>`;
         }
 
-        document.getElementById('btn-guardar-excel').addEventListener('click', () => {
-            guardarEnExcelPermanente();
-        });
-
-    function guardarEnExcelPermanente() {
-            const wb = XLSX.utils.book_new();
-            const datosArray = [];
-
-            // 1. Encabezados originales para las Columnas D, E, F, G, H, I
-            const encabezadosOriginales = ['In 90', 'In 180', 'In 360', 'Afiliado SEC', 'Asistencial', 'In 90 (OSECAC)'];
-            datosArray.push(["", "", "", ...encabezadosOriginales]);
-
-            baseDeDatos.forEach(reg => {
-                const fila = [
-                    reg.categoria || "",
-                    reg.itemOriginal || reg.item || "", 
-                    reg.detalle || ""
-                ];
-
-                encabezadosOriginales.forEach(encabezado => {
-                    const clave = claveComparable(encabezado);
-                    let val = reg.precios[clave];
-                    
-                    if (val !== undefined && val !== "" && !isNaN(val)) {
-                        fila.push(Number(val));
-                    } else {
-                        fila.push(val !== undefined ? val : "");
-                    }
-                });
-
-                datosArray.push(fila);
-            });
-
-            const ws = XLSX.utils.aoa_to_sheet(datosArray);
-
-            // Activar las líneas de cuadrícula visibles en Excel
-            ws['!sheetviews'] = [{ showGridLines: true }];
-
-            // Estilo de bordes para recuadrar completamente cada celda
-            const estiloBorde = {
-                top: { style: "thin", color: { rgb: "000000" } },
-                bottom: { style: "thin", color: { rgb: "000000" } },
-                left: { style: "thin", color: { rgb: "000000" } },
-                right: { style: "thin", color: { rgb: "000000" } }
-            };
-
-            // 2. Recorrer celdas para aplicar recuadros y centrado
-            const range = XLSX.utils.decode_range(ws['!ref']);
-            
-            for (let R = range.s.r; R <= range.e.r; ++R) {
-                for (let C = range.s.c; C <= range.e.c; ++C) {
-                    const cellAddress = XLSX.utils.encode_cell({r: R, c: C});
-                    
-                    // Si la celda no existe en el rango, la creamos para mantener el recuadro bordereado uniforme
-                    if (!ws[cellAddress]) {
-                        ws[cellAddress] = { t: 's', v: '' };
-                    }
-
-                    // Recuadrar la celda con bordes negros
-                    ws[cellAddress].s = {
-                        border: estiloBorde
-                    };
-
-                    // Fila de Encabezados (Fila 1)
-                    if (R === 0) {
-                        if (C >= 3) { // Columnas D, E, F, G, H, I
-                            ws[cellAddress].s.font = { bold: true };
-                            ws[cellAddress].s.alignment = { horizontal: "center", vertical: "center" };
-                        }
-                    } 
-                    // Columnas D, E, F, G, H, I (Índices C >= 3)
-                    else if (C >= 3) {
-                        const val = ws[cellAddress].v;
-                        if (typeof val === 'number') {
-                            ws[cellAddress].z = '"$"#,##0'; // Formato de moneda $ sin decimales
-                        }
-                        // CENTRADO ESTRICTO horizontal y vertical para D, E, F, G, H, I
-                        ws[cellAddress].s.alignment = { horizontal: "center", vertical: "center" };
-                    } 
-                    // Columnas A, B, C (Categoría, Ítem, Detalle)
-                    else {
-                        ws[cellAddress].s.alignment = { horizontal: "left", vertical: "center" };
-                        if (C === 1) {
-                            ws[cellAddress].s.font = { bold: true };
-                        }
-                    }
-                }
-            }
-            
-            // 3. Anchos de columna optimizados
-            ws['!cols'] = [ 
-                {wch: 28}, // A: Categoría
-                {wch: 45}, // B: Ítem
-                {wch: 22}, // C: Detalle
-                {wch: 14}, // D: In 90
-                {wch: 14}, // E: In 180
-                {wch: 14}, // F: In 360
-                {wch: 16}, // G: Afiliado SEC
-                {wch: 16}, // H: Asistencial
-                {wch: 18}  // I: In 90 (OSECAC)
-            ];
-            
-            XLSX.utils.book_append_sheet(wb, ws, "JUNIO 2026 (2)"); 
-            XLSX.writeFile(wb, "precios.xlsx");
-
-            alert("¡Archivo 'precios.xlsx' guardado con columnas D-I centradas y celdas recuadradas!");   
-        }
-
-function guardarEnJSON() {
+        function guardarEnJSON() {
             if (!baseDeDatos || baseDeDatos.length === 0) {
                 alert("No hay datos cargados para exportar.");
                 return;
             }
 
-            // Convertir la base de datos a formato JSON limpio con indentación
             const jsonString = JSON.stringify(baseDeDatos, null, 2);
-            
-            // Crear el archivo en memoria y forzar la descarga
             const blob = new Blob([jsonString], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             
@@ -798,28 +505,8 @@ function guardarEnJSON() {
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
 
-            alert("¡Archivo 'precios.json' generado y descargado con éxito!");
+            alert("¡Archivo 'precios.json' actualizado y descargado con éxito!");
         }
-
-
-
-// Cargar precios automáticamente al abrir la página
-fetch('precios.json')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("No se pudo cargar el archivo precios.json");
-        }
-        return response.json();
-    })
-    .then(data => {
-        baseDeDatos = data;
-        renderizarTabla(); // Tu función que dibuja los precios en la pantalla
-        console.log("Precios cargados correctamente desde precios.json");
-    })
-    .catch(error => {
-        console.error("Error al cargar los precios:", error);
-    });
-
     </script>
 </body>
 </html>
