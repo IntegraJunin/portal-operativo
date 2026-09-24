@@ -253,16 +253,28 @@
         let baseDeDatos = [];
         let filtroActivo = null;
 
-        async function descargarExcel() {
-            const variantes = ['precios(modificado).xlsx', 'precios.xlsx', 'PRECIOS.xlsx'];
-            for (const url of variantes) {
-                try {
-                    const res = await fetch(url);
-                    if (res.ok) return { tipo: 'array', data: await res.arrayBuffer() };
-                } catch (e) {}
+      let baseDeDatos = [];
+
+// Cargar precios.json automáticamente al abrir el buscador
+document.addEventListener("DOMContentLoaded", () => {
+    fetch('precios.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("No se pudo cargar precios.json");
             }
-            throw new Error('No se pudo encontrar el archivo excel');
-        }
+            return response.json();
+        })
+        .then(data => {
+            baseDeDatos = data;
+            
+            // Ejecutar tu función que dibuja las filas y activa los filtros
+            if (typeof renderizarTabla === "function") {
+                renderizarTabla(baseDeDatos);
+            }
+            console.log("Precios y filtros cargados con éxito desde JSON");
+        })
+        .catch(error => console.error("Error al cargar la lista de precios:", error));
+});
 
         // REGLAS DE NEGOCIO
         const PALABRAS_CLAVE_IN90_PERMITIDO = [
