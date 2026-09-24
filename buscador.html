@@ -6,6 +6,7 @@
     <title>Portal Operativo INTEGRA - Buscador de Precios</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -228,7 +229,6 @@
     </div>
 
     <script>
-        
         const PLANES_SIEMPRE_BLOQUEADOS = ['AD', 'COS', 'MM', 'MM/COM', 'MON/OP NO COS'];
 
         function normalizar(v){ return String(v ?? '').trim(); }
@@ -252,51 +252,137 @@
 
         let baseDeDatos = [];
         let filtroActivo = null;
+
+        async function descargarExcel() {
+            const variantes = ['precios(modificado).xlsx', 'precios.xlsx', 'PRECIOS.xlsx'];
+            for (const url of variantes) {
+                try {
+                    const res = await fetch(url);
+                    if (res.ok) return { tipo: 'array', data: await res.arrayBuffer() };
+                } catch (e) {}
+            }
+            throw new Error('No se pudo encontrar el archivo excel');
+        }
+
+        // REGLAS DE NEGOCIO
+        const PALABRAS_CLAVE_IN90_PERMITIDO = [
+            'TURISMO', 'QUINCHO', 'SALON', 'PILETA', 'COLONIA', 'MUSICA', 'FUTBOL',
+            'AUDITORIO', 'MASAJE', 'PODOLOG', 'COSMETO', 'PELUQUER', 'LAGUNA', 'ARROYO',
+            'RESERVA', 'CUOTA', 'SEPELIO'
+        ];
+        function in90PermitidoEnCategoria(categoria){
+            const cat = normalizarCategoria(categoria);
+            return PALABRAS_CLAVE_IN90_PERMITIDO.some(kw => cat.includes(kw));
+        }
+
+        const PALABRAS_CLAVE_EXCLUIDAS_IN180 = ['COMED', 'FAMYL', 'PETRAGLIA', 'PSIQUIATRIA'];
+        function in180PermitidoEn(categoria, item){
+            const cat = normalizarCategoria(categoria);
+            const it = normalizarCategoria(item);
+            if (PALABRAS_CLAVE_EXCLUIDAS_IN180.some(kw => cat.includes(kw))) return false;
+            if (it.includes('CONVENIO')) return false;
+            if (it.startsWith('CONSULTA MEDICA')) return false;
+            return true;
+        }
+
         let etiquetaPorClave = {};
 
-        // Cargar precios.json automáticamente al abrir el buscador
-        document.addEventListener('DOMContentLoaded', () => {
-            fetch('precios.json')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("No se pudo cargar el archivo precios.json");
+        function parsearFilas(filas){
+            const registros = [];
+            let mapaColumnas = {};
+            etiquetaPorClave = {};
+            ORDEN_PLANES = [];
+
+            let filaHeaderIndex = 0;
+            for(let i=0; i < filas.length; i++) {
+                if(filas[i][3]) { 
+                    filaHeaderIndex = i;
+                    break;
+                }
+            }
+
+            const headerRow = filas[filaHeaderIndex];
+            
+            for (let c = 3; c < headerRow.length; c++) {
+                const nombrePlan = normalizar(headerRow[c]);
+                if (nombrePlan) {
+                    const clave = claveComparable(nombrePlan);
+                    mapaColumnas[c] = clave;
+                    if (!(clave in etiquetaPorClave)) {
+                        etiquetaPorClave[clave] = nombrePlan;
+                        ORDEN_PLANES.push(clave);
                     }
-                    return response.json();
-                })
-                .then(data => {
-                    baseDeDatos = data;
+                }
+            }
 
-                    // Reconstruir los planes disponibles para los filtros
-                    const planesSet = new Set();
-                    etiquetaPorClave = {};
-                    baseDeDatos.forEach(r => {
-                        if (r.precios) {
-                            Object.keys(r.precios).forEach(p => {
-                                planesSet.add(p);
-                                etiquetaPorClave[p] = p;
-                            });
-                        }
-                    });
-                    ORDEN_PLANES = ordenarPlanes([...planesSet]);
+            let categoriaActual = 'GENERAL';
 
-                    // Actualizar estado en la pantalla
+            for (let i = filaHeaderIndex + 1; i < filas.length; i++) {
+                const fila = filas[i];
+                if (!fila || fila.length === 0) continue;
+
+                const colCategoria = normalizar(fila[0]);
+                const colItem = normalizar(fila[1]);
+                const colDetalle = normalizar(fila[2]);
+
+                if (colCategoria) categoriaActual = colCategoria;
+
+                if (!colItem) continue;
+
+                const nombreItemFinal = colDetalle ? `${colItem} (${colDetalle})` : colItem;
+                const precios = {};
+
+                Object.entries(mapaColumnas).forEach(([colIndex, clave]) => {
+                    const valor = fila[Number(colIndex)];
+                    if (valor !== undefined && valor !== '' && valor !== null && valor !== 'NaN') {
+                        precios[clave] = valor;
+                    }
+                });
+
+                if (Object.keys(precios).length === 0) continue;
+
+                PLANES_SIEMPRE_BLOQUEADOS.forEach(clave => { delete precios[clave]; });
+                if ('IN 90' in precios && !in90PermitidoEnCategoria(categoriaActual)) {
+                    delete precios['IN 90'];
+                }
+                if ('IN 180' in precios && !in180PermitidoEn(categoriaActual, nombreItemFinal)) {
+                    delete precios['IN 180'];
+                }
+
+                if (Object.keys(precios).length === 0) continue;
+
+                registros.push({ item: nombreItemFinal, categoria: categoriaActual, precios });
+            }
+            ORDEN_PLANES = ordenarPlanes(ORDEN_PLANES);
+            return registros;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            descargarExcel()
+                .then(({ data }) => {
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const primeraHoja = workbook.Sheets[workbook.SheetNames[0]];
+                    const filas = XLSX.utils.sheet_to_json(primeraHoja, { header: 1, defval: null });
+
+                    if (filas.length === 0) throw new Error('El Excel está vacío');
+
+                    baseDeDatos = parsearFilas(filas);
+                    
                     document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
                     document.getElementById('texto-resultados').textContent = `Base lista (${baseDeDatos.length} registros).`;
                     document.getElementById('badge-estado').textContent = 'Base Cargada';
                     document.getElementById('badge-estado').classList.add('text-emerald-600');
                     document.getElementById('input-busqueda').disabled = false;
 
-                    // Renderizar la interfaz y los filtros
                     renderizarFiltros();
                     renderizarFiltroConvenios();
                     renderizarFiltroServicios();
                     aplicarBusquedaYFiltro();
                 })
                 .catch(err => {
-                    console.error("Error al cargar la lista de precios:", err);
+                    console.error(err);
                     document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-red-500';
-                    document.getElementById('texto-resultados').textContent = 'Error al cargar precios.json';
-                    document.getElementById('badge-estado').textContent = 'Error';
+                    document.getElementById('texto-resultados').textContent = 'Error al cargar precios.xlsx';
                 });
         });
 
@@ -330,6 +416,7 @@
             { nombre: 'LAB. MILANI', claves: ['MILANI'] },
             { nombre: 'LAB. PETRAGLIA', claves: ['PETRAGLIA'] },
             { nombre: 'NEXO', claves: ['NEXO'] }
+           
         ].map(c => ({ ...c, coincide: (cat) => c.claves.some(k => normalizarCategoria(cat).includes(k))}));
 
         let convenioActivo = null;
