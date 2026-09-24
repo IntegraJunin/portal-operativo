@@ -667,55 +667,100 @@
             guardarEnExcelPermanente();
         });
 
-       function guardarEnExcelPermanente() {
+     function guardarEnExcelPermanente() {
             const wb = XLSX.utils.book_new();
             const datosArray = [];
 
-            // 1. Array con los nombres EXACTOS y en el ORDEN EXACTO del precios.xlsx original
+            // 1. Encabezados originales
             const encabezadosOriginales = ['In 90', 'In 180', 'In 360', 'Afiliado SEC', 'Asistencial', 'In 90 (OSECAC)'];
-            
-            // 2. Las primeras tres columnas van vacías ("") para igualar el formato original
             datosArray.push(["", "", "", ...encabezadosOriginales]);
 
             baseDeDatos.forEach(reg => {
                 const fila = [
                     reg.categoria,
-                    reg.itemOriginal || reg.item, // Se mantiene el ítem original
+                    reg.itemOriginal || reg.item, 
                     reg.detalle || ""
                 ];
 
-                // 3. Extraemos el precio usando la clave normalizada, iterando en el orden correcto
                 encabezadosOriginales.forEach(encabezado => {
-                    // Normalizamos el encabezado original para buscar en reg.precios (ej: "IN 90 (OSECAC)")
                     const clave = claveComparable(encabezado);
+                    let val = reg.precios[clave];
                     
-                    // Si el valor existe, lo agregamos. Si no, dejamos la celda vacía
-                    fila.push(reg.precios[clave] !== undefined ? reg.precios[clave] : "");
+                    // Si el valor es número válido, lo convertimos a Number para que Excel lo trate como tal
+                    if (val !== undefined && val !== "" && !isNaN(val)) {
+                        fila.push(Number(val));
+                    } else {
+                        // Si es texto (ej: "incluida") o está vacío
+                        fila.push(val !== undefined ? val : "");
+                    }
                 });
 
                 datosArray.push(fila);
             });
 
             const ws = XLSX.utils.aoa_to_sheet(datosArray);
+
+            // 2. Aplicar formato de moneda ($#,##0), alineación y bordes celda por celda
+            const range = XLSX.utils.decode_range(ws['!ref']);
             
-            // 4. Ajustar los anchos de columna para que sean lo más fieles posible al original
+            for (let R = range.s.r; R <= range.e.r; ++R) {
+                for (let C = range.s.c; C <= range.e.c; ++C) {
+                    const cellAddress = XLSX.utils.encode_cell({r: R, c: C});
+                    if (!ws[cellAddress]) continue;
+
+                    // Inicializar objeto de estilos si no existe
+                    if (!ws[cellAddress].s) ws[cellAddress].s = {};
+
+                    // Bordes sutiles para todas las celdas con datos
+                    ws[cellAddress].s.border = {
+                        top: { style: "thin", color: { rgb: "D3D3D3" } },
+                        bottom: { style: "thin", color: { rgb: "D3D3D3" } },
+                        left: { style: "thin", color: { rgb: "D3D3D3" } },
+                        right: { style: "thin", color: { rgb: "D3D3D3" } }
+                    };
+
+                    // Fila de encabezados (Fila 0 / R === 0)
+                    if (R === 0 && C >= 3) {
+                        ws[cellAddress].s.font = { bold: true, color: { rgb: "FFFFFF" } };
+                        ws[cellAddress].s.fill = { fgColor: { rgb: "2F4F4F" } }; // Verde oscuro profesional
+                        ws[cellAddress].s.alignment = { horizontal: "center", vertical: "center" };
+                    } 
+                    // Columnas de precios (Columnas 3 a 8 correspondientes a In 90 hasta OSECAC)
+                    else if (C >= 3 && R > 0) {
+                        const val = ws[cellAddress].v;
+                        if (typeof val === 'number') {
+                            // Formato de moneda exacto sin decimales y con separador de miles
+                            ws[cellAddress].z = '"$"#,##0';
+                        }
+                        ws[cellAddress].s.alignment = { horizontal: "center", vertical: "center" };
+                    } 
+                    // Columnas de texto (Categoría, Ítem, Detalle)
+                    else if (R > 0) {
+                        ws[cellAddress].s.alignment = { horizontal: "left", vertical: "center" };
+                        if (C === 0 || C === 1) {
+                            ws[cellAddress].s.font = { bold: (C === 1) }; // Negrita en los ítems
+                        }
+                    }
+                }
+            }
+            
+            // 3. Anchos de columna optimizados
             ws['!cols'] = [ 
-                {wch: 25}, // Categoría
+                {wch: 28}, // Categoría
                 {wch: 45}, // Ítem
-                {wch: 20}, // Detalle
-                {wch: 12}, // In 90
-                {wch: 12}, // In 180
-                {wch: 12}, // In 360
-                {wch: 15}, // Afiliado SEC
-                {wch: 15}, // Asistencial
+                {wch: 22}, // Detalle
+                {wch: 14}, // In 90
+                {wch: 14}, // In 180
+                {wch: 14}, // In 360
+                {wch: 16}, // Afiliado SEC
+                {wch: 16}, // Asistencial
                 {wch: 18}  // In 90 (OSECAC)
             ];
             
-            // Nombre de la hoja idéntico al precios.xlsx original
             XLSX.utils.book_append_sheet(wb, ws, "JUNIO 2026 (2)"); 
             XLSX.writeFile(wb, "precios.xlsx");
 
-            alert("¡Archivo generado con éxito! Guarda el descargado 'precios.xlsx' reemplazando tu archivo actual.");   
+            alert("¡Archivo 'precios.xlsx' generado con éxito con formato de moneda, centrado y bordes!");   
         }
     </script>
 </body>
