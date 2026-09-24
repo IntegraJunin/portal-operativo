@@ -6,7 +6,7 @@
     <title>Portal Operativo INTEGRA - Acceso Seguro</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -667,18 +667,18 @@
             guardarEnExcelPermanente();
         });
 
-     function guardarEnExcelPermanente() {
+    function guardarEnExcelPermanente() {
             const wb = XLSX.utils.book_new();
             const datosArray = [];
 
-            // 1. Encabezados originales
+            // 1. Encabezados originales para las Columnas D, E, F, G, H, I
             const encabezadosOriginales = ['In 90', 'In 180', 'In 360', 'Afiliado SEC', 'Asistencial', 'In 90 (OSECAC)'];
             datosArray.push(["", "", "", ...encabezadosOriginales]);
 
             baseDeDatos.forEach(reg => {
                 const fila = [
-                    reg.categoria,
-                    reg.itemOriginal || reg.item, 
+                    reg.categoria || "",
+                    reg.itemOriginal || reg.item || "", 
                     reg.detalle || ""
                 ];
 
@@ -686,11 +686,9 @@
                     const clave = claveComparable(encabezado);
                     let val = reg.precios[clave];
                     
-                    // Si el valor es número válido, lo convertimos a Number para que Excel lo trate como tal
                     if (val !== undefined && val !== "" && !isNaN(val)) {
                         fila.push(Number(val));
                     } else {
-                        // Si es texto (ej: "incluida") o está vacío
                         fila.push(val !== undefined ? val : "");
                     }
                 });
@@ -700,45 +698,55 @@
 
             const ws = XLSX.utils.aoa_to_sheet(datosArray);
 
-            // 2. Aplicar formato de moneda ($#,##0), alineación y bordes celda por celda
+            // Activar las líneas de cuadrícula visibles en Excel
+            ws['!sheetviews'] = [{ showGridLines: true }];
+
+            // Estilo de bordes para recuadrar completamente cada celda
+            const estiloBorde = {
+                top: { style: "thin", color: { rgb: "000000" } },
+                bottom: { style: "thin", color: { rgb: "000000" } },
+                left: { style: "thin", color: { rgb: "000000" } },
+                right: { style: "thin", color: { rgb: "000000" } }
+            };
+
+            // 2. Recorrer celdas para aplicar recuadros y centrado
             const range = XLSX.utils.decode_range(ws['!ref']);
             
             for (let R = range.s.r; R <= range.e.r; ++R) {
                 for (let C = range.s.c; C <= range.e.c; ++C) {
                     const cellAddress = XLSX.utils.encode_cell({r: R, c: C});
-                    if (!ws[cellAddress]) continue;
+                    
+                    // Si la celda no existe en el rango, la creamos para mantener el recuadro bordereado uniforme
+                    if (!ws[cellAddress]) {
+                        ws[cellAddress] = { t: 's', v: '' };
+                    }
 
-                    // Inicializar objeto de estilos si no existe
-                    if (!ws[cellAddress].s) ws[cellAddress].s = {};
-
-                    // Bordes sutiles para todas las celdas con datos
-                    ws[cellAddress].s.border = {
-                        top: { style: "thin", color: { rgb: "D3D3D3" } },
-                        bottom: { style: "thin", color: { rgb: "D3D3D3" } },
-                        left: { style: "thin", color: { rgb: "D3D3D3" } },
-                        right: { style: "thin", color: { rgb: "D3D3D3" } }
+                    // Recuadrar la celda con bordes negros
+                    ws[cellAddress].s = {
+                        border: estiloBorde
                     };
 
-                    // Fila de encabezados (Fila 0 / R === 0)
-                    if (R === 0 && C >= 3) {
-                        ws[cellAddress].s.font = { bold: true, color: { rgb: "FFFFFF" } };
-                        ws[cellAddress].s.fill = { fgColor: { rgb: "2F4F4F" } }; // Verde oscuro profesional
-                        ws[cellAddress].s.alignment = { horizontal: "center", vertical: "center" };
+                    // Fila de Encabezados (Fila 1)
+                    if (R === 0) {
+                        if (C >= 3) { // Columnas D, E, F, G, H, I
+                            ws[cellAddress].s.font = { bold: true };
+                            ws[cellAddress].s.alignment = { horizontal: "center", vertical: "center" };
+                        }
                     } 
-                    // Columnas de precios (Columnas 3 a 8 correspondientes a In 90 hasta OSECAC)
-                    else if (C >= 3 && R > 0) {
+                    // Columnas D, E, F, G, H, I (Índices C >= 3)
+                    else if (C >= 3) {
                         const val = ws[cellAddress].v;
                         if (typeof val === 'number') {
-                            // Formato de moneda exacto sin decimales y con separador de miles
-                            ws[cellAddress].z = '"$"#,##0';
+                            ws[cellAddress].z = '"$"#,##0'; // Formato de moneda $ sin decimales
                         }
+                        // CENTRADO ESTRICTO horizontal y vertical para D, E, F, G, H, I
                         ws[cellAddress].s.alignment = { horizontal: "center", vertical: "center" };
                     } 
-                    // Columnas de texto (Categoría, Ítem, Detalle)
-                    else if (R > 0) {
+                    // Columnas A, B, C (Categoría, Ítem, Detalle)
+                    else {
                         ws[cellAddress].s.alignment = { horizontal: "left", vertical: "center" };
-                        if (C === 0 || C === 1) {
-                            ws[cellAddress].s.font = { bold: (C === 1) }; // Negrita en los ítems
+                        if (C === 1) {
+                            ws[cellAddress].s.font = { bold: true };
                         }
                     }
                 }
@@ -746,21 +754,21 @@
             
             // 3. Anchos de columna optimizados
             ws['!cols'] = [ 
-                {wch: 28}, // Categoría
-                {wch: 45}, // Ítem
-                {wch: 22}, // Detalle
-                {wch: 14}, // In 90
-                {wch: 14}, // In 180
-                {wch: 14}, // In 360
-                {wch: 16}, // Afiliado SEC
-                {wch: 16}, // Asistencial
-                {wch: 18}  // In 90 (OSECAC)
+                {wch: 28}, // A: Categoría
+                {wch: 45}, // B: Ítem
+                {wch: 22}, // C: Detalle
+                {wch: 14}, // D: In 90
+                {wch: 14}, // E: In 180
+                {wch: 14}, // F: In 360
+                {wch: 16}, // G: Afiliado SEC
+                {wch: 16}, // H: Asistencial
+                {wch: 18}  // I: In 90 (OSECAC)
             ];
             
             XLSX.utils.book_append_sheet(wb, ws, "JUNIO 2026 (2)"); 
             XLSX.writeFile(wb, "precios.xlsx");
 
-            alert("¡Archivo 'precios.xlsx' generado con éxito con formato de moneda, centrado y bordes!");   
+            alert("¡Archivo 'precios.xlsx' guardado con columnas D-I centradas y celdas recuadradas!");   
         }
     </script>
 </body>
