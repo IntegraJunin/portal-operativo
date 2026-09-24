@@ -664,33 +664,32 @@
         }
 
         document.getElementById('btn-guardar-excel').addEventListener('click', () => {
-            guardarEnExcelPermanente();
-        });
-
-        function guardarEnExcelPermanente() {
+            function guardarEnExcelPermanente() {
             const wb = XLSX.utils.book_new();
             const datosArray = [];
 
             // 1. Array con los nombres EXACTOS y en el ORDEN EXACTO del precios.xlsx original
             const encabezadosOriginales = ['In 90', 'In 180', 'In 360', 'Afiliado SEC', 'Asistencial', 'In 90 (OSECAC)'];
             
-            // 2. Las primeras tres columnas van vacías ("") para igualar el formato original
+            // 2. Fila de cabecera con las primeras 3 columnas vacías como en el original
             datosArray.push(["", "", "", ...encabezadosOriginales]);
 
             baseDeDatos.forEach(reg => {
                 const fila = [
                     reg.categoria,
-                    reg.itemOriginal || reg.item, // Se mantiene el ítem original
+                    reg.itemOriginal || reg.item,
                     reg.detalle || ""
                 ];
 
-                // 3. Extraemos el precio usando la clave normalizada, iterando en el orden correcto
                 encabezadosOriginales.forEach(encabezado => {
-                    // Normalizamos el encabezado original para buscar en reg.precios (ej: "IN 90 (OSECAC)")
                     const clave = claveComparable(encabezado);
+                    let val = reg.precios[clave] !== undefined ? reg.precios[clave] : "";
                     
-                    // Si el valor existe, lo agregamos. Si no, dejamos la celda vacía
-                    fila.push(reg.precios[clave] !== undefined ? reg.precios[clave] : "");
+                    // Asegurar formato numérico correcto si es un número guardado como texto
+                    if (val !== "" && !isNaN(val) && encabezado !== 'In 360') {
+                        val = Number(val);
+                    }
+                    fila.push(val);
                 });
 
                 datosArray.push(fila);
@@ -698,11 +697,11 @@
 
             const ws = XLSX.utils.aoa_to_sheet(datosArray);
             
-            // 4. Ajustar los anchos de columna para que sean lo más fieles posible al original
+            // 3. Aplicar anchos de columna profesionales idénticos al original
             ws['!cols'] = [ 
-                {wch: 25}, // Categoría
-                {wch: 45}, // Ítem
-                {wch: 20}, // Detalle
+                {wch: 28}, // Categoría / Grupo
+                {wch: 45}, // Práctica / Ítem
+                {wch: 22}, // Detalle
                 {wch: 12}, // In 90
                 {wch: 12}, // In 180
                 {wch: 12}, // In 360
@@ -711,10 +710,10 @@
                 {wch: 18}  // In 90 (OSECAC)
             ];
             
-            XLSX.utils.book_append_sheet(wb, ws, "Hoja1"); // Opcional: poner "Hoja1" que es el estándar
-            XLSX.writeFile(wb, "precios.xlsx"); // Recomendado usar el mismo nombre
+            XLSX.utils.book_append_sheet(wb, ws, "JUNIO 2026 (2)"); 
+            XLSX.writeFile(wb, "precios.xlsx");
 
-            alert("¡Archivo generado con éxito! Guarda el descargado 'precios.xlsx' reemplazando tu archivo actual.");   
+            alert("¡Archivo 'precios.xlsx' generado y actualizado con éxito!");   
         }
     </script>
 </body>
