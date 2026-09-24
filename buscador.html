@@ -401,105 +401,91 @@
             return p.includes(letra) && !['A','B','C'].filter(l => l!==letra).some(l=>p.includes(l));
         }
 
-        // 1. Corrección de SERVICIOS_GRUPOS (Incluye Enfermería, Kinesiología y corrige Cavitador)
-const SERVICIOS_GRUPOS = [
-    {
-        id: 'cuotas',
-        titulo: '💳 CUOTAS',
-        items: [
-            { id: 'cs', nombre: 'SOCIO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('CUOTA') && (txt.includes('SOCIO') || txt.includes('SOC')); } },
-            { id: 'cp', nombre: 'SEPELIO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('SEPELIO'); } }
-        ]
-    },
-    {
-        id: 'consultas',
-        titulo: '🩺 CONSULTAS Y SALUD',
-        items: [
-            { id: 'ca', nombre: 'CONSULTA A', coincide: (i,c) => esConsultaDeLetra(i,c,'A') },
-            { id: 'cb', nombre: 'CONSULTA B', coincide: (i,c) => esConsultaDeLetra(i,c,'B') },
-            { id: 'cc', nombre: 'CONSULTA C', coincide: (i,c) => esConsultaDeLetra(i,c,'C') },
-            { id: 'nu', nombre: 'NUTRICION', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('NUTRICI') },
-            { id: 'co', nombre: 'ODONTOLOGIA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('ODONTO') && txt.includes('CONSULTA'); } },
-            { id: 'kin', nombre: 'KINESIOLOGIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('KINESIO') },
-            { id: 'enf', nombre: 'ENFERMERIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('ENFERM') }
-        ]
-    },
-    {
-        id: 'practicas_odonto',
-        titulo: '🦷 ODONTOLOGIA',
-        items: [
-            { id: 'po_cir', nombre: 'CIRUGIAS ODONTOLOGICAS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CIRUGI') },
-            { id: 'po_con', nombre: 'CONDUCTOS ODONTOLOGICOS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CONDUCTO') },
-            // CORREGIDO: ahora evalúa la categoría 'c' o el texto combinado
-            { id: 'po_cav', nombre: 'CAVITADOR (METODO DE LIMPIEZA)', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CAVITADOR') },
-            { id: 'po_sel', nombre: 'SELLADOR', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('SELLADOR') },
-            { id: 'po_obl', nombre: 'OBTURACION LAMPARA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('OBTURAC') && txt.includes('LAMPARA'); } },
-            { id: 'po_oba', nombre: 'OBTURACION CON AMALGAMA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('OBTURAC') && txt.includes('AMALGAMA'); } },
-            { id: 'po_obi', nombre: 'OBTURACION CON IONOMERO VITRIO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('OBTURAC') && (txt.includes('IONOMERO') || txt.includes('VITRIO')); } },
-            { id: 'po_ext', nombre: 'EXTRACCIONES', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('EXTRACCION') },
-            { id: 'po_rep', nombre: 'REPARACION', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('REPARAC') },
-            { id: 'po_pac', nombre: 'PROTESIS ACRILICO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('PROTESIS') && txt.includes('ACRILIC'); } },
-            { id: 'po_pla', nombre: 'PLACAS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PLACA') },
-            { id: 'po_cro', nombre: 'CROMO', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CROMO') },
-            { id: 'po_fij', nombre: 'FIJAS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('FIJA') },
-            { id: 'po_pfl', nombre: 'PROTESIS FLEXIBLES', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('PROTESIS') && txt.includes('FLEXIBLE'); } }
-        ]
-    },
-    {
-        id: 'salones',
-        titulo: '🏛️ SALONES',
-        items: [
-            { id: 's1', nombre: 'SALON 1', coincide: (i,c) => { const it = quitarAcentos(i).toUpperCase(); const txt = quitarAcentos(i+' '+c).toUpperCase(); return !it.includes('QUINCHO') && (/\bsalon\s*(?:n[°º\.]?\s*)?1\b/i.test(txt) || (it.includes('SALON') && it.includes('1'))); } },
-            { id: 's2', nombre: 'SALON 2', coincide: (i,c) => { const it = quitarAcentos(i).toUpperCase(); const txt = quitarAcentos(i+' '+c).toUpperCase(); return !it.includes('QUINCHO') && (/\bsalon\s*(?:n[°º\.]?\s*)?2\b/i.test(txt) || (it.includes('SALON') && it.includes('2'))); } },
-            { id: 's3', nombre: 'SALON 3', coincide: (i,c) => { const it = quitarAcentos(i).toUpperCase(); const txt = quitarAcentos(i+' '+c).toUpperCase(); return !it.includes('QUINCHO') && (/\bsalon\s*(?:n[°º\.]?\s*)?3\b/i.test(txt) || (it.includes('SALON') && it.includes('3'))); } },
-            { id: 'qu', nombre: 'QUINCHOS 1 Y 2', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('QUINCHO') },
-            { id: 'aud', nombre: 'AUDITORIO', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('AUDITORIO') },
-            { id: 'sinst', nombre: 'INSTITUCIONES', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('INSTITUCIONES') }
-        ]
-    },
-    {
-        id: 'recreacion',
-        titulo: '⚽ RECREACIÓN',
-        items: [
-            { id: 'em', nombre: 'ESCUELA MUSICA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('MUSICA') }
-        ]
-    },
-    {
-        id: 'cuidado_personal',
-        titulo: '💆 CUIDADO PERSONAL',
-        items: [
-            { id: 'cp_mas', nombre: 'MASAJES', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('MASAJE') },
-            { id: 'cp_pod', nombre: 'PODOLOGIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PODOLOG') },
-            { id: 'cp_cos', nombre: 'COSMETOLOGIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('COSMETO') },
-            { id: 'cp_pel', nombre: 'PELUQUERIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PELUQUER') }
-        ]
-    },
-    {
-        id: 'turismo',
-        titulo: '✈️ TURISMO',
-        items: [
-            { id: 'tu_lag', nombre: 'LAGUNA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('LAGUNA') },
-            { id: 'tu_arr', nombre: 'ARROYO DE LOS PATOS', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('ARROYO') || txt.includes('ARROLLO') || txt.includes('PATOS'); } },
-            { id: 'tu_res', nombre: 'GASTOS DE RESERVA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('RESERVA') || (txt.includes('GASTO') && txt.includes('RESERVA')); } }
-        ]
-    }
-];
-
-// 2. Desactivar Convenio cuando se selecciona un Servicio (para evitar conflicto de 0 resultados)
-function renderizarFiltroConvenios(){
-    const cont = document.getElementById('fila-convenios');
-    cont.innerHTML = `<button class="chip-filtro activo" data-convenio="">TODOS</button>` +
-        CONVENIOS_FIJOS.map((c, i) => `<button class="chip-filtro" data-convenio="${i}">${c.nombre}</button>`).join('');
-
-    cont.querySelectorAll('.chip-filtro').forEach(btn => {
-        btn.addEventListener('click', () => {
-            convenioActivo = btn.dataset.convenio !== '' ? CONVENIOS_FIJOS[Number(btn.dataset.convenio)] : null;
-            cont.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
-            btn.classList.add('activo');
-            aplicarBusquedaYFiltro();
-        });
-    });
-}
+        const SERVICIOS_GRUPOS = [
+            {
+                id: 'cuotas',
+                titulo: '💳 CUOTAS',
+                items: [
+                    { id: 'cs', nombre: 'SOCIO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('CUOTA') && (txt.includes('SOCIO') || txt.includes('SOC')); } },
+                    { id: 'cp', nombre: 'SEPELIO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('SEPELIO'); } }
+                ]
+            },
+            {
+                id: 'consultas',
+                titulo: '🩺 CONSULTAS Y SALUD',
+                items: [
+                    { id: 'ca', nombre: 'CONSULTA A', coincide: (i,c) => esConsultaDeLetra(i,c,'A') },
+                    { id: 'cb', nombre: 'CONSULTA B', coincide: (i,c) => esConsultaDeLetra(i,c,'B') },
+                    { id: 'cc', nombre: 'CONSULTA C', coincide: (i,c) => esConsultaDeLetra(i,c,'C') },
+                    { id: 'nu', nombre: 'NUTRICION', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('NUTRICI') },
+                    { id: 'co', nombre: 'ODONTOLOGIA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('ODONTO') && txt.includes('CONSULTA'); } },
+                    { id: 'kin', nombre: 'KINESIOLOGIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('KINESIO') },
+                    { id: 'enf', nombre: 'ENFERMERIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('ENFERM') }
+                ]
+            },
+            {
+                id: 'practicas_odonto',
+                titulo: '🦷 ODONTOLOGIA',
+                items: [
+                    { id: 'po_cir', nombre: 'CIRUGIAS ODONTOLOGICAS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CIRUGI') },
+                    { id: 'po_con', nombre: 'CONDUCTOS ODONTOLOGICOS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CONDUCTO') },
+                    { id: 'po_cav', nombre: 'CAVITADOR (METODO DE LIMPIEZA)', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CAVITADOR') },
+                    { id: 'po_sel', nombre: 'SELLADOR', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('SELLADOR') },
+                    { id: 'po_obl', nombre: 'OBTURACION LAMPARA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('OBTURAC') && txt.includes('LAMPARA'); } },
+                    { id: 'po_oba', nombre: 'OBTURACION CON AMALGAMA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('OBTURAC') && txt.includes('AMALGAMA'); } },
+                    { id: 'po_obi', nombre: 'OBTURACION CON IONOMERO VITRIO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('OBTURAC') && (txt.includes('IONOMERO') || txt.includes('VITRIO')); } },
+                    { id: 'po_ext', nombre: 'EXTRACCIONES', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('EXTRACCION') },
+                    { id: 'po_rep', nombre: 'REPARACION', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('REPARAC') },
+                    { id: 'po_pac', nombre: 'PROTESIS ACRILICO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('PROTESIS') && txt.includes('ACRILIC'); } },
+                    { id: 'po_pla', nombre: 'PLACAS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PLACA') },
+                    { id: 'po_cro', nombre: 'CROMO', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('CROMO') },
+                    { id: 'po_fij', nombre: 'FIJAS', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('FIJA') },
+                    { id: 'po_pfl', nombre: 'PROTESIS FLEXIBLES', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('PROTESIS') && txt.includes('FLEXIBLE'); } }
+                ]
+            },
+            {
+                id: 'salones',
+                titulo: '🏛️ SALONES',
+                items: [
+                    { id: 's1', nombre: 'SALON 1', coincide: (i,c) => { const it = quitarAcentos(i).toUpperCase(); const txt = quitarAcentos(i+' '+c).toUpperCase(); return !it.includes('QUINCHO') && (/\bsalon\s*(?:n[°º\.]?\s*)?1\b/i.test(txt) || (it.includes('SALON') && it.includes('1'))); } },
+                    { id: 's2', nombre: 'SALON 2', coincide: (i,c) => { const it = quitarAcentos(i).toUpperCase(); const txt = quitarAcentos(i+' '+c).toUpperCase(); return !it.includes('QUINCHO') && (/\bsalon\s*(?:n[°º\.]?\s*)?2\b/i.test(txt) || (it.includes('SALON') && it.includes('2'))); } },
+                    { id: 's3', nombre: 'SALON 3', coincide: (i,c) => { const it = quitarAcentos(i).toUpperCase(); const txt = quitarAcentos(i+' '+c).toUpperCase(); return !it.includes('QUINCHO') && (/\bsalon\s*(?:n[°º\.]?\s*)?3\b/i.test(txt) || (it.includes('SALON') && it.includes('3'))); } },
+                    { id: 'qu', nombre: 'QUINCHOS 1 Y 2', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('QUINCHO') },
+                    { id: 'aud', nombre: 'AUDITORIO', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('AUDITORIO') },
+                    { id: 'sinst', nombre: 'INSTITUCIONES', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('INSTITUCIONES') }
+                ]
+            },
+            {
+                id: 'recreacion',
+                titulo: '⚽ RECREACIÓN Y DEPORTES',
+                items: [
+                    { id: 'pil', nombre: 'PILETA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('PILETA') || txt.includes('NATAT'); } },
+                    { id: 'col_v', nombre: 'COLONIA VERANO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('COLONIA') && (txt.includes('VERANO') || !txt.includes('INVIERNO')); } },
+                    { id: 'col_i', nombre: 'COLONIA INVIERNO', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('COLONIA') && txt.includes('INVIERNO'); } },
+                    { id: 'ef', nombre: 'ESCUELA DE FUTBOL', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('FUTBOL') || txt.includes('FOTBOL'); } },
+                    { id: 'em', nombre: 'ESCUELA DE MUSICA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('MUSICA') }
+                ]
+            },
+            {
+                id: 'cuidado_personal',
+                titulo: '💆 CUIDADO PERSONAL',
+                items: [
+                    { id: 'cp_mas', nombre: 'MASAJES', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('MASAJE') },
+                    { id: 'cp_pod', nombre: 'PODOLOGIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PODOLOG') },
+                    { id: 'cp_cos', nombre: 'COSMETOLOGIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('COSMETO') },
+                    { id: 'cp_pel', nombre: 'PELUQUERIA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('PELUQUER') }
+                ]
+            },
+            {
+                id: 'turismo',
+                titulo: '✈️ TURISMO',
+                items: [
+                    { id: 'tu_lag', nombre: 'LAGUNA', coincide: (i,c) => quitarAcentos(i+' '+c).toUpperCase().includes('LAGUNA') },
+                    { id: 'tu_arr', nombre: 'ARROYO DE LOS PATOS', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('ARROYO') || txt.includes('ARROLLO') || txt.includes('PATOS'); } },
+                    { id: 'tu_res', nombre: 'GASTOS DE RESERVA', coincide: (i,c) => { const txt = quitarAcentos(i+' '+c).toUpperCase(); return txt.includes('RESERVA') || (txt.includes('GASTO') && txt.includes('RESERVA')); } }
+                ]
+            }
+        ];
 
         let servicioActivo = null;
         function renderizarFiltroServicios(){
@@ -549,6 +535,15 @@ function renderizarFiltroConvenios(){
                 btn.addEventListener('click', () => {
                     const id = btn.dataset.servicio;
                     servicioActivo = id ? todosItems.find(it => it.id === id) : null;
+
+                    // Si se activa un filtro de servicio específico, limpiamos el filtro de convenios
+                    if (servicioActivo && convenioActivo) {
+                        convenioActivo = null;
+                        const contConv = document.getElementById('fila-convenios');
+                        contConv.querySelectorAll('.chip-filtro').forEach(b => b.classList.remove('activo'));
+                        contConv.querySelector('.chip-filtro[data-convenio=""]')?.classList.add('activo');
+                    }
+
                     document.querySelectorAll('#fila-cuotas .chip-filtro, #fila-consultas .chip-filtro, #fila-odontologia .chip-filtro, #contenedor-servicios .chip-filtro').forEach(b => b.classList.remove('activo'));
 
                     if (servicioActivo) {
