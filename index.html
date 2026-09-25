@@ -139,6 +139,27 @@
         min-height:calc(100vh - 190px);
     }
     .frame-container iframe{ width:100%; height:calc(100vh - 190px); min-height:600px; border:none; display:block; }
+
+    /* ESTILOS MODAL LOGIN EDITOR */
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
+        display: flex; align-items: center; justify-content: center; z-index: 9999;
+    }
+    .modal-card {
+        background: var(--card); padding: 2rem; border-radius: 1.5rem;
+        width: 90%; max-width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    .modal-card h3 { margin-top: 0; color: var(--brand); font-size: 1.3rem; margin-bottom: 0.5rem; }
+    .modal-card p { font-size: 0.85rem; color: #666; margin-bottom: 1.2rem; }
+    .modal-card input {
+        width: 100%; padding: 0.75rem 1rem; margin-bottom: 0.8rem;
+        border: 1px solid var(--line); border-radius: 10px; font-family: inherit; font-size: 0.9rem;
+    }
+    .modal-card input:focus { outline: 2px solid var(--accent); }
+    .modal-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.5rem; }
+    .btn-cancelar { background: var(--pill); border: none; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-family: 'Outfit', sans-serif; font-weight: 600; color: var(--brand); }
+    .btn-ingresar { background: var(--accent); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer; font-family: 'Outfit', sans-serif; font-weight: 700; }
 </style>
 </head>
 <body>
@@ -219,6 +240,22 @@
         </div>
     </div>
 
+</div>
+
+<!-- MODAL DE LOGIN -->
+<div id="modal-login" class="modal-overlay hidden">
+    <div class="modal-card">
+        <h3>🔒 Acceso Restringido</h3>
+        <p>Ingresá tus credenciales para acceder al Editor Exclusivo.</p>
+        <form onsubmit="event.preventDefault(); iniciarSesion();">
+            <input type="text" id="inputUsuario" placeholder="Usuario" required autocomplete="username">
+            <input type="password" id="inputPassword" placeholder="Contraseña" required autocomplete="current-password">
+            <div class="modal-actions">
+                <button type="button" onclick="cerrarModalLogin()" class="btn-cancelar">Cancelar</button>
+                <button type="submit" class="btn-ingresar">Ingresar</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script>
@@ -332,7 +369,64 @@
         tituloId: 'visor-titulo-solicitudes', descargaId: 'visor-descarga-solicitudes', bodyId: 'visor-body-solicitudes'
     });
 
+    // ----------------------------------------------------
+    // LÓGICA DE AUTENTICACIÓN Y NAVEGACIÓN
+    // ----------------------------------------------------
+
+    function tieneSesion() {
+        return document.cookie.split('; ').some(row => row.startsWith('admin_session=authenticated'));
+    }
+
+    function abrirModalLogin() {
+        document.getElementById('modal-login').classList.remove('hidden');
+    }
+
+    function cerrarModalLogin() {
+        document.getElementById('modal-login').classList.add('hidden');
+        // Limpiar los campos al cerrar
+        document.getElementById('inputUsuario').value = '';
+        document.getElementById('inputPassword').value = '';
+    }
+
+    async function iniciarSesion() {
+        const user = document.getElementById('inputUsuario').value;
+        const password = document.getElementById('inputPassword').value;
+
+        try {
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                cerrarModalLogin();
+                // Recarga el iframe para que Vercel sirva el editor ya autenticado
+                const iframeEditor = document.querySelector('#sec-editor iframe');
+                if (iframeEditor) iframeEditor.src = 'editor.html';
+                
+                mostrarSeccionDirecto('editor');
+            } else {
+                alert(data.message || 'Credenciales incorrectas');
+            }
+        } catch (error) {
+            alert('Error de conexión con el servidor');
+        }
+    }
+
     function mostrarSeccion(seccion){
+        // Si intenta entrar al editor y no está autenticado, abre el modal
+        if (seccion === 'editor' && !tieneSesion()) {
+            abrirModalLogin();
+            return;
+        }
+        // Si ya está autenticado o es otra sección, la muestra normal
+        mostrarSeccionDirecto(seccion);
+    }
+
+    function mostrarSeccionDirecto(seccion){
         const secciones = {
             manuales: document.getElementById('sec-manuales'),
             solicitudes: document.getElementById('sec-solicitudes'),
