@@ -1,5 +1,25 @@
 [
   {
+    "idRegistro": 200,
+    "categoria": "CMD (FAMYL)",
+    "item": "ESPIROMETRIA",
+    "precios": {
+      "IN 360": 25000,
+      "AFILIADO SEC": 25000,
+      "ASISTENCIAL": 25000
+    }
+  },
+  {
+    "idRegistro": 199,
+    "categoria": "CMD (FAMYL)",
+    "item": "ERGOMETRIA",
+    "precios": {
+      "IN 360": 68000,
+      "AFILIADO SEC": 68000,
+      "ASISTENCIAL": 68000
+    }
+  },
+  {
     "idRegistro": 0,
     "item": "SEPELIO",
     "itemOriginal": "SEPELIO",
