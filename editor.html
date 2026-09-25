@@ -185,7 +185,7 @@
             </div>
 
             <p class="text-xs text-gray-500 font-medium leading-relaxed">
-                Ingrese sus credenciales de repositorio para sincronizar <strong>precios.json</strong> automáticamente sin descargas.
+                Ingrese sus credenciales de repositorio para sincronizar <strong>precios.json</strong> y descargar copias de seguridad.
             </p>
 
             <div class="space-y-3 text-xs font-bold">
@@ -224,17 +224,17 @@
         </div>
     </div>
 
-    <!-- CONTENIDO PRINCIPAL (OCULTO HASTA AUTENTICARSE) -->
+    <!-- CONTENIDO PRINCIPAL -->
     <div id="contenido-principal" class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-0 overflow-hidden hidden">
         
-        <!-- COLUMNA IZQUIERDA: FILTRO Y NÚCLEO PARA AGREGAR ÍTEMS -->
+        <!-- COLUMNA IZQUIERDA -->
         <aside class="lg:col-span-4 xl:col-span-4 h-full overflow-y-auto pr-2 space-y-3">
             <div class="flex justify-between items-center sticky top-0 bg-[#f4e7dc] py-1 z-10">
                 <h2 class="text-lg font-extrabold text-[#3b291a]">Panel de Control</h2>
                 <button onclick="cerrarSesion()" class="text-xs font-bold text-red-700 hover:underline bg-white px-2.5 py-1 rounded-lg border border-[#e5d3c5]">Cerrar Sesión</button>
             </div>
 
-            <!-- FILTRO DE CATEGORÍA (ÚNICAMENTE LISTA DESPLEGABLE) -->
+            <!-- FILTRO DE CATEGORÍA -->
             <div class="filtro-card">
                 <div class="filtro-titulo"><span>🏷️</span> FILTRO POR CATEGORÍA</div>
                 <select id="select-categoria" class="w-full p-2.5 text-xs font-bold rounded-xl border border-[#e5d3c5] bg-white text-gray-700 outline-none focus:ring-2 focus:ring-[#b85a3c] shadow-sm">
@@ -288,13 +288,18 @@
             </div>
         </aside>
 
-        <!-- COLUMNA DERECHA: RESULTADOS Y TABLA -->
+        <!-- COLUMNA DERECHA -->
         <main class="lg:col-span-8 xl:col-span-8 h-full overflow-y-auto pr-2 flex flex-col gap-3">
-            <div class="flex justify-between items-center sticky top-0 bg-[#f4e7dc] py-1 z-10">
+            <div class="flex flex-wrap justify-between items-center sticky top-0 bg-[#f4e7dc] py-1 z-10 gap-2">
                 <h2 class="text-lg font-extrabold text-[#3b291a]">Editor Exclusivo de Precios</h2>
                 
-                <div class="flex items-center gap-2">
-                    <button onclick="abrirConfigGitHub()" class="p-2 rounded-xl border border-[#e5d3c5] bg-white text-xs font-bold text-gray-600 hover:bg-gray-50 shadow-sm" title="Configurar GitHub">
+                <div class="flex flex-wrap items-center gap-2">
+                    <!-- BOTÓN DE BACKUP DEL REPOSITORIO -->
+                    <button onclick="descargarBackupRepo()" id="btn-backup-repo" class="px-3 py-1.5 rounded-xl border-2 border-[#b85a3c] bg-white text-xs font-extrabold text-[#b85a3c] hover:bg-[#b85a3c] hover:text-white transition shadow-sm flex items-center gap-1.5 cursor-pointer" title="Descargar copia de seguridad completa del repositorio">
+                        <span>📦</span> Backup Repo
+                    </button>
+
+                    <button onclick="abrirConfigGitHub()" class="p-2 rounded-xl border border-[#e5d3c5] bg-white text-xs font-bold text-gray-600 hover:bg-gray-50 shadow-sm cursor-pointer" title="Configurar GitHub">
                         ⚙️ GitHub
                     </button>
 
@@ -408,6 +413,64 @@
                 path: localStorage.getItem('gh_path') || 'precios.json',
                 branch: localStorage.getItem('gh_branch') || 'main'
             };
+        }
+
+        // --- DESCARGAR BACKUP COMPLETO EN ZIP DESDE GITHUB ---
+        async function descargarBackupRepo() {
+            const config = obtenerConfigGitHub();
+            if (!config.token || !config.owner || !config.repo) {
+                abrirConfigGitHub();
+                alert("Por favor configure sus datos de acceso a GitHub para descargar el backup.");
+                return;
+            }
+
+            const btn = document.getElementById('btn-backup-repo');
+            const textoOriginal = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = "<span>⏳</span> Descargando...";
+
+            try {
+                const url = `https://api.github.com/repos/${config.owner}/${config.repo}/zipball/${config.branch}`;
+                const res = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${config.token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    throw new Error(errData.message || `Error status: ${res.status}`);
+                }
+
+                const blob = await res.blob();
+                
+                const ahora = new Date();
+                const anio = ahora.getFullYear();
+                const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+                const dia = String(ahora.getDate()).padStart(2, '0');
+                const horas = String(ahora.getHours()).padStart(2, '0');
+                const minutos = String(ahora.getMinutes()).padStart(2, '0');
+                
+                const nombreArchivo = `Backup_${anio}-${mes}-${dia}_${horas}-${minutos}.zip`;
+
+                const urlBlob = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = urlBlob;
+                a.download = nombreArchivo;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(urlBlob);
+
+                alert(`✅ Backup descargado con éxito:\n\n${nombreArchivo}`);
+            } catch (err) {
+                console.error(err);
+                alert(`❌ No se pudo descargar el backup: ${err.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = textoOriginal;
+            }
         }
 
         // --- LÓGICA PRINCIPAL DEL SISTEMA DE PRECIOS ---
@@ -649,14 +712,12 @@
             contenedor.innerHTML = `<table><thead>${theadHTML}</thead><tbody>${tbodyHTML}</tbody></table>`;
         }
 
-        // --- CONVERSIÓN UTF-8 A BASE64 PARA LA API DE GITHUB ---
         function utf8ToBase64(str) {
             const bytes = new TextEncoder().encode(str);
             const binString = Array.from(bytes, (byte) => String.fromCharCode(byte)).join("");
             return btoa(binString);
         }
 
-        // --- GUARDADO DIRECTO A GITHUB VIA API ---
         async function guardarEnJSON() {
             if (!baseDeDatos || baseDeDatos.length === 0) {
                 alert("No hay datos cargados para guardar.");
@@ -679,7 +740,6 @@
                 const jsonString = JSON.stringify(baseDeDatos, null, 2);
                 const urlGet = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.path}?ref=${config.branch}`;
 
-                // 1. Obtener el SHA actual del archivo en GitHub para actualizarlo correctamente
                 const resGet = await fetch(urlGet, {
                     headers: {
                         'Authorization': `Bearer ${config.token}`,
@@ -696,7 +756,6 @@
                     throw new Error(`Error en GitHub GET: ${errData.message || resGet.statusText}`);
                 }
 
-                // 2. Commit directo del nuevo contenido mediante la API
                 const bodyPut = {
                     message: `Actualización de precios.json (${new Date().toLocaleString('es-AR')})`,
                     content: utf8ToBase64(jsonString),
