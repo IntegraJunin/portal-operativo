@@ -143,7 +143,7 @@
 </head>
 <body class="p-3 md:p-4 flex flex-col h-screen overflow-hidden">
 
-    <!-- PANTALLA DE LOGIN (MODAL / OVERLAY) -->
+    <!-- PANTALLA DE LOGIN -->
     <div id="pantalla-login" class="fixed inset-0 z-50 bg-[#f4e7dc] flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl border border-[#e5d3c5] shadow-xl p-8 w-full max-w-md flex flex-col items-center">
             <div class="w-16 h-16 bg-[#fbf5ef] border border-[#e5d3c5] rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-sm">
@@ -294,7 +294,6 @@
                 <h2 class="text-lg font-extrabold text-[#3b291a]">Editor Exclusivo de Precios</h2>
                 
                 <div class="flex flex-wrap items-center gap-2">
-                    <!-- BOTÓN DE BACKUP DEL REPOSITORIO -->
                     <button onclick="descargarBackupRepo()" id="btn-backup-repo" class="px-3 py-1.5 rounded-xl border-2 border-[#b85a3c] bg-white text-xs font-extrabold text-[#b85a3c] hover:bg-[#b85a3c] hover:text-white transition shadow-sm flex items-center gap-1.5 cursor-pointer" title="Descargar copia de seguridad completa del repositorio">
                         <span>📦</span> Backup Repo
                     </button>
@@ -415,32 +414,31 @@
             };
         }
 
-      // --- DESCARGAR BACKUP COMPLETO EN ZIP DESDE GITHUB ---
-function descargarBackupRepo() {
-    const config = obtenerConfigGitHub();
-    if (!config.owner || !config.repo) {
-        abrirConfigGitHub();
-        alert("Por favor configure Usuario / Org y Repositorio para descargar el backup.");
-        return;
-    }
+        // --- DESCARGAR BACKUP COMPLETO EN ZIP DESDE GITHUB ---
+        function descargarBackupRepo() {
+            const config = obtenerConfigGitHub();
+            if (!config.owner || !config.repo) {
+                abrirConfigGitHub();
+                alert("Por favor configure Usuario / Org y Repositorio para descargar el backup.");
+                return;
+            }
 
-    const btn = document.getElementById('btn-backup-repo');
-    const textoOriginal = btn.innerHTML;
-    btn.innerHTML = "<span>⏳</span> Iniciando...";
+            const btn = document.getElementById('btn-backup-repo');
+            const textoOriginal = btn.innerHTML;
+            btn.innerHTML = "<span>⏳</span> Iniciando...";
 
-    // Enlace directo de descarga de GitHub (evita el bloqueo de CORS)
-    const urlDescarga = `https://github.com/${config.owner}/${config.repo}/archive/refs/heads/${config.branch}.zip`;
+            const urlDescarga = `https://github.com/${config.owner}/${config.repo}/archive/refs/heads/${config.branch}.zip`;
 
-    const a = document.createElement('a');
-    a.href = urlDescarga;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+            const a = document.createElement('a');
+            a.href = urlDescarga;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
 
-    setTimeout(() => {
-        btn.innerHTML = textoOriginal;
-    }, 2000);
-}
+            setTimeout(() => {
+                btn.innerHTML = textoOriginal;
+            }, 2000);
+        }
 
         // --- LÓGICA PRINCIPAL DEL SISTEMA DE PRECIOS ---
         function normalizar(v){ return String(v ?? '').trim(); }
@@ -597,6 +595,49 @@ function descargarBackupRepo() {
             alert(`¡Práctica "${itemNombre}" agregada temporalmente a la base!\n\nHaga clic en "☁️ Guardar en GitHub" para hacer permanentes los cambios.`);
         }
 
+        // --- ELIMINAR PRÁCTICA / SERVICIO COMPLETO CON CONFIRMACIÓN ---
+        function eliminarRegistro(idReg) {
+            const reg = baseDeDatos.find(r => r.idRegistro === idReg);
+            if (!reg) return;
+
+            const confirmar = confirm(
+                `⚠️ ¿Está seguro de que desea eliminar esta práctica/servicio?\n\n` +
+                `• Categoría: ${reg.categoria}\n` +
+                `• Práctica: ${reg.item}\n\n` +
+                `Esta acción removerá el registro de la lista actual.`
+            );
+
+            if (confirmar) {
+                baseDeDatos = baseDeDatos.filter(r => r.idRegistro !== idReg);
+                poblarCategorias();
+                aplicarBusquedaYFiltro();
+                alert(`✅ Práctica "${reg.item}" eliminada. Recuerde guardar los cambios en GitHub.`);
+            }
+        }
+
+        // --- ACTUALIZAR O ELIMINAR PRECIO INDIVIDUAL CON CONFIRMACIÓN ---
+        function actualizarPrecioEnBase(idReg, clavePlan, nuevoValor) {
+            const reg = baseDeDatos.find(r => r.idRegistro === idReg);
+            if (!reg) return;
+
+            if (!reg.precios) reg.precios = {};
+
+            const valorLimpio = nuevoValor.trim();
+
+            if (valorLimpio === '' || valorLimpio === null) {
+                if (reg.precios[clavePlan] !== undefined) {
+                    const confirmar = confirm(`¿Desea eliminar el precio de "${clavePlan}" para "${reg.item}"?`);
+                    if (confirmar) {
+                        delete reg.precios[clavePlan];
+                    }
+                }
+                aplicarBusquedaYFiltro();
+            } else {
+                const numVal = Number(valorLimpio);
+                reg.precios[clavePlan] = (!isNaN(numVal) && valorLimpio !== '') ? numVal : valorLimpio;
+            }
+        }
+
         function buscarEstricto(termino){
             const t = quitarAcentos(termino).toLowerCase().trim();
             if (!t) return [];
@@ -616,7 +657,7 @@ function descargarBackupRepo() {
                 resultados = resultados.filter(r => r.categoria === categoriaSeleccionada);
             }
 
-            document.getElementById('texto-resultados').textContent = `Mostrando ${resultados.length} de ${baseDeDatos.length} registros.`;
+            document.getElementById('texto-resultados').textContent = `Mostrando ${resultados.length} de${baseDeDatos.length} registros.`;
             renderizarTabla(resultados);
         }
 
@@ -633,19 +674,7 @@ function descargarBackupRepo() {
             return !isNaN(numero) ? new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(numero) : valor;
         }
 
-        function actualizarPrecioEnBase(idReg, clavePlan, nuevoValor) {
-            const reg = baseDeDatos.find(r => r.idRegistro === idReg);
-            if (reg) {
-                if (!reg.precios) reg.precios = {};
-                if (nuevoValor === '' || nuevoValor === null) {
-                    delete reg.precios[clavePlan];
-                } else {
-                    const numVal = Number(nuevoValor);
-                    reg.precios[clavePlan] = (!isNaN(numVal) && nuevoValor.trim() !== '') ? numVal : nuevoValor;
-                }
-            }
-        }
-
+        // --- RENDERIZADO DE TABLA ---
         function renderizarTabla(datos) {
             const contenedor = document.getElementById('tabla-wrap');
             if (!datos || datos.length === 0) {
@@ -654,10 +683,12 @@ function descargarBackupRepo() {
             }
 
             const columnas = ORDEN_PLANES;
-            const theadHTML = `<tr><th>Práctica / Servicio</th>${columnas.map((clave) => `<th>${clave.toUpperCase()}</th>`).join('')}</tr>`;
+            const thAccion = modoEdicion ? `<th style="width: 40px; text-align: center;">Borrar</th>` : ``;
+            const theadHTML = `<tr>${thAccion}<th>Práctica / Servicio</th>${columnas.map((clave) => `<th>${clave.toUpperCase()}</th>`).join('')}</tr>`;
             
             const tbodyHTML = datos.map((r) => `
                 <tr>
+                    ${modoEdicion ? `<td style="text-align: center;"><button onclick="eliminarRegistro(${r.idRegistro})" class="text-red-500 hover:text-red-700 font-bold text-sm cursor-pointer p-1" title="Eliminar registro completo">🗑️</button></td>` : ''}
                     <td class="celda-item"><span class="celda-categoria">${r.categoria}</span><br>${r.item}</td>
                     ${columnas.map((clave) => {
                         const tiene = r.precios && r.precios[clave] !== undefined;
@@ -669,6 +700,7 @@ function descargarBackupRepo() {
                                     type="text" 
                                     class="input-precio-edit" 
                                     value="${valorActual}" 
+                                    placeholder="—"
                                     onchange="actualizarPrecioEnBase(${r.idRegistro}, '${clave}', this.value)"
                                 >
                             </td>`;
