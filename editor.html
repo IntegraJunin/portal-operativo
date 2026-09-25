@@ -174,6 +174,56 @@
         </div>
     </div>
 
+    <!-- MODAL DE CONFIGURACIÓN GITHUB -->
+    <div id="modal-config-github" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl border border-[#e5d3c5] shadow-2xl p-6 w-full max-w-md flex flex-col gap-4">
+            <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+                <h3 class="font-extrabold text-[#3b291a] text-base flex items-center gap-2">
+                    <span>⚙️</span> Configuración de GitHub
+                </h3>
+                <button onclick="cerrarConfigGitHub()" class="text-gray-400 hover:text-gray-600 text-lg font-bold">&times;</button>
+            </div>
+
+            <p class="text-xs text-gray-500 font-medium leading-relaxed">
+                Ingrese sus credenciales de repositorio para sincronizar <strong>precios.json</strong> automáticamente sin descargas.
+            </p>
+
+            <div class="space-y-3 text-xs font-bold">
+                <div>
+                    <label class="block text-gray-700 mb-1">GitHub Personal Access Token (PAT)</label>
+                    <input type="password" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" class="w-full p-2.5 rounded-xl border border-[#e5d3c5] bg-[#faf6f0] outline-none focus:ring-2 focus:ring-[#b85a3c]">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-gray-700 mb-1">Usuario / Org</label>
+                        <input type="text" id="gh-owner-input" placeholder="tu-usuario" class="w-full p-2.5 rounded-xl border border-[#e5d3c5] bg-[#faf6f0] outline-none focus:ring-2 focus:ring-[#b85a3c]">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-1">Repositorio</label>
+                        <input type="text" id="gh-repo-input" placeholder="nombre-repo" class="w-full p-2.5 rounded-xl border border-[#e5d3c5] bg-[#faf6f0] outline-none focus:ring-2 focus:ring-[#b85a3c]">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-gray-700 mb-1">Ruta del archivo</label>
+                        <input type="text" id="gh-path-input" value="precios.json" placeholder="precios.json" class="w-full p-2.5 rounded-xl border border-[#e5d3c5] bg-[#faf6f0] outline-none focus:ring-2 focus:ring-[#b85a3c]">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-1">Rama (Branch)</label>
+                        <input type="text" id="gh-branch-input" value="main" placeholder="main" class="w-full p-2.5 rounded-xl border border-[#e5d3c5] bg-[#faf6f0] outline-none focus:ring-2 focus:ring-[#b85a3c]">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-2 pt-2">
+                <button onclick="cerrarConfigGitHub()" class="w-1/2 py-2.5 rounded-xl border border-gray-300 text-xs font-bold text-gray-600 hover:bg-gray-50">Cancelar</button>
+                <button onclick="guardarConfigGitHub()" class="w-1/2 bg-[#b85a3c] text-white py-2.5 rounded-xl text-xs font-extrabold shadow hover:bg-[#964229]">Guardar Ajustes</button>
+            </div>
+        </div>
+    </div>
+
     <!-- CONTENIDO PRINCIPAL (OCULTO HASTA AUTENTICARSE) -->
     <div id="contenido-principal" class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-0 overflow-hidden hidden">
         
@@ -224,7 +274,7 @@
                     <div>
                         <label class="block text-[11px] font-extrabold uppercase text-[#4a3525] mb-1.5">Precios por Plan (Opcional)</label>
                         <div id="contenedor-precios-nuevo" class="grid grid-cols-2 gap-2 bg-white p-2.5 rounded-xl border border-[#e5d3c5] max-h-48 overflow-y-auto">
-                            <!-- Los inputs de precios por plan se generan dinámicamente -->
+                            <!-- Se generan dinámicamente -->
                         </div>
                     </div>
 
@@ -243,14 +293,18 @@
             <div class="flex justify-between items-center sticky top-0 bg-[#f4e7dc] py-1 z-10">
                 <h2 class="text-lg font-extrabold text-[#3b291a]">Editor Exclusivo de Precios</h2>
                 
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2">
+                    <button onclick="abrirConfigGitHub()" class="p-2 rounded-xl border border-[#e5d3c5] bg-white text-xs font-bold text-gray-600 hover:bg-gray-50 shadow-sm" title="Configurar GitHub">
+                        ⚙️ GitHub
+                    </button>
+
                     <label class="flex items-center gap-1.5 text-xs font-bold text-[#4a3525] cursor-pointer bg-white px-3 py-1.5 rounded-xl border border-[#e5d3c5]">
                         <input type="checkbox" id="check-modo-edicion" class="rounded text-[#b85a3c] focus:ring-[#b85a3c]">
                         <span>Habilitar Edición</span>
                     </label>
 
-                    <button onclick="guardarEnJSON()" style="background-color: #28a745; color: white; padding: 8px 16px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 12px;" class="shadow-sm hover:opacity-90 transition">
-                        💾 Guardar Cambios (precios.json)
+                    <button id="btn-guardar-github" onclick="guardarEnJSON()" style="background-color: #28a745; color: white; padding: 8px 16px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 12px;" class="shadow-sm hover:opacity-90 transition">
+                        ☁️ Guardar en GitHub
                     </button>
                 </div>
             </div>
@@ -310,6 +364,52 @@
             document.getElementById('password-input').value = '';
         }
 
+        // --- GESTIÓN DE CONFIGURACIÓN GITHUB ---
+        function abrirConfigGitHub() {
+            document.getElementById('gh-token-input').value = localStorage.getItem('gh_token') || '';
+            document.getElementById('gh-owner-input').value = localStorage.getItem('gh_owner') || '';
+            document.getElementById('gh-repo-input').value = localStorage.getItem('gh_repo') || '';
+            document.getElementById('gh-path-input').value = localStorage.getItem('gh_path') || 'precios.json';
+            document.getElementById('gh-branch-input').value = localStorage.getItem('gh_branch') || 'main';
+            document.getElementById('modal-config-github').classList.remove('hidden');
+        }
+
+        function cerrarConfigGitHub() {
+            document.getElementById('modal-config-github').classList.add('hidden');
+        }
+
+        function guardarConfigGitHub() {
+            const token = document.getElementById('gh-token-input').value.trim();
+            const owner = document.getElementById('gh-owner-input').value.trim();
+            const repo = document.getElementById('gh-repo-input').value.trim();
+            const path = document.getElementById('gh-path-input').value.trim() || 'precios.json';
+            const branch = document.getElementById('gh-branch-input').value.trim() || 'main';
+
+            if (!token || !owner || !repo) {
+                alert('Por favor complete Token, Usuario y Repositorio.');
+                return;
+            }
+
+            localStorage.setItem('gh_token', token);
+            localStorage.setItem('gh_owner', owner);
+            localStorage.setItem('gh_repo', repo);
+            localStorage.setItem('gh_path', path);
+            localStorage.setItem('gh_branch', branch);
+
+            cerrarConfigGitHub();
+            alert('¡Configuración de GitHub guardada correctamente!');
+        }
+
+        function obtenerConfigGitHub() {
+            return {
+                token: localStorage.getItem('gh_token') || '',
+                owner: localStorage.getItem('gh_owner') || '',
+                repo: localStorage.getItem('gh_repo') || '',
+                path: localStorage.getItem('gh_path') || 'precios.json',
+                branch: localStorage.getItem('gh_branch') || 'main'
+            };
+        }
+
         // --- LÓGICA PRINCIPAL DEL SISTEMA DE PRECIOS ---
         function normalizar(v){ return String(v ?? '').trim(); }
         function quitarAcentos(s){ return String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
@@ -329,7 +429,6 @@
                 .then(data => {
                     baseDeDatos = data;
 
-                    // Extraer los nombres de los planes presentes
                     const planesSet = new Set();
                     baseDeDatos.forEach(r => {
                         if (r.precios) {
@@ -337,7 +436,6 @@
                         }
                     });
 
-                    // Mantener el orden prioritario
                     ORDEN_PLANES = [...planesSet].sort((a, b) => {
                         const prioridades = ['IN 90', 'IN 90 (OSECAC)', 'IN 180', 'IN 360', 'AFILIADO SEC', 'ASISTENCIAL'];
                         const ia = prioridades.indexOf(a);
@@ -374,18 +472,15 @@
             select.innerHTML = '<option value="">-- TODAS LAS CATEGORÍAS --</option>';
             if (datalist) datalist.innerHTML = '';
 
-            // Extraer de forma única todas las categorías
             const categoriasUnicas = [...new Set(baseDeDatos.map(r => r.categoria).filter(Boolean))]
                 .sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
 
             categoriasUnicas.forEach(cat => {
-                // Opción para el filtro selector
                 const optionSelect = document.createElement('option');
                 optionSelect.value = cat;
                 optionSelect.textContent = cat;
                 select.appendChild(optionSelect);
 
-                // Opción para el autocompletado del formulario
                 if (datalist) {
                     const optionData = document.createElement('option');
                     optionData.value = cat;
@@ -395,7 +490,6 @@
 
             select.value = categoriaSeleccionada;
 
-            // Evento cambio de Select
             select.onchange = (e) => {
                 categoriaSeleccionada = e.target.value;
                 aplicarBusquedaYFiltro();
@@ -435,7 +529,6 @@
                 return;
             }
 
-            // Construir el objeto de precios ingresados
             const preciosNuevos = {};
             const inputsPrecios = document.querySelectorAll('.input-precio-nuevo');
             inputsPrecios.forEach(input => {
@@ -447,7 +540,6 @@
                 }
             });
 
-            // Generar nuevo idRegistro incremental
             const maxId = baseDeDatos.reduce((max, r) => {
                 const idNum = Number(r.idRegistro);
                 return (!isNaN(idNum) && idNum > max) ? idNum : max;
@@ -460,10 +552,8 @@
                 precios: preciosNuevos
             };
 
-            // Agregar al principio de la base de datos para visibilidad inmediata
             baseDeDatos.unshift(nuevoRegistro);
 
-            // Actualizar interfaz
             poblarCategorias();
             document.getElementById('nuevo-item').value = '';
             inputsPrecios.forEach(inp => inp.value = '');
@@ -472,7 +562,7 @@
             document.getElementById('select-categoria').value = cat;
 
             aplicarBusquedaYFiltro();
-            alert(`¡Práctica "${itemNombre}" agregada con éxito a la categoría "${cat}"!\n\nRecuerde hacer clic en el botón "💾 Guardar Cambios (precios.json)" para descargar la versión actualizada del archivo.`);
+            alert(`¡Práctica "${itemNombre}" agregada temporalmente a la base!\n\nHaga clic en "☁️ Guardar en GitHub" para hacer permanentes los cambios.`);
         }
 
         function buscarEstricto(termino){
@@ -559,25 +649,87 @@
             contenedor.innerHTML = `<table><thead>${theadHTML}</thead><tbody>${tbodyHTML}</tbody></table>`;
         }
 
-        function guardarEnJSON() {
+        // --- CONVERSIÓN UTF-8 A BASE64 PARA LA API DE GITHUB ---
+        function utf8ToBase64(str) {
+            const bytes = new TextEncoder().encode(str);
+            const binString = Array.from(bytes, (byte) => String.fromCharCode(byte)).join("");
+            return btoa(binString);
+        }
+
+        // --- GUARDADO DIRECTO A GITHUB VIA API ---
+        async function guardarEnJSON() {
             if (!baseDeDatos || baseDeDatos.length === 0) {
-                alert("No hay datos cargados para exportar.");
+                alert("No hay datos cargados para guardar.");
                 return;
             }
 
-            const jsonString = JSON.stringify(baseDeDatos, null, 2);
-            const blob = new Blob([jsonString], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "precios.json";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            const config = obtenerConfigGitHub();
+            if (!config.token || !config.owner || !config.repo) {
+                abrirConfigGitHub();
+                alert("Por favor configure sus datos de acceso a GitHub antes de guardar.");
+                return;
+            }
 
-            alert("¡Archivo 'precios.json' actualizado y descargado con éxito!");
+            const btnGuardar = document.getElementById('btn-guardar-github');
+            const textoOriginal = btnGuardar.innerHTML;
+            btnGuardar.disabled = true;
+            btnGuardar.innerHTML = "⏳ Guardando en GitHub...";
+
+            try {
+                const jsonString = JSON.stringify(baseDeDatos, null, 2);
+                const urlGet = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.path}?ref=${config.branch}`;
+
+                // 1. Obtener el SHA actual del archivo en GitHub para actualizarlo correctamente
+                const resGet = await fetch(urlGet, {
+                    headers: {
+                        'Authorization': `Bearer ${config.token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                let sha = null;
+                if (resGet.ok) {
+                    const dataGet = await resGet.json();
+                    sha = dataGet.sha;
+                } else if (resGet.status !== 404) {
+                    const errData = await resGet.json();
+                    throw new Error(`Error en GitHub GET: ${errData.message || resGet.statusText}`);
+                }
+
+                // 2. Commit directo del nuevo contenido mediante la API
+                const bodyPut = {
+                    message: `Actualización de precios.json (${new Date().toLocaleString('es-AR')})`,
+                    content: utf8ToBase64(jsonString),
+                    branch: config.branch
+                };
+                if (sha) bodyPut.sha = sha;
+
+                const urlPut = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.path}`;
+                const resPut = await fetch(urlPut, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${config.token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(bodyPut)
+                });
+
+                if (!resPut.ok) {
+                    const errPut = await resPut.json();
+                    throw new Error(`Error al guardar en GitHub: ${errPut.message || resPut.statusText}`);
+                }
+
+                document.getElementById('indicador-color').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
+                document.getElementById('badge-estado').textContent = 'Guardado en GitHub';
+                alert("✅ ¡Guardado exitoso! El archivo 'precios.json' se ha modificado directamente en tu repositorio de GitHub.");
+            } catch (err) {
+                console.error(err);
+                alert(`❌ ${err.message}`);
+            } finally {
+                btnGuardar.disabled = false;
+                btnGuardar.innerHTML = textoOriginal;
+            }
         }
     </script>
 </body>
