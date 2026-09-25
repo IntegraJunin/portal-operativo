@@ -415,63 +415,32 @@
             };
         }
 
-        // --- DESCARGAR BACKUP COMPLETO EN ZIP DESDE GITHUB ---
-        async function descargarBackupRepo() {
-            const config = obtenerConfigGitHub();
-            if (!config.token || !config.owner || !config.repo) {
-                abrirConfigGitHub();
-                alert("Por favor configure sus datos de acceso a GitHub para descargar el backup.");
-                return;
-            }
+      // --- DESCARGAR BACKUP COMPLETO EN ZIP DESDE GITHUB ---
+function descargarBackupRepo() {
+    const config = obtenerConfigGitHub();
+    if (!config.owner || !config.repo) {
+        abrirConfigGitHub();
+        alert("Por favor configure Usuario / Org y Repositorio para descargar el backup.");
+        return;
+    }
 
-            const btn = document.getElementById('btn-backup-repo');
-            const textoOriginal = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = "<span>⏳</span> Descargando...";
+    const btn = document.getElementById('btn-backup-repo');
+    const textoOriginal = btn.innerHTML;
+    btn.innerHTML = "<span>⏳</span> Iniciando...";
 
-            try {
-                const url = `https://api.github.com/repos/${config.owner}/${config.repo}/zipball/${config.branch}`;
-                const res = await fetch(url, {
-                    headers: {
-                        'Authorization': `Bearer ${config.token}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
+    // Enlace directo de descarga de GitHub (evita el bloqueo de CORS)
+    const urlDescarga = `https://github.com/${config.owner}/${config.repo}/archive/refs/heads/${config.branch}.zip`;
 
-                if (!res.ok) {
-                    const errData = await res.json().catch(() => ({}));
-                    throw new Error(errData.message || `Error status: ${res.status}`);
-                }
+    const a = document.createElement('a');
+    a.href = urlDescarga;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 
-                const blob = await res.blob();
-                
-                const ahora = new Date();
-                const anio = ahora.getFullYear();
-                const mes = String(ahora.getMonth() + 1).padStart(2, '0');
-                const dia = String(ahora.getDate()).padStart(2, '0');
-                const horas = String(ahora.getHours()).padStart(2, '0');
-                const minutos = String(ahora.getMinutes()).padStart(2, '0');
-                
-                const nombreArchivo = `Backup_${anio}-${mes}-${dia}_${horas}-${minutos}.zip`;
-
-                const urlBlob = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = urlBlob;
-                a.download = nombreArchivo;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(urlBlob);
-
-                alert(`✅ Backup descargado con éxito:\n\n${nombreArchivo}`);
-            } catch (err) {
-                console.error(err);
-                alert(`❌ No se pudo descargar el backup: ${err.message}`);
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = textoOriginal;
-            }
-        }
+    setTimeout(() => {
+        btn.innerHTML = textoOriginal;
+    }, 2000);
+}
 
         // --- LÓGICA PRINCIPAL DEL SISTEMA DE PRECIOS ---
         function normalizar(v){ return String(v ?? '').trim(); }
