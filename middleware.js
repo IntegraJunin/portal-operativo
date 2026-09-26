@@ -4,16 +4,14 @@ export const config = {
 
 export default function middleware(request) {
   const cookieHeader = request.headers.get('cookie') || '';
+  const authSecret = process.env.AUTH_SECRET || 'clave_secreta_integra_2026';
 
-  // Verificamos si la cookie existe
-  if (cookieHeader.includes('admin_session=autorizado')) {
-    // Esta es la forma oficial en Vercel para decirle "déjalo pasar"
-    return new Response(null, {
-      headers: { 'x-middleware-next': '1' }
-    });
+  // Si contiene la cookie correcta, retornar nada (void) permite a Vercel servir el editor.html
+  if (cookieHeader.includes(`auth_token=${authSecret}`)) {
+    return;
   }
 
-  // Si no está la cookie, rebota al usuario a la página de login
+  // Si no está autenticado, redirige al login
   const url = new URL('/login.html', request.url);
   return Response.redirect(url, 302);
 }
