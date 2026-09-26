@@ -34,23 +34,29 @@
     <script>
         document.getElementById('login-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
+            
+            // .trim() elimina espacios en blanco accidentales al inicio o final
+            const user = document.getElementById('username').value.trim().toLowerCase();
+            const pass = document.getElementById('password').value.trim();
 
+            // Credenciales válidas: usuario "admin" (sin importar mayúsculas) y clave "secreto123"
             if (user === 'admin' && pass === 'secreto123') {
-                // Guardamos la cookie con parámetros de seguridad mejorados
+                // Ocultar mensaje de error si estaba visible
+                document.getElementById('error-msg').classList.add('hidden');
+
+                // Crear cookie de sesión
                 document.cookie = "admin_session=autorizado; path=/; max-age=86400; SameSite=Lax";
                 
-                // Feedback visual: El botón se pone verde para confirmar
+                // Feedback visual en el botón
                 const btn = document.querySelector('button[type="submit"]');
                 btn.textContent = "Acceso correcto. Ingresando...";
                 btn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
                 btn.classList.add('bg-green-600');
                 
-                // Redirigimos al editor con una pausa de medio segundo
+                // Redirigir al editor
                 setTimeout(() => {
                     window.location.href = "/editor.html";
-                }, 500);
+                }, 400);
             } else {
                 document.getElementById('error-msg').classList.remove('hidden');
                 document.getElementById('password').value = '';
