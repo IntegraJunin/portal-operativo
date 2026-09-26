@@ -414,36 +414,20 @@
             };
         }
 
-    // --- DESCARGAR BACKUP COMPLETO EN ZIP DESDE GITHUB ---
+   // --- DESCARGAR BACKUP DESDE ENDPOINT SEGURO DE VERCEL ---
 function descargarBackupRepo() {
-    const config = obtenerConfigGitHub();
-    
-    // Toma los datos guardados o utiliza los valores predeterminados de tu proyecto
-    const owner = (config.owner || 'integrajunin').trim();
-    const repo = (config.repo || 'portal-operativo').trim();
-    const branch = (config.branch || 'main').trim();
-
-    if (!owner || !repo) {
-        abrirConfigGitHub();
-        alert("Por favor configure Usuario / Org y Repositorio para descargar el backup.");
-        return;
-    }
-
     const btn = document.getElementById('btn-backup-repo');
     const textoOriginal = btn.innerHTML;
-    btn.innerHTML = "<span>⏳</span> Descargando...";
+    btn.innerHTML = "<span>⏳</span> Generando backup...";
     btn.disabled = true;
 
-    // Servidor directo de descargas de GitHub (evita CORS y bloqueos de fetch)
-    const urlZip = `https://codeload.github.com/${owner}/${repo}/zip/refs/heads/${branch}`;
-
-    // Inicia la descarga directamente en el navegador sin salir del editor
-    window.location.href = urlZip;
+    // Dispara la descarga desde nuestro endpoint autenticado en Vercel
+    window.location.href = '/api/backup';
 
     setTimeout(() => {
         btn.disabled = false;
         btn.innerHTML = textoOriginal;
-    }, 2500);
+    }, 3000);
 }
 
         // --- LÓGICA PRINCIPAL DEL SISTEMA DE PRECIOS ---
