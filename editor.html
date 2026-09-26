@@ -414,31 +414,61 @@
             };
         }
 
-        // --- DESCARGAR BACKUP COMPLETO EN ZIP DESDE GITHUB ---
-        function descargarBackupRepo() {
-            const config = obtenerConfigGitHub();
-            if (!config.owner || !config.repo) {
-                abrirConfigGitHub();
-                alert("Por favor configure Usuario / Org y Repositorio para descargar el backup.");
-                return;
-            }
+     // --- DESCARGAR BACKUP COMPLETO EN ZIP DESDE GITHUB (VÍA API / FETCH) ---
+async function descargarBackupRepo() {
+    const config = obtenerConfigGitHub();
+    if (!config.owner || !config.repo) {
+        abrirConfigGitHub();
+        alert("Por favor configure Usuario / Org y Repositorio para descargar el backup.");
+        return;
+    }
 
-            const btn = document.getElementById('btn-backup-repo');
-            const textoOriginal = btn.innerHTML;
-            btn.innerHTML = "<span>⏳</span> Iniciando...";
+    const btn = document.getElementById('btn-backup-repo');
+    const textoOriginal = btn.innerHTML;
+    btn.innerHTML = "<span>⏳</span> Generando ZIP...";
+    btn.disabled = true;
 
-            const urlDescarga = `https://github.com/${config.owner}/${config.repo}/archive/refs/heads/${config.branch}.zip`;
-
-            const a = document.createElement('a');
-            a.href = urlDescarga;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-
-            setTimeout(() => {
-                btn.innerHTML = textoOriginal;
-            }, 2000);
+    try {
+        // Solicitamos el archivo a la API de GitHub
+        const apiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/zipball/${config.branch}`;
+        
+        const headers = {
+            'Accept': 'application/vnd.github.v3+json'
+        };
+        
+        // Si ingresaste un PAT, lo adjunta para tener acceso (sea público o privado)
+        if (config.token) {
+            headers['Authorization'] = `Bearer ${config.token}`;
         }
+
+        const response = await fetch(apiUrl, { headers });
+
+        if (!response.ok) {
+            throw new Error(`GitHub respondió con estado ${response.status}. Verifique sus datos y el PAT.`);
+        }
+
+        // Recibimos el archivo comprimido como paquete de datos (Blob)
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        
+        // Forzamos la descarga del archivo .zip sin salir de la página
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = `${config.repo}-backup.zip`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        
+        // Liberamos la memoria
+        window.URL.revokeObjectURL(downloadUrl);
+    } catch (err) {
+        console.error(err);
+        alert("❌ Error al descargar el backup: " + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = textoOriginal;
+    }
+}
 
         // --- LÓGICA PRINCIPAL DEL SISTEMA DE PRECIOS ---
         function normalizar(v){ return String(v ?? '').trim(); }
