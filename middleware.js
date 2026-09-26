@@ -3,16 +3,17 @@ export const config = {
 };
 
 export default function middleware(request) {
-  // Obtenemos las cookies del navegador
   const cookieHeader = request.headers.get('cookie') || '';
 
-  // Verificamos si existe la cookie que daremos en el login
+  // Verificamos si la cookie existe
   if (cookieHeader.includes('admin_session=autorizado')) {
-    // Retornar vacío deja que la petición cargue el editor.html
-    return;
+    // Esta es la forma oficial en Vercel para decirle "déjalo pasar"
+    return new Response(null, {
+      headers: { 'x-middleware-next': '1' }
+    });
   }
 
-  // Si no está la cookie, redirigimos a la página de login personalizada
+  // Si no está la cookie, rebota al usuario a la página de login
   const url = new URL('/login.html', request.url);
   return Response.redirect(url, 302);
 }

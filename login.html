@@ -37,15 +37,21 @@
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
 
-            // Validación de credenciales
             if (user === 'admin' && pass === 'secreto123') {
-                // Creamos la cookie válida para todo el sitio, expira en 1 día (86400 segundos)
-                document.cookie = "admin_session=autorizado; path=/; max-age=86400";
+                // Guardamos la cookie con parámetros de seguridad mejorados
+                document.cookie = "admin_session=autorizado; path=/; max-age=86400; SameSite=Lax";
                 
-                // Redirigimos al editor. El middleware ahora verá la cookie y nos dejará pasar.
-                window.location.href = "/editor.html";
+                // Feedback visual: El botón se pone verde para confirmar
+                const btn = document.querySelector('button[type="submit"]');
+                btn.textContent = "Acceso correcto. Ingresando...";
+                btn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                btn.classList.add('bg-green-600');
+                
+                // Redirigimos al editor con una pausa de medio segundo
+                setTimeout(() => {
+                    window.location.href = "/editor.html";
+                }, 500);
             } else {
-                // Mostramos el mensaje de error
                 document.getElementById('error-msg').classList.remove('hidden');
                 document.getElementById('password').value = '';
             }
