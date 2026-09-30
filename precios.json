@@ -144,8 +144,8 @@
     "categoria": "Consultas / practicas",
     "precios": {
       "IN 360": 22000,
-      "AFILIADO SEC": 7000,
-      "ASISTENCIAL": 7000,
+      "AFILIADO SEC": 7500,
+      "ASISTENCIAL": 7500,
       "IN 90 (OSECAC)": 35000
     }
   },
@@ -182,11 +182,11 @@
     "detalle": "",
     "categoria": "CONSULTA ODONTOLOGICA",
     "precios": {
-      "IN 180": 14000,
-      "IN 360": 12000,
-      "AFILIADO SEC": 5400,
+      "IN 180": 15000,
+      "IN 360": 13000,
+      "AFILIADO SEC": 6000,
       "ASISTENCIAL": 0,
-      "IN 90 (OSECAC)": 17400
+      "IN 90 (OSECAC)": 22000
     }
   },
   {
