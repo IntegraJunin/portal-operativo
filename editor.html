@@ -673,12 +673,12 @@ function descargarBackupRepo() {
             }
 
             const columnas = ORDEN_PLANES;
-            const thAccion = modoEdicion ? `<th style="width: 40px; text-align: center;">Borrar</th>` : ``;
+            const thAccion = modoEdicion ? `<th style="width: 40px; min-width: 40px; text-align: center;">🗑️</th>` : ``;
             const theadHTML = `<tr>${thAccion}<th>Práctica / Servicio</th>${columnas.map((clave) => `<th>${clave.toUpperCase()}</th>`).join('')}</tr>`;
             
             const tbodyHTML = datos.map((r) => `
                 <tr>
-                    ${modoEdicion ? `<td style="text-align: center;"><button onclick="eliminarRegistro(${r.idRegistro})" class="text-red-500 hover:text-red-700 font-bold text-sm cursor-pointer p-1" title="Eliminar registro completo">🗑️</button></td>` : ''}
+                    ${modoEdicion ? `<td style="text-align: center; min-width: 40px;"><button onclick="eliminarRegistro(${r.idRegistro})" class="text-red-500 hover:text-red-700 font-bold text-sm cursor-pointer p-1" title="Eliminar registro completo">🗑️</button></td>` : ''}
                     <td class="celda-item"><span class="celda-categoria">${r.categoria}</span><br>${r.item}</td>
                     ${columnas.map((clave) => {
                         const tiene = r.precios && r.precios[clave] !== undefined;
