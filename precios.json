@@ -1112,10 +1112,11 @@
     "detalle": "",
     "categoria": "GASTOS DE RESERVA Y ADMINISTRATIVOS/ DIARIOS",
     "precios": {
-      "IN 180": 9400,
-      "IN 360": 8057,
-      "AFILIADO SEC": 0,
-      "ASISTENCIAL": 0
+      "IN 180": 10000,
+      "IN 360": 8000,
+      "AFILIADO SEC": 6000,
+      "ASISTENCIAL": 6000,
+      "IN 90": 15000
     }
   },
   {
@@ -1125,10 +1126,11 @@
     "detalle": "",
     "categoria": "GASTOS DE RESERVA Y ADMINISTRATIVOS/ DIARIOS",
     "precios": {
-      "IN 180": 13800,
-      "IN 360": 11829,
-      "AFILIADO SEC": 0,
-      "ASISTENCIAL": 0
+      "IN 180": 15000,
+      "IN 360": 12000,
+      "AFILIADO SEC": 9000,
+      "ASISTENCIAL": 9000,
+      "IN 90": 20000
     }
   },
   {
@@ -1138,10 +1140,11 @@
     "detalle": "",
     "categoria": "GASTOS DE RESERVA Y ADMINISTRATIVOS/ DIARIOS",
     "precios": {
-      "IN 180": 13800,
-      "IN 360": 11829,
-      "AFILIADO SEC": 0,
-      "ASISTENCIAL": 0
+      "IN 180": 15000,
+      "IN 360": 12000,
+      "AFILIADO SEC": 9000,
+      "ASISTENCIAL": 9000,
+      "IN 90": 20000
     }
   },
   {
