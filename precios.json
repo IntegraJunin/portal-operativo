@@ -771,10 +771,10 @@
     "detalle": "",
     "categoria": "MASAJES",
     "precios": {
-      "IN 180": 14000,
-      "IN 360": 12000,
-      "AFILIADO SEC": 5500,
-      "ASISTENCIAL": 5500
+      "IN 180": 12000,
+      "IN 360": 10000,
+      "AFILIADO SEC": 6000,
+      "ASISTENCIAL": 6000
     }
   },
   {
@@ -784,10 +784,10 @@
     "detalle": "",
     "categoria": "MASAJES",
     "precios": {
-      "IN 180": 21000,
-      "IN 360": 18000,
-      "AFILIADO SEC": 8400,
-      "ASISTENCIAL": 8400
+      "IN 180": 18000,
+      "IN 360": 16000,
+      "AFILIADO SEC": 9000,
+      "ASISTENCIAL": 9000
     }
   },
   {
@@ -797,10 +797,10 @@
     "detalle": "",
     "categoria": "MASAJES",
     "precios": {
-      "IN 180": 14000,
-      "IN 360": 12000,
-      "AFILIADO SEC": 5000,
-      "ASISTENCIAL": 5000
+      "IN 180": 12000,
+      "IN 360": 10000,
+      "AFILIADO SEC": 6000,
+      "ASISTENCIAL": 6000
     }
   },
   {
@@ -810,10 +810,10 @@
     "detalle": "",
     "categoria": "MASAJES",
     "precios": {
-      "IN 180": 21000,
-      "IN 360": 18000,
-      "AFILIADO SEC": 5200,
-      "ASISTENCIAL": 5200
+      "IN 180": 18000,
+      "IN 360": 16000,
+      "AFILIADO SEC": 9000,
+      "ASISTENCIAL": 6000
     }
   },
   {
@@ -823,10 +823,10 @@
     "detalle": "",
     "categoria": "MASAJES",
     "precios": {
-      "IN 180": 21000,
-      "IN 360": 18000,
-      "AFILIADO SEC": 7900,
-      "ASISTENCIAL": 7900
+      "IN 180": 18000,
+      "IN 360": 16000,
+      "AFILIADO SEC": 9000,
+      "ASISTENCIAL": 6000
     }
   },
   {
