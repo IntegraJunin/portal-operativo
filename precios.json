@@ -656,8 +656,8 @@
     "precios": {
       "IN 180": 14000,
       "IN 360": 12000,
-      "AFILIADO SEC": 4100,
-      "ASISTENCIAL": 4100
+      "AFILIADO SEC": 6000,
+      "ASISTENCIAL": 6000
     }
   },
   {
@@ -667,10 +667,10 @@
     "detalle": "",
     "categoria": "COSMETOLOGIA",
     "precios": {
-      "IN 180": 10500,
+      "IN 180": 11000,
       "IN 360": 9000,
-      "AFILIADO SEC": 4900,
-      "ASISTENCIAL": 4900
+      "AFILIADO SEC": 4000,
+      "ASISTENCIAL": 4000
     }
   },
   {
@@ -680,10 +680,10 @@
     "detalle": "",
     "categoria": "COSMETOLOGIA",
     "precios": {
-      "IN 180": 10500,
+      "IN 180": 11000,
       "IN 360": 9000,
-      "AFILIADO SEC": 4900,
-      "ASISTENCIAL": 4900
+      "AFILIADO SEC": 4000,
+      "ASISTENCIAL": 4000
     }
   },
   {
@@ -695,8 +695,8 @@
     "precios": {
       "IN 180": 14000,
       "IN 360": 12000,
-      "AFILIADO SEC": 3400,
-      "ASISTENCIAL": 3400
+      "AFILIADO SEC": 6000,
+      "ASISTENCIAL": 6000
     }
   },
   {
@@ -708,8 +708,8 @@
     "precios": {
       "IN 180": 14000,
       "IN 360": 12000,
-      "AFILIADO SEC": 3400,
-      "ASISTENCIAL": 3400
+      "AFILIADO SEC": 6000,
+      "ASISTENCIAL": 6000
     }
   },
   {
@@ -721,8 +721,8 @@
     "precios": {
       "IN 180": 14000,
       "IN 360": 12000,
-      "AFILIADO SEC": 3400,
-      "ASISTENCIAL": 3400
+      "AFILIADO SEC": 6000,
+      "ASISTENCIAL": 6000
     }
   },
   {
@@ -734,8 +734,8 @@
     "precios": {
       "IN 180": 14000,
       "IN 360": 12000,
-      "AFILIADO SEC": 5700,
-      "ASISTENCIAL": 5700
+      "AFILIADO SEC": 6000,
+      "ASISTENCIAL": 6000
     }
   },
   {
