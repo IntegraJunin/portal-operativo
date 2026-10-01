@@ -948,10 +948,10 @@
     "detalle": "",
     "categoria": "AUDITORIO",
     "precios": {
-      "IN 180": 176000,
-      "IN 360": 176000,
-      "AFILIADO SEC": 176000,
-      "ASISTENCIAL": 176000
+      "IN 180": 190000,
+      "IN 360": 190000,
+      "AFILIADO SEC": 190000,
+      "ASISTENCIAL": 190000
     }
   },
   {
@@ -961,10 +961,10 @@
     "detalle": "",
     "categoria": "AUDITORIO",
     "precios": {
-      "IN 180": 233000,
-      "IN 360": 233000,
-      "AFILIADO SEC": 233000,
-      "ASISTENCIAL": 233000
+      "IN 180": 250000,
+      "IN 360": 250000,
+      "AFILIADO SEC": 250000,
+      "ASISTENCIAL": 250000
     }
   },
   {
@@ -974,10 +974,10 @@
     "detalle": "",
     "categoria": "AUDITORIO",
     "precios": {
-      "IN 180": 41000,
-      "IN 360": 41000,
-      "AFILIADO SEC": 41000,
-      "ASISTENCIAL": 41000
+      "IN 180": 44000,
+      "IN 360": 44000,
+      "AFILIADO SEC": 44000,
+      "ASISTENCIAL": 44000
     }
   },
   {
@@ -987,10 +987,10 @@
     "detalle": "",
     "categoria": "AUDITORIO",
     "precios": {
-      "IN 180": 7700,
-      "IN 360": 7700,
-      "AFILIADO SEC": 7700,
-      "ASISTENCIAL": 7700
+      "IN 180": 8000,
+      "IN 360": 8000,
+      "AFILIADO SEC": 8000,
+      "ASISTENCIAL": 8000
     }
   },
   {
