@@ -1014,10 +1014,11 @@
     "detalle": "",
     "categoria": "LAGUNA",
     "precios": {
-      "IN 180": 67900,
-      "IN 360": 58200,
-      "AFILIADO SEC": 23500,
-      "ASISTENCIAL": 23500
+      "IN 180": 72000,
+      "IN 360": 62000,
+      "AFILIADO SEC": 25000,
+      "ASISTENCIAL": 25000,
+      "IN 90": 105000
     }
   },
   {
@@ -1027,10 +1028,11 @@
     "detalle": "",
     "categoria": "LAGUNA",
     "precios": {
-      "IN 180": 197400,
-      "IN 360": 169200,
-      "AFILIADO SEC": 72000,
-      "ASISTENCIAL": 72000
+      "IN 180": 208000,
+      "IN 360": 178000,
+      "AFILIADO SEC": 76000,
+      "ASISTENCIAL": 76000,
+      "IN 90": 298000
     }
   },
   {
@@ -1040,10 +1042,11 @@
     "detalle": "",
     "categoria": "LAGUNA",
     "precios": {
-      "IN 180": 179200,
-      "IN 360": 153600,
-      "AFILIADO SEC": 62000,
-      "ASISTENCIAL": 62000
+      "IN 180": 190000,
+      "IN 360": 162000,
+      "AFILIADO SEC": 65000,
+      "ASISTENCIAL": 65000,
+      "IN 90": 270000
     }
   },
   {
@@ -1053,10 +1056,11 @@
     "detalle": "",
     "categoria": "LAGUNA",
     "precios": {
-      "IN 180": 355600,
-      "IN 360": 304800,
-      "AFILIADO SEC": 124000,
-      "ASISTENCIAL": 124000
+      "IN 180": 375000,
+      "IN 360": 321000,
+      "AFILIADO SEC": 131000,
+      "ASISTENCIAL": 131000,
+      "IN 90": 536000
     }
   },
   {
@@ -1066,10 +1070,11 @@
     "detalle": "",
     "categoria": "LAGUNA",
     "precios": {
-      "IN 180": 5740,
-      "IN 360": 4920,
-      "AFILIADO SEC": 2500,
-      "ASISTENCIAL": 2500
+      "IN 180": 6000,
+      "IN 360": 5000,
+      "AFILIADO SEC": 2700,
+      "ASISTENCIAL": 2700,
+      "IN 90": 87000
     }
   },
   {
