@@ -836,11 +836,11 @@
     "detalle": "Valor por Turno",
     "categoria": "SALONES",
     "precios": {
-      "IN 90": 111000,
-      "IN 180": 77700,
-      "IN 360": 66600,
-      "AFILIADO SEC": 46700,
-      "ASISTENCIAL": 46700
+      "IN 90": 1200000,
+      "IN 180": 84000,
+      "IN 360": 72000,
+      "AFILIADO SEC": 50000,
+      "ASISTENCIAL": 50000
     }
   },
   {
@@ -850,11 +850,11 @@
     "detalle": "DEPOSITO",
     "categoria": "SALONES",
     "precios": {
-      "IN 90": 51000,
-      "IN 180": 35700,
-      "IN 360": 30600,
-      "AFILIADO SEC": 21300,
-      "ASISTENCIAL": 21300
+      "IN 90": 52000,
+      "IN 180": 37000,
+      "IN 360": 32000,
+      "AFILIADO SEC": 23000,
+      "ASISTENCIAL": 23000
     }
   },
   {
@@ -864,11 +864,11 @@
     "detalle": "Valor por turno",
     "categoria": "SALONES",
     "precios": {
-      "IN 90": 241000,
-      "IN 180": 168700,
-      "IN 360": 144600,
-      "AFILIADO SEC": 76000,
-      "ASISTENCIAL": 76000
+      "IN 90": 255000,
+      "IN 180": 180000,
+      "IN 360": 155000,
+      "AFILIADO SEC": 80000,
+      "ASISTENCIAL": 80000
     }
   },
   {
@@ -878,11 +878,11 @@
     "detalle": "DEPOSITO",
     "categoria": "SALONES",
     "precios": {
-      "IN 90": 70000,
-      "IN 180": 63000,
-      "IN 360": 56000,
-      "AFILIADO SEC": 48000,
-      "ASISTENCIAL": 48000
+      "IN 90": 72000,
+      "IN 180": 65000,
+      "IN 360": 57000,
+      "AFILIADO SEC": 50000,
+      "ASISTENCIAL": 50000
     }
   },
   {
@@ -892,11 +892,11 @@
     "detalle": "Valor por turno",
     "categoria": "SALONES",
     "precios": {
-      "IN 90": 551000,
-      "IN 180": 385700,
-      "IN 360": 330600,
-      "AFILIADO SEC": 209000,
-      "ASISTENCIAL": 209000
+      "IN 90": 600000,
+      "IN 180": 4200000,
+      "IN 360": 360000,
+      "AFILIADO SEC": 220000,
+      "ASISTENCIAL": 220000
     }
   },
   {
@@ -906,11 +906,11 @@
     "detalle": "DEPOSITO",
     "categoria": "SALONES",
     "precios": {
-      "IN 90": 132000,
-      "IN 180": 92400,
-      "IN 360": 79200,
-      "AFILIADO SEC": 75000,
-      "ASISTENCIAL": 75000
+      "IN 90": 140000,
+      "IN 180": 100000,
+      "IN 360": 90000,
+      "AFILIADO SEC": 80000,
+      "ASISTENCIAL": 80000
     }
   },
   {
@@ -920,11 +920,11 @@
     "detalle": "Valor por Turno",
     "categoria": "SALONES",
     "precios": {
-      "IN 90": 962000,
-      "IN 180": 673400,
-      "IN 360": 577200,
-      "AFILIADO SEC": 464000,
-      "ASISTENCIAL": 464000
+      "IN 90": 1020000000,
+      "IN 180": 7150000,
+      "IN 360": 615000,
+      "AFILIADO SEC": 465000,
+      "ASISTENCIAL": 465000
     }
   },
   {
@@ -934,11 +934,11 @@
     "detalle": "DEPOSITO",
     "categoria": "SALONES",
     "precios": {
-      "IN 90": 203000,
-      "IN 180": 142100,
-      "IN 360": 121800,
-      "AFILIADO SEC": 139000,
-      "ASISTENCIAL": 139000
+      "IN 90": 215000,
+      "IN 180": 190000,
+      "IN 360": 170000,
+      "AFILIADO SEC": 140000,
+      "ASISTENCIAL": 140000
     }
   },
   {
