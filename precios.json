@@ -1084,10 +1084,11 @@
     "detalle": "",
     "categoria": "ARROLLO DE LOS PATOS",
     "precios": {
-      "IN 180": 72800,
-      "IN 360": 62400,
-      "AFILIADO SEC": 41600,
-      "ASISTENCIAL": 41600
+      "IN 180": 77000,
+      "IN 360": 66000,
+      "AFILIADO SEC": 44000,
+      "ASISTENCIAL": 44000,
+      "IN 90": 110000
     }
   },
   {
@@ -1097,10 +1098,11 @@
     "detalle": "",
     "categoria": "ARROLLO DE LOS PATOS",
     "precios": {
-      "IN 180": 101325,
-      "IN 360": 86850,
-      "AFILIADO SEC": 57900,
-      "ASISTENCIAL": 57900
+      "IN 180": 108000,
+      "IN 360": 92000,
+      "AFILIADO SEC": 62000,
+      "ASISTENCIAL": 62000,
+      "IN 90": 154000
     }
   },
   {
