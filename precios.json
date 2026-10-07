@@ -1,5 +1,16 @@
 [
   {
+    "idRegistro": 202,
+    "categoria": "PODOLOGIA",
+    "item": "PODOLOGIA DOMICILIARIA",
+    "precios": {
+      "IN 180": 20000,
+      "IN 360": 20000,
+      "AFILIADO SEC": 20000,
+      "ASISTENCIAL": 20000
+    }
+  },
+  {
     "idRegistro": 201,
     "categoria": "COLONIA VERANO",
     "item": "TRANSPORTE",
