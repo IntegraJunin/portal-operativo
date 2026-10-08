@@ -1,5 +1,25 @@
 [
   {
+    "idRegistro": 204,
+    "categoria": "CMD (FAMYL)",
+    "item": "TOMOG. CONE BEAM 3D 1 MAXILAR",
+    "precios": {
+      "IN 360": 87200,
+      "AFILIADO SEC": 87200,
+      "ASISTENCIAL": 87200
+    }
+  },
+  {
+    "idRegistro": 203,
+    "categoria": "CMD (FAMYL)",
+    "item": "TOMOG. CONE BEAM 3D 1 REGION",
+    "precios": {
+      "IN 360": 72000,
+      "AFILIADO SEC": 72000,
+      "ASISTENCIAL": 72000
+    }
+  },
+  {
     "idRegistro": 202,
     "categoria": "PODOLOGIA",
     "item": "PODOLOGIA DOMICILIARIA",
@@ -1664,30 +1684,6 @@
       "IN 360": 24000,
       "AFILIADO SEC": 24000,
       "ASISTENCIAL": 24000
-    }
-  },
-  {
-    "idRegistro": 125,
-    "item": "COME BEAM 3D 1 REGION",
-    "itemOriginal": "COME BEAM 3D 1 REGION",
-    "detalle": "",
-    "categoria": "CMD (FAMYL)",
-    "precios": {
-      "IN 360": 72000,
-      "AFILIADO SEC": 72000,
-      "ASISTENCIAL": 72000
-    }
-  },
-  {
-    "idRegistro": 126,
-    "item": "COME BEAM 3D 1 MAXILAR",
-    "itemOriginal": "COME BEAM 3D 1 MAXILAR",
-    "detalle": "",
-    "categoria": "CMD (FAMYL)",
-    "precios": {
-      "IN 360": 87200,
-      "AFILIADO SEC": 87200,
-      "ASISTENCIAL": 87200
     }
   },
   {
