@@ -1,5 +1,15 @@
 [
   {
+    "idRegistro": 205,
+    "categoria": "CMD (FAMYL)",
+    "item": "RX PANORAMICA",
+    "precios": {
+      "IN 360": 24000,
+      "AFILIADO SEC": 24000,
+      "ASISTENCIAL": 24000
+    }
+  },
+  {
     "idRegistro": 204,
     "categoria": "CMD (FAMYL)",
     "item": "TOMOG. CONE BEAM 3D 1 MAXILAR",
@@ -1672,18 +1682,6 @@
       "IN 360": 40000,
       "AFILIADO SEC": 40000,
       "ASISTENCIAL": 40000
-    }
-  },
-  {
-    "idRegistro": 124,
-    "item": "PANORAMICA",
-    "itemOriginal": "PANORAMICA",
-    "detalle": "",
-    "categoria": "CMD (FAMYL)",
-    "precios": {
-      "IN 360": 24000,
-      "AFILIADO SEC": 24000,
-      "ASISTENCIAL": 24000
     }
   },
   {
