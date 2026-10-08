@@ -1,5 +1,14 @@
 [
   {
+    "idRegistro": 206,
+    "categoria": "CONSULTA KINESIOLOGIA",
+    "item": "KINESIOLOGIA X 1 SESION",
+    "precios": {
+      "IN 180": 13000,
+      "IN 360": 13000
+    }
+  },
+  {
     "idRegistro": 205,
     "categoria": "CMD (FAMYL)",
     "item": "RX PANORAMICA",
@@ -197,8 +206,6 @@
     "detalle": "",
     "categoria": "CONSULTA KINESIOLOGIA",
     "precios": {
-      "IN 180": 65000,
-      "IN 360": 56000,
       "AFILIADO SEC": 14750,
       "ASISTENCIAL": 0
     }
@@ -210,8 +217,6 @@
     "detalle": "",
     "categoria": "CONSULTA KINESIOLOGIA",
     "precios": {
-      "IN 180": 130000,
-      "IN 360": 112000,
       "AFILIADO SEC": 29500,
       "ASISTENCIAL": 0
     }
