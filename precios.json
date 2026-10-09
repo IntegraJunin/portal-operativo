@@ -5,7 +5,7 @@
     "item": "KINESIOLOGIA X 1 SESION",
     "precios": {
       "IN 180": 13000,
-      "IN 360": 13000
+      "IN 360": 11200
     }
   },
   {
@@ -207,7 +207,7 @@
     "categoria": "CONSULTA KINESIOLOGIA",
     "precios": {
       "AFILIADO SEC": 14750,
-      "ASISTENCIAL": 0
+      "ASISTENCIAL": 14750
     }
   },
   {
@@ -218,7 +218,7 @@
     "categoria": "CONSULTA KINESIOLOGIA",
     "precios": {
       "AFILIADO SEC": 29500,
-      "ASISTENCIAL": 0
+      "ASISTENCIAL": 29500
     }
   },
   {
