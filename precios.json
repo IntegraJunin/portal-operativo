@@ -1,5 +1,16 @@
 [
   {
+    "idRegistro": 209,
+    "categoria": "NEXO TERAPIA",
+    "item": "ADMISION",
+    "precios": {
+      "IN 180": 15000,
+      "IN 360": 15000,
+      "AFILIADO SEC": 15000,
+      "ASISTENCIAL": 15000
+    }
+  },
+  {
     "idRegistro": 208,
     "categoria": "NEXO TERAPIA",
     "item": "PSICOPEDAGOGIA",
@@ -2441,19 +2452,6 @@
       "IN 360": 40000,
       "AFILIADO SEC": 40000,
       "ASISTENCIAL": 40000
-    }
-  },
-  {
-    "idRegistro": 188,
-    "item": "ADMISION",
-    "itemOriginal": "ADMISION",
-    "detalle": "",
-    "categoria": "NEXO TERAPIA",
-    "precios": {
-      "IN 180": 15000,
-      "IN 360": 15000,
-      "AFILIADO SEC": 15000,
-      "ASISTENCIAL": 15000
     }
   },
   {
