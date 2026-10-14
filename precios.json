@@ -1,5 +1,15 @@
 [
   {
+    "idRegistro": 210,
+    "categoria": "CMD (FAMYL)",
+    "item": "HOLTER 24 HS",
+    "precios": {
+      "IN 360": 68000,
+      "AFILIADO SEC": 68000,
+      "ASISTENCIAL": 68000
+    }
+  },
+  {
     "idRegistro": 209,
     "categoria": "NEXO TERAPIA",
     "item": "ADMISION",
